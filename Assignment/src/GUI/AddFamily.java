@@ -5,8 +5,8 @@
  */
 package GUI;
 
+import Classes.Family;
 import Classes.Members;
-import Classes.Single;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -39,7 +39,7 @@ import javax.swing.plaf.FontUIResource;
  *
  * @author ppunme
  */
-public class AddSingle extends JFrame implements ActionListener, ItemListener
+public class AddFamily extends JFrame implements ActionListener, ItemListener
 {
     public static ArrayList<Members> list;
     
@@ -81,7 +81,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
     private int indexState;
     private String stateLoad;
     private int indexType;
-    private String typeLoad;
+    private int typeLoad;
     private int nextAvailableID;
 
     MainMenu parentMenu;
@@ -100,7 +100,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         }
     }
 	
-    public AddSingle(MainMenu menu, ArrayList<Members> membersArray) 
+    public AddFamily(MainMenu menu, ArrayList<Members> membersArray) 
     {  	
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Single Membership");
@@ -224,8 +224,8 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         pnlAddress.add(new JLabel("Postcode   ", SwingConstants.RIGHT));
         pnlAddress.add(txfPostcode = new JTextField());
         
-        //Create panel for the type detail
-        String tLoad[] = {"Active Saver ($85 per month)", "Bronze Plus ($100 per month)", "Ultimate ($120)", "Make a Selection"};
+        //Create panel for the noMember detail
+        String tLoad[] = {"less than 3 members", "3-5 members", "more than 5 members", "Make a Selection"};
         cboTypeLoad = new JComboBox(tLoad);
         cboTypeLoad.setSelectedItem("Make a Selection");
         
@@ -275,7 +275,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
     {
         if(e.getSource() == btnAdd)
         {
-            addStudent();
+            addMember();
         }
         if(e.getSource() == btnClear)
         {
@@ -295,7 +295,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         }
         if(e.getSource() == cboTypeLoad)
         {
-            typeLoad = (String) cboTypeLoad.getSelectedItem();
+            typeLoad = (Integer) cboTypeLoad.getSelectedItem();
         }
         if(e.getSource() == btnExit)
         {
@@ -316,7 +316,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
     }
 	
     //add Local student to the array
-    public void addStudent()
+    public void addMember()
     {
         int id;
         String first, last, email, phone, streetNo, streetName, suburb, postcode;
@@ -342,7 +342,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         {
             JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + gender + " " + email + " " + phone + " " + streetNo + streetName + suburb + stateLoad + postcode + " " + typeLoad);
             //add to ArrayList
-            list.add(new Single(id, first, last, gender, email, phone, streetNo, streetName, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
+            list.add(new Family(id, first, last, gender, email, phone, streetNo, streetName, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
             //JOptionPane.showMessageDialog(null, list);
             nextAvailableID++;
             //list.get(id-1).calcFees(); //update the BASE_FEE($1000) for this type of student

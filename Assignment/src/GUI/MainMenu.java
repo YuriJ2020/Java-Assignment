@@ -28,25 +28,27 @@ public class MainMenu extends javax.swing.JFrame {
     /**
      * Creates new form MainMenu
      */
-    public static ArrayList<Members> list = new ArrayList<Members>();
-    
     //input and output file
     private static String fileName = "Members.bin";
     
+    public static ArrayList<Members> list = new ArrayList<Members>();
+    
+    private static int numMembers = 0; //count total no. of members records on file (to set the next ID)
+    
     //open OutputFile
-    private static FileOutputStream foStream; 
-    private static ObjectOutputStream outStream; 
-    
-    
-    
+    private static FileOutputStream fos; 
+    private static ObjectOutputStream oos; 
     
     Color myColor = new Color(163, 186, 195); 
     
     public MainMenu() {
         initComponents();
         
+        this.setTitle("Main Menu");
         this.setBounds(530, 100, 540, 560); // (x,y,width,height)
+        
         pnlAdd.setBorder(BorderFactory.createLineBorder(myColor, 2));
+        
     }
 
     /**
@@ -110,7 +112,7 @@ public class MainMenu extends javax.swing.JFrame {
         pnlHeadLayout.setHorizontalGroup(
             pnlHeadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHeadLayout.createSequentialGroup()
-                .addContainerGap(112, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlHeadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblHead2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblHead1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -403,9 +405,6 @@ public class MainMenu extends javax.swing.JFrame {
         pnlAllLayout.setHorizontalGroup(
             pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAllLayout.createSequentialGroup()
-                .addComponent(pnlHead, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(pnlAllLayout.createSequentialGroup()
                 .addGap(78, 78, 78)
                 .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -420,7 +419,8 @@ public class MainMenu extends javax.swing.JFrame {
                         .addComponent(btnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(44, 44, 44)
                         .addComponent(btnRestore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE))
+            .addComponent(pnlHead, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAllLayout.setVerticalGroup(
             pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -446,7 +446,7 @@ public class MainMenu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlAll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -462,11 +462,18 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSingleMousePressed
 
     private void btnFamilyMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFamilyMousePressed
-        // TODO add your handling code here:
+        AddFamily addFamilyFrame = new AddFamily(this, list);
+        this.setVisible(false);	
     }//GEN-LAST:event_btnFamilyMousePressed
 
     private void btnSearchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMousePressed
-        // TODO add your handling code here:
+        String output = "MEMBER DETAILS\n\n";
+        list = readData();
+        
+        for(Members obj : list){
+            output += obj + "\n";
+        }
+        JOptionPane.showMessageDialog(null, output);
     }//GEN-LAST:event_btnSearchMousePressed
 
     private void btnBackupMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackupMousePressed
@@ -486,7 +493,14 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnHelpMousePressed
 
     private void btnRestoreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRestoreMousePressed
-        // TODO add your handling code here:
+        try{
+            readData();
+            JOptionPane.showMessageDialog(null, list.size() + " Member records have been loaded from file");
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(null, e.getMessage());	
+        }
     }//GEN-LAST:event_btnRestoreMousePressed
 
     private void btnSingleMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSingleMouseEntered
@@ -593,12 +607,13 @@ public class MainMenu extends javax.swing.JFrame {
     public static ArrayList<Members> readData(){
         
         ArrayList<Members> list = new ArrayList<>();
+        
         try{
            list = ReadWrite.readData(fileName);
         }
         catch(FileNotFoundException fnfEx){
             System.err.println("Problem with the patients.bin file");
-            JOptionPane.showMessageDialog(null, "File \"PatientV2.bin\" will be created");
+            JOptionPane.showMessageDialog(null, "File \"Members.bin\" will be created");
         }
         catch(ClassNotFoundException cnfEx){
             System.err.println("Patient class does not exist");
@@ -644,6 +659,9 @@ public class MainMenu extends javax.swing.JFrame {
                 new MainMenu().setVisible(true);
             }
         });
+        
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
