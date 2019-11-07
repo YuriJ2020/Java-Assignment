@@ -21,7 +21,7 @@ public abstract class Members implements Serializable
     private String suburb;
     private String state;
     private String postcode;
-    private double baseFee; //40.00 per month
+    private double baseFee; //$40.00 per month
 
     //Constructor
     public Members(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee) {
@@ -132,10 +132,10 @@ public abstract class Members implements Serializable
 
     @Override
     public String toString() {
-        return "Members{" + "id=" + id + ", name=" + name + ", last=" + last 
-                + ", gender=" + gender + ", email=" + email + ", phone=" + phone 
-                + ", address=" + address + ", suburb=" + suburb + ", state=" + state 
-                + ", postcode=" + postcode + ", baseFee=" + baseFee + "\n";
+        return "Member details" + "\n\nMember id: " + id + "\nName: " + name + "\nLast:" + last 
+                + "\nGender: " + gender + "\nEmail: " + email + "\nPhone: " + phone 
+                + "\nAddress: " + address + "\nSuburb: " + suburb + "\nState: " + state 
+                + "\nPostcode: " + postcode + "\nBase Fee: " + baseFee + "\n";
     }
     
     

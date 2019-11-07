@@ -103,8 +103,6 @@ public class SearchForm extends JFrame implements ActionListener {
         
         parentMenu = menu;
         list = membersArray;
-        
-        con.add(new JLabel("Search Member"), BorderLayout.NORTH);
 
         //Head Panel
         JPanel pnlHeading = new JPanel();
@@ -112,7 +110,7 @@ public class SearchForm extends JFrame implements ActionListener {
         pnlHeading.add(lblHeading = new JLabel());
         lblHeading.setForeground(Color.white);
         lblHeading.setFont(f1);
-        lblHeading.setText("Search Form");
+        lblHeading.setText("Search for Members");
         
         //Search Panel
         JPanel pnlSearch = new JPanel();

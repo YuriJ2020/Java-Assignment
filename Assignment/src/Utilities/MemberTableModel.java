@@ -21,7 +21,7 @@ public class MemberTableModel extends AbstractTableModel{
     //Student objects will be saved in an arrayList
     
     private ArrayList<Members> list = new ArrayList<>();
-    private String[] columnNames = {"Member ID", "First Name", "Last Name"};
+    private String[] columnNames = {"Member ID", "First Name", "Last Name", "Gender", "Email", "Phone", "Address", "Suburb", "Type", "No. of Member"};
     
     //constructor
     public MemberTableModel() {
@@ -47,12 +47,18 @@ public class MemberTableModel extends AbstractTableModel{
 
     
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Members stud = list.get(rowIndex);
+        Members m = list.get(rowIndex);
         switch(columnIndex)
         {
-            case 0: return stud.getId();
-            case 1: return stud.getName();
-            case 2: return stud.getLast();
+            case 0: return m.getId();
+            case 1: return m.getName();
+            case 2: return m.getLast();
+            case 3: return m.getGender();
+            case 4: return m.getEmail();
+            case 5: return m.getPhone();
+            case 6: return m.getAddress();
+            case 7: return m.getSuburb();
+          
         }
         return null;
     }
@@ -67,8 +73,8 @@ public class MemberTableModel extends AbstractTableModel{
     //this method will wxtract one object (Student) from the ArrayList at a time
     public Members getRow(int row)
     {
-        Members memb = list.get(row);
-        return memb;
+        Members m = list.get(row);
+        return m;
     }
     
     //connect to the database
@@ -108,13 +114,11 @@ public class MemberTableModel extends AbstractTableModel{
         try{
             con = getConnection();
             stmt = con.createStatement();
-            String sql = "SELECT * FROM member";
+            String sql = "SELECT * FROM tblMember INNER JOIN tblSingle ON tblMember.memberID = tblSingle.memberID"
+                    + " INNER JOIN tblAddress ON tblMember.memberID = tblAddress.memberID";
             r = stmt.executeQuery(sql);
+            System.out.println(r);
             
-            sql = "SELECT * FROM single";
-            r = stmt.executeQuery(sql);
-            
-            sql = "SELECT * FROM address";
             //clear out the arrayList
             list.clear();
             

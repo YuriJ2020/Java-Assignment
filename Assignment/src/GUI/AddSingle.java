@@ -65,11 +65,8 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
 
     //Labels
     private JLabel lblHeading, lblID, lblFirst, lblLast, lblGender, lblEmail, lblPhone;
-
-    //Combo Box
-    private String[] sLoad = {"Part-Time","Full-Time","Make a Selection"};
-    private JComboBox cboStudyLoad = new JComboBox(sLoad);
-
+    
+    //Image
     private JLabel lblImage;
     private ImageIcon image;
     
@@ -82,7 +79,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
     Font f2 = new Font("Helvetica", Font.PLAIN,16);
     
     private boolean validate = true;
-    private final static double BASE_FEE = 1000.00; 
+    private final static double BASE_FEE = 50.00; 
     private String gender;
     private int indexState;
     private String stateLoad;
@@ -223,15 +220,16 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         pnlAddress.add(txfPostcode = new JTextField());
         
         //Create panel for the type detail
-        String tLoad[] = {"Active Saver ($85 per month)", "Bronze Plus ($100 per month)", "Ultimate ($120)", "Make a Selection"};
+        //String tLoad[] = {"Active Saver", "Bronze Plus", "Ultimate", "Make a Selection"};
+        String tLoad[] = {"Saver", "Bronze", "Ultimate", "Make a Selection"};
         cboTypeLoad = new JComboBox(tLoad);
         cboTypeLoad.setSelectedItem("Make a Selection");
         
     	JPanel pnlType = new JPanel();
         pnlType.setBackground(myColor1);
         pnlType.setBorder(new EmptyBorder(10, 10, 10, 10));
-        pnlType.setLayout(new GridLayout(0,3));
-        pnlType.add(new JLabel("Member Type:     ", SwingConstants.LEFT));
+        pnlType.setLayout(new GridLayout(0,2));
+        pnlType.add(new JLabel("Member Type:     ", SwingConstants.RIGHT));
     	pnlType.add(cboTypeLoad);
         pnlType.add(new JLabel(""));
         
@@ -336,17 +334,26 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         validate = true;
 
         //check to see if each TextField have data
-        if(!(first.equals("")|| last.equals("")))
+        if(!(first.equals("") || last.equals("") || email.equals("") || phone.equals("") || address.equals("")
+                || suburb.equals("") || postcode.equals("")))
         {
-            JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + gender + " " + email + " " + phone + " " + address + suburb + stateLoad + postcode + " " + typeLoad);
-            //add to ArrayList
-            list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
-            //JOptionPane.showMessageDialog(null, list);
-            nextAvailableID++;
-            //list.get(id-1).calcFees(); //update the BASE_FEE($1000) for this type of student
 
-            validate = false; //all data valid
-            addToDatabase();
+                if(!(typeLoad.equals("Make a Selection"))){
+                    JOptionPane.showMessageDialog(null, stateLoad + " " + typeLoad);
+                    //add to ArrayList
+                    list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
+                    JOptionPane.showMessageDialog(null, list);
+                    
+                    nextAvailableID++;
+                    list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
+
+                    validate = false; //all data valid
+                    addToDatabase();
+                }
+                else{
+                    validate = true;
+                }
+           
         }
 
         if(validate)
@@ -398,29 +405,58 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
             stmt = con.createStatement();
             System.out.println("Connected to the database");
             
-            //create tblEmployees
-            /*String tblEmployees = "CREATE TABLE if not exists tblMembers(" 
+            //create table if it not exist
+            //create tblMember
+            String tblMember = "CREATE TABLE if not exists tblMember(" 
                     + "memberId int not null primary key, "
-                    + "first varchar(30), "
-                    + "last varchar(30))"; 
-            
-            System.out.println(tblEmployees);        
-            stmt.executeUpdate(tblEmployees);
+                    + "first varchar(50), "
+                    + "last varchar(50),"
+                    + "gender varchar(20),"
+                    + "email varchar(50),"
+                    + "phone varchar(20))"; 
+            System.out.println(tblMember);        
+            stmt.executeUpdate(tblMember);
             System.out.println("tblEmployees has been created");
             
-            //create tblBank
-            String tblBank = "CREATE TABLE if not exists tblBank(" 
-                    + "bank varchar(30), " 
-                    + "bsb int, " 
-                    + "accountNo int not null, "
-                    + "empId int, "
-                    + "PRIMARY KEY (accountNo),"
-                    + "FOREIGN KEY (empId) References tblEmployees(empId))";
-     
-            stmt.executeUpdate(tblBank);
-            System.out.println("tblBank has been created");*/
+            //create tblAddress
+            String tblAddress = "CREATE TABLE if not exists tblAddress("
+                    + "addressID int not null AUTO_INCREMENT,"
+                    + "address varchar(50)," 
+                    + "suburb varchar(50),"
+                    + "state varchar(50),"
+                    + "postcode int, " 
+                    + "memberID int, "
+                    + "PRIMARY KEY (addressID),"
+                    + "FOREIGN KEY (memberId) References tblMember(memberId))";
+            System.out.println(tblAddress);        
+            stmt.executeUpdate(tblAddress);
+            System.out.println("tblAddress has been created");
             
-            String sql = "SELECT * from member where memberID=" + txfID.getText();
+            //create tblSingle
+            String tblSingle = "CREATE TABLE if not exists tblSingle("
+                    + "singleID int not null AUTO_INCREMENT,"
+                    + "type varchar(50), " 
+                    + "baseFee double,"
+                    + "memberID int,"
+                    + "PRIMARY KEY (singleID),"
+                    + "FOREIGN KEY (memberId) References tblMember(memberId))";
+            System.out.println(tblSingle);        
+            stmt.executeUpdate(tblSingle);
+            System.out.println("tblSingle has been created");
+            
+            //create tblFamily
+            String tblFamily = "CREATE TABLE if not exists tblFamily("
+                    + "familyID int not null AUTO_INCREMENT,"
+                    + "noMember int, " 
+                    + "memberID int,"
+                    + "PRIMARY KEY (familyID),"
+                    + "FOREIGN KEY (memberId) References tblMember(memberId))";
+            System.out.println(tblFamily);        
+            stmt.executeUpdate(tblFamily);
+            System.out.println("tblFamily has been created");
+            
+            //check memberID in database
+            String sql = "SELECT * from tblMember where memberID=" + txfID.getText();
             r = stmt.executeQuery(sql);
             System.out.println(r);
             
@@ -431,20 +467,18 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
             else
             {
                 //insert data to member table
-                sql = "INSERT INTO member (memberID, first, last, gender, email, phone) values"
-                        + "('"+ txfID.getText() + "','" + txfFirst.getText() + "','" + txfLast.getText() 
+                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone) values"
+                        + "('" + txfID.getText() + "','" + txfFirst.getText() + "','" + txfLast.getText() 
                         + "','" + gender + "','" + txfEmail.getText() + "','" + txfPhone.getText() + "')";
                 stmt.executeUpdate(sql);
-                System.out.println("Member details have been added to member table");
 
                 //insert data to address table
-                sql = "INSERT INTO address (address, suburb, state, postcode, memberID) values ('"+ txfAddress.getText()
+                sql = "INSERT INTO tblAddress (address, suburb, state, postcode, memberID) values ('"+ txfAddress.getText()
                         + "','" + txfSuburb.getText() + "','" + stateLoad + "','" + txfPostcode.getText() + "','" + txfID.getText() + "')";
                 stmt.executeUpdate(sql);
-                System.out.println("Member details have been added to address table");
                 
                 //insert data to single table
-                sql = "INSERT INTO single (type, baseFee, memberID) values ('"+ typeLoad + "','" + BASE_FEE + "','" + txfID.getText() + "')";
+                sql = "INSERT INTO tblSingle (type, baseFee, memberID) values ('"+ typeLoad + "','" + BASE_FEE + "','" + txfID.getText() + "')";
                 stmt.executeUpdate(sql);
                 System.out.println("Member details have been added to single table");
                 JOptionPane.showMessageDialog(null, "Member details have been added to database");
