@@ -7,6 +7,7 @@ package GUI;
 
 import Classes.Members;
 import Classes.Single;
+import Utilities.ConnectionDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -18,6 +19,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.swing.ButtonGroup;
@@ -43,14 +48,15 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
 {
     public static ArrayList<Members> list;
     
-    //buttons
+    //Buttons
     private JButton btnAdd, btnClear, btnExit;
 
     //TextFields
     private JTextField txfID, txfFirst, txfLast, txfEmail, txfPhone;
-    private JTextField txfStreetNo, txfStreetName, txfSuburb, txfPostcode;
+    private JTextField txfAddress, txfSuburb, txfPostcode;
 
     //Radio Buttons
+    private JRadioButton rbtSingle, rbtFamily;
     private JRadioButton rbtMale, rbtFemale;
     
     //Combo Box
@@ -113,14 +119,8 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         //re-create the main menu when this frame is closed
     	parentMenu = menu;
         list = membersArray;
-        
-        nextAvailableID = 1;
-        /*f(list.size() == 0){
-            nextAvailableID = 1;
-        }
-        else{
-            nextAvailableID = list.size() + 1;
-        }*/
+
+        nextAvailableID = list.size() + 1;
         
         //create panel for Heading
         JPanel pnlHeading = new JPanel();
@@ -213,10 +213,8 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
 
         pnlAddress.add(new JLabel());
         pnlAddress.add(new JLabel("ADDRESS", SwingConstants.CENTER));
-        pnlAddress.add(new JLabel("Street No   ", SwingConstants.RIGHT));
-        pnlAddress.add(txfStreetNo = new JTextField());
-        pnlAddress.add(new JLabel("Street Name   ", SwingConstants.RIGHT));
-        pnlAddress.add(txfStreetName = new JTextField());    
+        pnlAddress.add(new JLabel("Address   ", SwingConstants.RIGHT));
+        pnlAddress.add(txfAddress = new JTextField());    
         pnlAddress.add(new JLabel("Suburb   ", SwingConstants.RIGHT));
         pnlAddress.add(txfSuburb = new JTextField());
         pnlAddress.add(new JLabel("State   ", SwingConstants.RIGHT));
@@ -275,7 +273,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
     {
         if(e.getSource() == btnAdd)
         {
-            addStudent();
+            addMember();
         }
         if(e.getSource() == btnClear)
         {
@@ -316,10 +314,11 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
     }
 	
     //add Local student to the array
-    public void addStudent()
+    public void addMember()
     {
+        //insert into arrayList
         int id;
-        String first, last, email, phone, streetNo, streetName, suburb, postcode;
+        String first, last, email, phone, address, suburb, postcode;
 
         id = list.size()+1;
 
@@ -328,8 +327,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         last = txfLast.getText();
         email = txfEmail.getText();
         phone = txfEmail.getText();
-        streetNo = txfStreetNo.getText();
-        streetName = txfStreetName.getText();
+        address = txfAddress.getText();
         suburb = txfSuburb.getText();
         indexState = cboStateLoad.getSelectedIndex();
         postcode = txfPostcode.getText();
@@ -340,15 +338,15 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         //check to see if each TextField have data
         if(!(first.equals("")|| last.equals("")))
         {
-            JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + gender + " " + email + " " + phone + " " + streetNo + streetName + suburb + stateLoad + postcode + " " + typeLoad);
+            JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + gender + " " + email + " " + phone + " " + address + suburb + stateLoad + postcode + " " + typeLoad);
             //add to ArrayList
-            list.add(new Single(id, first, last, gender, email, phone, streetNo, streetName, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
+            list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
             //JOptionPane.showMessageDialog(null, list);
             nextAvailableID++;
             //list.get(id-1).calcFees(); //update the BASE_FEE($1000) for this type of student
 
-            validate = false; //all data valid	
-           
+            validate = false; //all data valid
+            addToDatabase();
         }
 
         if(validate)
@@ -357,10 +355,9 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         }
         else
         {   			   			
-            JOptionPane.showMessageDialog(null, "Student Record successfully added"); 			
-            //clear Frame for next record
-            clearForm(); 
-        }		
+            JOptionPane.showMessageDialog(null, "Member Record successfully added"); 			
+            clearForm();  //clear Frame for next record
+        }
     }
 	
     // clear the Frame
@@ -372,20 +369,114 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         txfLast.setText("");		
         rbtMale.setSelected(false);
         rbtFemale.setSelected(false);
-        cboStudyLoad.setSelectedItem("Make a Selection");						
+        txfEmail.setText("");
+        txfPhone.setText("");
+        txfAddress.setText("");
+        txfSuburb.setText("");
+        cboStateLoad.setSelectedItem("Make a Selection");	
+        txfPostcode.setText("");
+        cboTypeLoad.setSelectedItem("Make a Selection");						
     }
 	
-    // close addProduct frame and return to main menu
-    public void  mainMenu() 
+    // close addSingle frame and return to main menu
+    public void mainMenu() 
     {
         parentMenu.setVisible(true);	
-        this.dispose(); //release resources back to the OS
+        this.dispose(); 
     }
-    
-    /*public static void main(String[] args) {
-
-        AddSingle test = new AddSingle(list);
-    }*/ 
-    
  
+    public void addToDatabase(){
+        //Insert into database
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet r = null;
+        
+        int MYSQL_DUPLICATE_PK = 1062; //1062 error code for duplicate primary key
+        
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            System.out.println("Connected to the database");
+            
+            //create tblEmployees
+            /*String tblEmployees = "CREATE TABLE if not exists tblMembers(" 
+                    + "memberId int not null primary key, "
+                    + "first varchar(30), "
+                    + "last varchar(30))"; 
+            
+            System.out.println(tblEmployees);        
+            stmt.executeUpdate(tblEmployees);
+            System.out.println("tblEmployees has been created");
+            
+            //create tblBank
+            String tblBank = "CREATE TABLE if not exists tblBank(" 
+                    + "bank varchar(30), " 
+                    + "bsb int, " 
+                    + "accountNo int not null, "
+                    + "empId int, "
+                    + "PRIMARY KEY (accountNo),"
+                    + "FOREIGN KEY (empId) References tblEmployees(empId))";
+     
+            stmt.executeUpdate(tblBank);
+            System.out.println("tblBank has been created");*/
+            
+            String sql = "SELECT * from member where memberID=" + txfID.getText();
+            r = stmt.executeQuery(sql);
+            System.out.println(r);
+            
+            if(r.next())
+            { //found this member id in database
+                JOptionPane.showMessageDialog(null, "This member id is already exist");
+            }
+            else
+            {
+                //insert data to member table
+                sql = "INSERT INTO member (memberID, first, last, gender, email, phone) values"
+                        + "('"+ txfID.getText() + "','" + txfFirst.getText() + "','" + txfLast.getText() 
+                        + "','" + gender + "','" + txfEmail.getText() + "','" + txfPhone.getText() + "')";
+                stmt.executeUpdate(sql);
+                System.out.println("Member details have been added to member table");
+
+                //insert data to address table
+                sql = "INSERT INTO address (address, suburb, state, postcode, memberID) values ('"+ txfAddress.getText()
+                        + "','" + txfSuburb.getText() + "','" + stateLoad + "','" + txfPostcode.getText() + "','" + txfID.getText() + "')";
+                stmt.executeUpdate(sql);
+                System.out.println("Member details have been added to address table");
+                
+                //insert data to single table
+                sql = "INSERT INTO single (type, baseFee, memberID) values ('"+ typeLoad + "','" + BASE_FEE + "','" + txfID.getText() + "')";
+                stmt.executeUpdate(sql);
+                System.out.println("Member details have been added to single table");
+                JOptionPane.showMessageDialog(null, "Member details have been added to database");
+            }
+            
+        } catch (SQLException sqlE) {
+            sqlE.printStackTrace();
+            System.err.println("ERROR: " + sqlE.getMessage());
+            if(sqlE.getErrorCode() == MYSQL_DUPLICATE_PK){ //duplicate primary key
+                JOptionPane.showMessageDialog(null, "Duplicate Member ID");
+                txfID.requestFocusInWindow();
+            }
+        } finally {
+            
+        }//end try catch 
+        
+        try {
+            if(stmt != null) {
+                stmt.close();
+            }
+            System.out.println("Statement close");
+        } catch (SQLException sqlE) {
+            System.out.println("Error closing statement");
+        }//end try catch
+        
+        try{
+            if (con != null) {
+                con.close();
+            }
+            System.out.println("Connection close");
+        } catch (SQLException sqlE) {
+            System.out.println("Error Closing connection");
+        }//end try catch
+    }
 }

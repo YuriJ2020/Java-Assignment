@@ -12,12 +12,12 @@ public class Single extends Members implements Serializable {
     private String type;
     
     public Single(){
-        super(0, "", "", "", "", "", "", "", "", "", "", 40.00);
+        super(0, "", "", "", "", "", "", "", "", "", 40.00);
         this.type = type;
     }
 
-    public Single(int id, String name, String last, String gender, String email, String phone, String streetNo, String streetName, String suburb, String state, String postcode, double baseFee, String type) {
-        super(id, name, last, gender, email, phone, streetNo, streetName, suburb, state, postcode, baseFee);
+    public Single(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee, String type) {
+        super(id, name, last, gender, email, phone, address, suburb, state, postcode, baseFee);
         this.type = type;
     }
 

@@ -17,23 +17,21 @@ public abstract class Members implements Serializable
     private String gender;
     private String email;
     private String phone;
-    private String streetNo;
-    private String streetName;
+    private String address;
     private String suburb;
     private String state;
     private String postcode;
     private double baseFee; //40.00 per month
 
     //Constructor
-    public Members(int id, String name, String last, String gender, String email, String phone, String streetNo, String streetName, String suburb, String state, String postcode, double baseFee) {
+    public Members(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee) {
         this.id = id;
         this.name = name;
         this.last = last;
         this.gender = gender;
         this.email = email;
         this.phone = phone;
-        this.streetNo = streetNo;
-        this.streetName = streetName;
+        this.address = address;
         this.suburb = suburb;
         this.state = state;
         this.postcode = postcode;
@@ -92,20 +90,12 @@ public abstract class Members implements Serializable
         this.phone = phone;
     }
 
-    public String getStreetNo() {
-        return streetNo;
+    public String getAddress() {
+        return address;
     }
 
-    public void setStreetNo(String streetNo) {
-        this.streetNo = streetNo;
-    }
-
-    public String getStreetName() {
-        return streetName;
-    }
-
-    public void setStreetName(String streetName) {
-        this.streetName = streetName;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getSuburb() {
@@ -142,10 +132,10 @@ public abstract class Members implements Serializable
 
     @Override
     public String toString() {
-        return "Members{" + "id=" + id + ", name=" + name + ", last=" + last + ", gender=" + gender 
-                + ", email=" + email + ", phone=" + phone + ", streetNo=" + streetNo 
-                + ", streetName=" + streetName + ", suburb=" + suburb + ", state=" + state 
-                + ", postcode=" + postcode + ", baseFee=" + baseFee + '}';
+        return "Members{" + "id=" + id + ", name=" + name + ", last=" + last 
+                + ", gender=" + gender + ", email=" + email + ", phone=" + phone 
+                + ", address=" + address + ", suburb=" + suburb + ", state=" + state 
+                + ", postcode=" + postcode + ", baseFee=" + baseFee + "\n";
     }
     
     

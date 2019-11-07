@@ -48,7 +48,7 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
 
     //TextFields
     private JTextField txfID, txfFirst, txfLast, txfEmail, txfPhone;
-    private JTextField txfStreetNo, txfStreetName, txfSuburb, txfPostcode;
+    private JTextField txfAddress, txfSuburb, txfPostcode;
 
     //Radio Buttons
     private JRadioButton rbtMale, rbtFemale;
@@ -213,10 +213,8 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
 
         pnlAddress.add(new JLabel());
         pnlAddress.add(new JLabel("ADDRESS", SwingConstants.CENTER));
-        pnlAddress.add(new JLabel("Street No   ", SwingConstants.RIGHT));
-        pnlAddress.add(txfStreetNo = new JTextField());
-        pnlAddress.add(new JLabel("Street Name   ", SwingConstants.RIGHT));
-        pnlAddress.add(txfStreetName = new JTextField());    
+        pnlAddress.add(new JLabel("Address   ", SwingConstants.RIGHT));
+        pnlAddress.add(txfAddress = new JTextField());  
         pnlAddress.add(new JLabel("Suburb   ", SwingConstants.RIGHT));
         pnlAddress.add(txfSuburb = new JTextField());
         pnlAddress.add(new JLabel("State   ", SwingConstants.RIGHT));
@@ -319,7 +317,7 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
     public void addMember()
     {
         int id;
-        String first, last, email, phone, streetNo, streetName, suburb, postcode;
+        String first, last, email, phone, address, suburb, postcode;
 
         id = list.size()+1;
 
@@ -328,8 +326,7 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         last = txfLast.getText();
         email = txfEmail.getText();
         phone = txfEmail.getText();
-        streetNo = txfStreetNo.getText();
-        streetName = txfStreetName.getText();
+        address = txfAddress.getText();
         suburb = txfSuburb.getText();
         indexState = cboStateLoad.getSelectedIndex();
         postcode = txfPostcode.getText();
@@ -340,9 +337,9 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         //check to see if each TextField have data
         if(!(first.equals("")|| last.equals("")))
         {
-            JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + gender + " " + email + " " + phone + " " + streetNo + streetName + suburb + stateLoad + postcode + " " + typeLoad);
+            JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + gender + " " + email + " " + phone + " " + address + suburb + stateLoad + postcode + " " + typeLoad);
             //add to ArrayList
-            list.add(new Family(id, first, last, gender, email, phone, streetNo, streetName, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
+            list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
             //JOptionPane.showMessageDialog(null, list);
             nextAvailableID++;
             //list.get(id-1).calcFees(); //update the BASE_FEE($1000) for this type of student

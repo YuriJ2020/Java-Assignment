@@ -13,12 +13,12 @@ public class Family extends Members implements Serializable
     
     public Family()
     {
-        super(0, "", "", "", "", "", "", "", "", "", "", 40.00);
+        super(0, "", "", "", "", "", "", "", "", "", 40.00);
         this.noMembers = noMembers;
     }
 
-    public Family(int id, String name, String last, String gender, String email, String phone, String streetNo, String streetName, String suburb, String state, String postcode, double baseFee, int noMembers) {
-        super(id, name, last, gender, email, phone, streetNo, streetName, suburb, state, postcode, baseFee);
+    public Family(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee, int noMembers) {
+        super(id, name, last, gender, email, phone, address, suburb, state, postcode, baseFee);
         this.noMembers = noMembers;
     }
 
