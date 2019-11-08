@@ -5,18 +5,24 @@
  */
 package GUI;
 
+import Classes.Family;
 import Classes.Members;
+import Classes.Single;
 import Utilities.ReadWrite;
 import java.awt.Color;
 import java.awt.Font;
+import java.io.EOFException;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -28,7 +34,7 @@ public class MainMenu extends javax.swing.JFrame {
      * Creates new form MainMenu
      */
     //input and output file
-    private static String fileName = "Members.bin";
+    private static String fileName = "Student.txt";
     
     public static ArrayList<Members> list = new ArrayList<Members>();
     
@@ -45,6 +51,10 @@ public class MainMenu extends javax.swing.JFrame {
         
         this.setTitle("Main Menu");
         this.setBounds(530, 100, 525, 570); // (x,y,width,height)
+        
+        //read contents of file on loading the main menu GUI
+        readFile();
+        JOptionPane.showMessageDialog(null, list.size() + " Member records have been loaded from file");
         
     }
 
@@ -109,18 +119,18 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHeadLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlHeadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblHead2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblHead1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26))
+                    .addComponent(lblHead1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblHead2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39))
         );
         pnlHeadLayout.setVerticalGroup(
             pnlHeadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHeadLayout.createSequentialGroup()
-                .addContainerGap(52, Short.MAX_VALUE)
+            .addGroup(pnlHeadLayout.createSequentialGroup()
+                .addGap(82, 82, 82)
                 .addComponent(lblHead1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblHead2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         btnBackup.setBackground(new java.awt.Color(234, 235, 237));
@@ -390,7 +400,7 @@ public class MainMenu extends javax.swing.JFrame {
             pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAllLayout.createSequentialGroup()
                 .addComponent(pnlHead, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(66, 66, 66)
+                .addGap(49, 49, 49)
                 .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnAddFamily, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAddSingle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -400,7 +410,7 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(btnHelp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnRestore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -442,6 +452,40 @@ public class MainMenu extends javax.swing.JFrame {
         try{
             readData();
             JOptionPane.showMessageDialog(null, list.size() + " Member records have been loaded from file");
+            //temporarily hide the main menu
+            this.setVisible(false);	
+
+            String allDetailsLocal = "";
+            String allDetailsInternational = "";
+            String headingLocal = "\nID\tNAME\t\t\tFEE\t\tCOURSE\t\tSTUDY LOAD\n";
+            String headingInternational = "\nID\tNAME\t\t\tFEE\t\tCOURSE\t\tCOUNTRY\n";
+
+            //retrieve all student details (if any)
+            if(list.size() > 0)
+            {
+                for (int i = 0; i < list.size(); i++)
+                {
+                    if (list.get(i) instanceof Single) //determine whether to add local or international student details
+                        allDetailsLocal += list.get(i) + ((Single)list.get(i)).getTypeLoad() + "\n";
+                    else
+                        allDetailsInternational += list.get(i) + "\n";
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "There are no students in the database\nGo back to main menu to add a student","HOLMESGLEN",2);
+            }
+
+            //display details in a JTextArea
+            JTextArea outputAll = new JTextArea();
+   	    outputAll.setFont(new Font("Courier", Font.PLAIN, 12)); //set non-proportional font for lined-up output
+	    outputAll.setText("ALL STUDENTS\n\nLOCAL STUDENTS"+headingLocal+allDetailsLocal+"\nINTERNATIONAL STUDENTS"
+    										+headingInternational+allDetailsInternational);
+	    
+	    JOptionPane.showMessageDialog(null, outputAll , "All Student Details", JOptionPane.PLAIN_MESSAGE);
+	    
+	    //re-draw the main menu on the screen
+	    this.setVisible(true);
         }
         catch (Exception e)
         {
@@ -584,6 +628,34 @@ public class MainMenu extends javax.swing.JFrame {
         }
         return list;
     }
+    
+    public static void readFile()
+	{
+            boolean reading = true;
+            try
+            {
+                FileInputStream fiStream = new FileInputStream(fileName);
+                ObjectInputStream inStream = new ObjectInputStream(fiStream);
+
+                //while (inStream.readObject() != null)
+                //while (inStream.available() != 0)
+                //while (inStream.read() != -1) 
+                while(reading)
+                {			
+                    list.add((Members)inStream.readObject());	
+                    numMembers++;
+                }
+                inStream.close();
+            }
+            catch(EOFException ex)
+            {
+                    reading = false;
+            }
+            catch(Exception e)
+            {
+                    reading = false;
+            }
+	}
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
