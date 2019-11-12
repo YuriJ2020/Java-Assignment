@@ -5,9 +5,9 @@
  */
 package GUI;
 
-import Classes.Family;
 import Classes.Members;
 import Classes.Single;
+import Utilities.ConnectionDetails;
 import Utilities.ReadWrite;
 import java.awt.Color;
 import java.awt.Font;
@@ -19,10 +19,16 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
@@ -34,7 +40,7 @@ public class MainMenu extends javax.swing.JFrame {
      * Creates new form MainMenu
      */
     //input and output file
-    private static String fileName = "Student.txt";
+    private static String fileName = "Members.bin";
     
     public static ArrayList<Members> list = new ArrayList<Members>();
     
@@ -50,12 +56,12 @@ public class MainMenu extends javax.swing.JFrame {
         initComponents();
         
         this.setTitle("Main Menu");
-        this.setBounds(530, 100, 525, 570); // (x,y,width,height)
+        this.setBounds(500, 100, 525, 570); // (x,y,width,height)
         
         //read contents of file on loading the main menu GUI
         readFile();
         JOptionPane.showMessageDialog(null, list.size() + " Member records have been loaded from file");
-        
+        System.out.println(list);
     }
 
     /**
@@ -77,13 +83,13 @@ public class MainMenu extends javax.swing.JFrame {
         btnRestore = new javax.swing.JPanel();
         icRestore = new javax.swing.JLabel();
         lblRestore = new javax.swing.JLabel();
-        btnAddFamily = new javax.swing.JPanel();
+        btnAddMember = new javax.swing.JPanel();
         lblAddFamily = new javax.swing.JLabel();
         icAddFamily = new javax.swing.JLabel();
         btnSearch = new javax.swing.JPanel();
         icSearch = new javax.swing.JLabel();
         lblSearch = new javax.swing.JLabel();
-        btnAddSingle = new javax.swing.JPanel();
+        btnAddAgent = new javax.swing.JPanel();
         icAddSingle = new javax.swing.JLabel();
         lblAddSingle = new javax.swing.JLabel();
         btnHelp = new javax.swing.JPanel();
@@ -97,10 +103,10 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        pnlAll.setBackground(new java.awt.Color(255, 255, 255));
+        pnlAll.setBackground(new java.awt.Color(234, 234, 234));
         pnlAll.setForeground(new java.awt.Color(66, 75, 84));
 
-        pnlHead.setBackground(new java.awt.Color(163, 186, 195));
+        pnlHead.setBackground(new java.awt.Color(34, 70, 96));
 
         lblHead1.setFont(new java.awt.Font("Lucida Grande", 0, 36)); // NOI18N
         lblHead1.setForeground(new java.awt.Color(255, 255, 255));
@@ -133,7 +139,7 @@ public class MainMenu extends javax.swing.JFrame {
                 .addContainerGap(36, Short.MAX_VALUE))
         );
 
-        btnBackup.setBackground(new java.awt.Color(234, 235, 237));
+        btnBackup.setBackground(new java.awt.Color(255, 255, 255));
         btnBackup.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnBackupMouseEntered(evt);
@@ -147,9 +153,9 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         icBackup.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/btnBackup.png"))); // NOI18N
+        icBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-database-50orange.png"))); // NOI18N
 
-        lblBackup.setForeground(new java.awt.Color(66, 75, 84));
+        lblBackup.setForeground(new java.awt.Color(102, 102, 102));
         lblBackup.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblBackup.setText("Backup");
 
@@ -166,14 +172,14 @@ public class MainMenu extends javax.swing.JFrame {
         btnBackupLayout.setVerticalGroup(
             btnBackupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnBackupLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(icBackup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblBackup)
-                .addContainerGap())
+                .addGap(12, 12, 12))
         );
 
-        btnRestore.setBackground(new java.awt.Color(234, 235, 237));
+        btnRestore.setBackground(new java.awt.Color(255, 255, 255));
         btnRestore.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnRestoreMouseEntered(evt);
@@ -187,9 +193,9 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         icRestore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icRestore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/btnRestore.png"))); // NOI18N
+        icRestore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-restart-purple.png"))); // NOI18N
 
-        lblRestore.setForeground(new java.awt.Color(66, 75, 84));
+        lblRestore.setForeground(new java.awt.Color(102, 102, 102));
         lblRestore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblRestore.setText("Restore");
 
@@ -198,62 +204,63 @@ public class MainMenu extends javax.swing.JFrame {
         btnRestoreLayout.setHorizontalGroup(
             btnRestoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnRestoreLayout.createSequentialGroup()
-                .addComponent(icRestore, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(lblRestore, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(lblRestore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(icRestore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         btnRestoreLayout.setVerticalGroup(
             btnRestoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnRestoreLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(icRestore)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(icRestore, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblRestore)
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addGap(12, 12, 12))
         );
 
-        btnAddFamily.setBackground(new java.awt.Color(234, 235, 237));
-        btnAddFamily.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnAddMember.setBackground(new java.awt.Color(255, 255, 255));
+        btnAddMember.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnAddFamilyMouseEntered(evt);
+                btnAddMemberMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnAddFamilyMouseExited(evt);
+                btnAddMemberMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                btnAddFamilyMousePressed(evt);
+                btnAddMemberMousePressed(evt);
             }
         });
 
-        lblAddFamily.setForeground(new java.awt.Color(66, 75, 84));
+        lblAddFamily.setForeground(new java.awt.Color(102, 102, 102));
         lblAddFamily.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblAddFamily.setText("Add Family");
+        lblAddFamily.setText("Add Member");
 
         icAddFamily.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icAddFamily.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/btnAdd.png"))); // NOI18N
+        icAddFamily.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-user-green.png"))); // NOI18N
+        icAddFamily.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        javax.swing.GroupLayout btnAddFamilyLayout = new javax.swing.GroupLayout(btnAddFamily);
-        btnAddFamily.setLayout(btnAddFamilyLayout);
-        btnAddFamilyLayout.setHorizontalGroup(
-            btnAddFamilyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnAddFamilyLayout.createSequentialGroup()
+        javax.swing.GroupLayout btnAddMemberLayout = new javax.swing.GroupLayout(btnAddMember);
+        btnAddMember.setLayout(btnAddMemberLayout);
+        btnAddMemberLayout.setHorizontalGroup(
+            btnAddMemberLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnAddMemberLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(btnAddFamilyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblAddFamily, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                    .addComponent(icAddFamily, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(btnAddMemberLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(icAddFamily, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                    .addComponent(lblAddFamily, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        btnAddFamilyLayout.setVerticalGroup(
-            btnAddFamilyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnAddFamilyLayout.createSequentialGroup()
-                .addContainerGap(10, Short.MAX_VALUE)
-                .addComponent(icAddFamily, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        btnAddMemberLayout.setVerticalGroup(
+            btnAddMemberLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnAddMemberLayout.createSequentialGroup()
+                .addComponent(icAddFamily, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblAddFamily)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnSearch.setBackground(new java.awt.Color(234, 235, 237));
+        btnSearch.setBackground(new java.awt.Color(255, 255, 255));
         btnSearch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnSearchMouseEntered(evt);
@@ -267,9 +274,10 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         icSearch.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/btnSearch.png"))); // NOI18N
+        icSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-search-50blue.png"))); // NOI18N
+        icSearch.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        lblSearch.setForeground(new java.awt.Color(66, 75, 84));
+        lblSearch.setForeground(new java.awt.Color(102, 102, 102));
         lblSearch.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblSearch.setText("Search");
 
@@ -280,62 +288,63 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(btnSearchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(btnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(icSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
+                    .addComponent(icSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                    .addComponent(lblSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         btnSearchLayout.setVerticalGroup(
             btnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnSearchLayout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
-                .addComponent(icSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(icSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblSearch)
-                .addContainerGap())
+                .addComponent(lblSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
 
-        btnAddSingle.setBackground(new java.awt.Color(234, 235, 237));
-        btnAddSingle.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnAddAgent.setBackground(new java.awt.Color(255, 255, 255));
+        btnAddAgent.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnAddAgent.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnAddSingleMouseEntered(evt);
+                btnAddAgentMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnAddSingleMouseExited(evt);
+                btnAddAgentMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                btnAddSingleMousePressed(evt);
+                btnAddAgentMousePressed(evt);
             }
         });
 
         icAddSingle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icAddSingle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/btnSingle.png"))); // NOI18N
+        icAddSingle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-business-red.png"))); // NOI18N
+        icAddSingle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        lblAddSingle.setForeground(new java.awt.Color(66, 75, 84));
+        lblAddSingle.setForeground(new java.awt.Color(102, 102, 102));
         lblAddSingle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblAddSingle.setText("Add Single");
+        lblAddSingle.setText("Add Agent");
 
-        javax.swing.GroupLayout btnAddSingleLayout = new javax.swing.GroupLayout(btnAddSingle);
-        btnAddSingle.setLayout(btnAddSingleLayout);
-        btnAddSingleLayout.setHorizontalGroup(
-            btnAddSingleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnAddSingleLayout.createSequentialGroup()
+        javax.swing.GroupLayout btnAddAgentLayout = new javax.swing.GroupLayout(btnAddAgent);
+        btnAddAgent.setLayout(btnAddAgentLayout);
+        btnAddAgentLayout.setHorizontalGroup(
+            btnAddAgentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnAddAgentLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(btnAddSingleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblAddSingle, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                    .addComponent(icAddSingle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(btnAddAgentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(icAddSingle, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                    .addComponent(lblAddSingle, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        btnAddSingleLayout.setVerticalGroup(
-            btnAddSingleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnAddSingleLayout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
-                .addComponent(icAddSingle, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblAddSingle)
-                .addContainerGap())
+        btnAddAgentLayout.setVerticalGroup(
+            btnAddAgentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnAddAgentLayout.createSequentialGroup()
+                .addComponent(icAddSingle, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblAddSingle, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
 
-        btnHelp.setBackground(new java.awt.Color(234, 235, 237));
+        btnHelp.setBackground(new java.awt.Color(255, 255, 255));
+        btnHelp.setForeground(new java.awt.Color(255, 255, 255));
         btnHelp.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnHelpMouseEntered(evt);
@@ -349,9 +358,10 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         icHelp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/btnHelp.png"))); // NOI18N
+        icHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-help-50grey.png"))); // NOI18N
+        icHelp.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        lblHelp.setForeground(new java.awt.Color(66, 75, 84));
+        lblHelp.setForeground(new java.awt.Color(102, 102, 102));
         lblHelp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblHelp.setText("Help");
 
@@ -362,8 +372,8 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(btnHelpLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(btnHelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(icHelp, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
+                    .addComponent(icHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         btnHelpLayout.setVerticalGroup(
@@ -371,9 +381,9 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(btnHelpLayout.createSequentialGroup()
                 .addContainerGap(16, Short.MAX_VALUE)
                 .addComponent(icHelp)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblHelp)
-                .addContainerGap())
+                .addGap(12, 12, 12))
         );
 
         javax.swing.GroupLayout pnlAllLayout = new javax.swing.GroupLayout(pnlAll);
@@ -383,33 +393,33 @@ public class MainMenu extends javax.swing.JFrame {
             .addComponent(pnlHead, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlAllLayout.createSequentialGroup()
                 .addGap(75, 75, 75)
-                .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnHelp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAddSingle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
+                .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(39, 39, 39)
                 .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAddFamily, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAddMember, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
                 .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnRestore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
         pnlAllLayout.setVerticalGroup(
             pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAllLayout.createSequentialGroup()
                 .addComponent(pnlHead, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
-                .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAddFamily, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAddSingle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50)
+                .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(37, 37, 37)
-                .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnHelp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRestore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnRestore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
 
@@ -427,14 +437,14 @@ public class MainMenu extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnAddFamilyMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddFamilyMousePressed
-        AddFamily addFamily = new AddFamily(this, list);
+    private void btnAddMemberMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMemberMousePressed
+        AddMember addMember = new AddMember(this, list);
         this.setVisible(false);	
-    }//GEN-LAST:event_btnAddFamilyMousePressed
+    }//GEN-LAST:event_btnAddMemberMousePressed
 
     private void btnBackupMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackupMousePressed
         try{
-            writeData(list);
+            writeData();
         }
         catch (Exception e)
         {
@@ -450,42 +460,7 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void btnRestoreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRestoreMousePressed
         try{
-            readData();
-            JOptionPane.showMessageDialog(null, list.size() + " Member records have been loaded from file");
-            //temporarily hide the main menu
-            this.setVisible(false);	
-
-            String allDetailsLocal = "";
-            String allDetailsInternational = "";
-            String headingLocal = "\nID\tNAME\t\t\tFEE\t\tCOURSE\t\tSTUDY LOAD\n";
-            String headingInternational = "\nID\tNAME\t\t\tFEE\t\tCOURSE\t\tCOUNTRY\n";
-
-            //retrieve all student details (if any)
-            if(list.size() > 0)
-            {
-                for (int i = 0; i < list.size(); i++)
-                {
-                    if (list.get(i) instanceof Single) //determine whether to add local or international student details
-                        allDetailsLocal += list.get(i) + ((Single)list.get(i)).getTypeLoad() + "\n";
-                    else
-                        allDetailsInternational += list.get(i) + "\n";
-                }
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(null, "There are no students in the database\nGo back to main menu to add a student","HOLMESGLEN",2);
-            }
-
-            //display details in a JTextArea
-            JTextArea outputAll = new JTextArea();
-   	    outputAll.setFont(new Font("Courier", Font.PLAIN, 12)); //set non-proportional font for lined-up output
-	    outputAll.setText("ALL STUDENTS\n\nLOCAL STUDENTS"+headingLocal+allDetailsLocal+"\nINTERNATIONAL STUDENTS"
-    										+headingInternational+allDetailsInternational);
-	    
-	    JOptionPane.showMessageDialog(null, outputAll , "All Student Details", JOptionPane.PLAIN_MESSAGE);
-	    
-	    //re-draw the main menu on the screen
-	    this.setVisible(true);
+            readFile();
         }
         catch (Exception e)
         {
@@ -493,10 +468,10 @@ public class MainMenu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnRestoreMousePressed
 
-    private void btnAddFamilyMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddFamilyMouseEntered
-        setColor(btnAddFamily);
-        btnAddFamily.setToolTipText("Add Family Membership details to the system");
-    }//GEN-LAST:event_btnAddFamilyMouseEntered
+    private void btnAddMemberMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMemberMouseEntered
+        setColor(btnAddMember);
+        btnAddMember.setToolTipText("Add Family Membership details to the system");
+    }//GEN-LAST:event_btnAddMemberMouseEntered
 
     private void btnHelpMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHelpMouseEntered
         setColor(btnHelp);
@@ -510,9 +485,9 @@ public class MainMenu extends javax.swing.JFrame {
         setColor(btnRestore);
     }//GEN-LAST:event_btnRestoreMouseEntered
 
-    private void btnAddFamilyMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddFamilyMouseExited
-        resetColor(btnAddFamily);
-    }//GEN-LAST:event_btnAddFamilyMouseExited
+    private void btnAddMemberMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMemberMouseExited
+        resetColor(btnAddMember);
+    }//GEN-LAST:event_btnAddMemberMouseExited
 
     private void btnHelpMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHelpMouseExited
         resetColor(btnHelp);
@@ -549,23 +524,24 @@ public class MainMenu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowActivated
 
-    private void btnAddSingleMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddSingleMousePressed
-        AddSingle addSingle = new AddSingle(this, list);
+    private void btnAddAgentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddAgentMousePressed
+        AddAgent addAgent = new AddAgent(this, list);
         this.setVisible(false);	
-    }//GEN-LAST:event_btnAddSingleMousePressed
+        
+    }//GEN-LAST:event_btnAddAgentMousePressed
 
-    private void btnAddSingleMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddSingleMouseExited
-        resetColor(btnAddSingle);
-    }//GEN-LAST:event_btnAddSingleMouseExited
+    private void btnAddAgentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddAgentMouseExited
+        resetColor(btnAddAgent);
+    }//GEN-LAST:event_btnAddAgentMouseExited
 
-    private void btnAddSingleMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddSingleMouseEntered
-        setColor(btnAddSingle);
-        btnAddSingle.setToolTipText("Add Insurance broker details to the system");
-    }//GEN-LAST:event_btnAddSingleMouseEntered
+    private void btnAddAgentMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddAgentMouseEntered
+        setColor(btnAddAgent);
+        btnAddAgent.setToolTipText("Add Insurance broker details to the system");
+    }//GEN-LAST:event_btnAddAgentMouseEntered
 
     private void btnSearchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMousePressed
        
-        SearchForm searchForm = new SearchForm(this, list);
+        SearchForm search = new SearchForm(this);
         this.setVisible(false);	
         
     }//GEN-LAST:event_btnSearchMousePressed
@@ -579,35 +555,34 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSearchMouseEntered
 
     public void setColor(JPanel panel){
-        panel.setBackground(new java.awt.Color(163,186,195));
+        panel.setBackground(new java.awt.Color(181,177,178)); 
     }
     
     public void resetColor(JPanel panel){
-        panel.setBackground(new java.awt.Color(238,238,238));
+        panel.setBackground(new java.awt.Color(255,255,255));
     }
     
-    public static void writeData(ArrayList<Members> list){
+    public static void writeData(){
         
         try{
-            ReadWrite.writeData(fileName, list);
+            fos = new FileOutputStream(fileName);
+            oos = new ObjectOutputStream(fos);
+            
+            for (int i=0; i < list.size() && list.get(i) != null; i++)
+            {
+                oos.writeObject(list.get(i));
+            }
+            oos.close();    
         }
-        catch(FileNotFoundException fnfEx){
-            System.err.println("Problem with the binary file");
-        }
-        catch(ClassNotFoundException cnfEx){
-            System.err.println("Problem with the Members class");
-        }
-        catch(NotSerializableException nsEx){
-            System.err.println("A class has not been serialised");
-        }
-        catch (IOException ioEx){
-            System.err.println("Issue(s) with saving data to file");
+        catch(Exception e){
+            System.out.println(e.getMessage());
         }
         
     }
     
-    public static ArrayList<Members> readData(){
-        
+    public static ArrayList<Members> readData()
+    {
+ 
         ArrayList<Members> list = new ArrayList<>();
         
         try{
@@ -642,7 +617,8 @@ public class MainMenu extends javax.swing.JFrame {
                 //while (inStream.read() != -1) 
                 while(reading)
                 {			
-                    list.add((Members)inStream.readObject());	
+                    list.add((Members)inStream.readObject());
+                    System.out.println(list);
                     numMembers++;
                 }
                 inStream.close();
@@ -691,8 +667,8 @@ public class MainMenu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel btnAddFamily;
-    private javax.swing.JPanel btnAddSingle;
+    private javax.swing.JPanel btnAddAgent;
+    private javax.swing.JPanel btnAddMember;
     private javax.swing.JPanel btnBackup;
     private javax.swing.JPanel btnHelp;
     private javax.swing.JPanel btnRestore;

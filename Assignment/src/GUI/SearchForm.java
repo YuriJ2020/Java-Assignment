@@ -6,137 +6,63 @@
 package GUI;
 
 import Classes.Members;
-import static GUI.AddSingle.list;
-import static GUI.AddSingle.setUIFont;
 import Utilities.ConnectionDetails;
 import Utilities.MemberTableModel;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.FontUIResource;
 
 /**
  *
  * @author ppunme
  */
-public class SearchForm extends JFrame implements ActionListener {
-    
-    private int selectedRow;
-    
-    private JTextField txfFirst = new JTextField();
-    private JTextField txfLast = new JTextField();
-    
-    private JLabel lblHeading;
-    private JLabel lblFirst = new JLabel("First Name  " ,SwingConstants.RIGHT);
-    private JLabel lblLast = new JLabel("Last Name  " ,SwingConstants.RIGHT);
-    
-    //Buttons
-    JButton btnSearch = new JButton("Search");
-    JButton btnDel = new JButton("Delete");
-    JButton btnUpdate = new JButton("Update");
-    JButton btnMenu = new JButton("Main Menu");
-    
-    
-    JTable tblMember = new JTable();
-    //add the table to the scroll bar constructor
-    JScrollPane scroll = new JScrollPane(tblMember,
-    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    
-    //set a color object using RGB
-    Color myColor1 = new Color(255, 255, 255); //white
-    Color myColor2 = new Color(234, 235, 237); //grey
-    Color myColor3 = new Color(163, 186, 195); //green
-    
-    Font f1 = new Font("Helvetica", Font.BOLD,30);
-    Font f2 = new Font("Helvetica", Font.PLAIN,16);
-    
-    Container con = getContentPane();
-    MemberTableModel memModel;
+public class SearchForm extends javax.swing.JFrame {
+
+    /**
+     * Creates new form SearchForm
+     */
+    String searchLoad;
+    ArrayList<Members> list = new ArrayList<>();
     
     MainMenu parentMenu;
     
-    //set default font
-    public static void setUIFont(FontUIResource f) {
-        Enumeration keys = UIManager.getDefaults().keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            Object value = UIManager.get(key);
-            if (value instanceof FontUIResource) {
-                FontUIResource orig = (FontUIResource) value;
-                Font font = new Font(f.getFontName(), orig.getStyle(), f.getSize());
-                UIManager.put(key, new FontUIResource(font));
-            }
-        }
-    }
+    Color myColor1 = new Color(45,81,142);
     
-    public SearchForm(MainMenu menu, ArrayList<Members> membersArray){
-        
-        //set default font
-        setUIFont(new FontUIResource(new Font("Helvetica", 0, 16))); 
-        
+    int indexSearch;
+    private int selectedRow;
+    private boolean found;
+    
+    MemberTableModel memberModel;
+    
+    public SearchForm(MainMenu menu) {
+        initComponents();
+   
         this.setTitle("Search Form");
         this.setVisible(true);
-        this.setBounds(530, 100, 700, 560);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+        this.setBounds(400, 100, 614, 630); // (x,y,width,height)
+     
         parentMenu = menu;
-        list = membersArray;
-
-        //Head Panel
-        JPanel pnlHeading = new JPanel();
-        pnlHeading.setBackground(myColor3);
-        pnlHeading.add(lblHeading = new JLabel());
-        lblHeading.setForeground(Color.white);
-        lblHeading.setFont(f1);
-        lblHeading.setText("Search for Members");
         
-        //Search Panel
-        JPanel pnlSearch = new JPanel();
-        pnlSearch.setLayout(new GridLayout(0,2));
-        pnlSearch.add(lblFirst);
-        pnlSearch.add(txfFirst);
-        pnlSearch.add(lblLast);
-        pnlSearch.add(txfLast);
-        pnlSearch.add(new JLabel(""));
-        pnlSearch.add(btnSearch);
- 
-        //Button Panel
-        JPanel pnlButton = new JPanel();
-        pnlButton.add(btnDel);
-        pnlButton.add(btnUpdate);
-        pnlButton.add(btnMenu);
-    
-        //Table
-        memModel = new MemberTableModel();
-        tblMember.setModel(memModel);
+        System.out.println(list);
         
-        //code to only allow to select one row at a time
-        tblMember.setSelectionMode(selectedRow);
+        searchLoad = (String) cboSearch.getSelectedItem();
+        System.out.println(searchLoad);
+        
+        memberModel = new MemberTableModel();
+        resultTable.setModel(memberModel);
+        
+        resultTable.setSelectionMode(selectedRow);
         
         //the following uses an anonymous inner class
-        ListSelectionModel rowSM = tblMember.getSelectionModel();
+        ListSelectionModel rowSM = resultTable.getSelectionModel();
         rowSM.addListSelectionListener(new ListSelectionListener(){
             @Override
             public void valueChanged(ListSelectionEvent e){
@@ -145,43 +71,332 @@ public class SearchForm extends JFrame implements ActionListener {
             }
         });
         
-        
-        JPanel pnlAll = new JPanel();
-        pnlAll.setLayout(new BorderLayout());
-        pnlAll.add(pnlSearch, BorderLayout.NORTH);
-        pnlAll.add(scroll, BorderLayout.CENTER);
-        
-        //Add Panel to Container
-        con.add(pnlHeading, BorderLayout.NORTH);
-        con.add(pnlAll, BorderLayout.CENTER);
-        con.add(pnlButton, BorderLayout.SOUTH);
-        
-        //register the buttons
-        btnSearch.addActionListener(this);
-        btnDel.addActionListener(this);
-        btnUpdate.addActionListener(this);
-        btnMenu.addActionListener(this);
     }
     
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == btnDel){
-            deleteRecord();
-        }
-        if(e.getSource() == btnUpdate){
-            Members m = memModel.getRow(selectedRow);
-            //UpdateStudent updateFrame = new UpdateStudent(this,studModel,s);
-            this.setVisible(false);
-        }
-        if(e.getSource() == btnMenu){
-            parentMenu.setVisible(true);	
-            this.dispose(); 
-        }
+    private void GetDataFromAll() {  
+                   
     }
     
-    public void deleteRecord(){
-        Members m = memModel.getRow(selectedRow);
-        System.out.print(m.getId());
+    private void GetDataFromID() {
+
+    }
+    
+    private void GetDataFromName() {
+        ArrayList<Members> searchList = new ArrayList<>();
+        
+        for(Members m : list) {
+            System.out.println(m.getName());
+            if(m == null) {
+                break;
+            } else {
+                if(m.getName().equalsIgnoreCase(txfSearch.getText())){
+                    found = true;
+                    searchList.add(m);
+                }
+            }
+        }
+        
+        if(found == true) {
+            System.out.println("Found ");
+            MemberTableModel memberModel = new MemberTableModel(searchList);
+            resultTable.setModel(memberModel);
+        } else {
+            JOptionPane.showMessageDialog(null, "Member does not exist");
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane(resultTable);
+        resultTable = new javax.swing.JTable();
+        cboSearch = new javax.swing.JComboBox<>();
+        txfSearch = new javax.swing.JTextField();
+        btnSearch = new javax.swing.JPanel();
+        lblSearch = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        lblHead = new javax.swing.JLabel();
+        btnBack = new javax.swing.JLabel();
+        btnDelete = new javax.swing.JLabel();
+        btnUpdate = new javax.swing.JLabel();
+        lblSearchBy = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
+
+        jPanel1.setBackground(new java.awt.Color(228, 228, 228));
+
+        resultTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Membere ID", "First Name", "Last Name", "Gender", "Email", "Phone", "Address"
+            }
+        ));
+        jScrollPane1.setViewportView(resultTable);
+
+        cboSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Member ID", "First Name", "Last Name", "Phone", "Address", "Sales Agent", " " }));
+        cboSearch.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboSearchItemStateChanged(evt);
+            }
+        });
+        cboSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboSearchActionPerformed(evt);
+            }
+        });
+
+        btnSearch.setBackground(new java.awt.Color(34, 70, 96));
+        btnSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnSearchMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnSearchMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnSearchMousePressed(evt);
+            }
+        });
+
+        lblSearch.setFont(new java.awt.Font("Helvetica", 0, 20)); // NOI18N
+        lblSearch.setForeground(new java.awt.Color(255, 255, 255));
+        lblSearch.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSearch.setText("Search");
+
+        javax.swing.GroupLayout btnSearchLayout = new javax.swing.GroupLayout(btnSearch);
+        btnSearch.setLayout(btnSearchLayout);
+        btnSearchLayout.setHorizontalGroup(
+            btnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+        );
+        btnSearchLayout.setVerticalGroup(
+            btnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnSearchLayout.createSequentialGroup()
+                .addContainerGap(17, Short.MAX_VALUE)
+                .addComponent(lblSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
+        );
+
+        jPanel5.setBackground(new java.awt.Color(133, 160, 168));
+
+        lblHead.setFont(new java.awt.Font("Helvetica", 0, 40)); // NOI18N
+        lblHead.setForeground(new java.awt.Color(255, 255, 255));
+        lblHead.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblHead.setText("Search Form");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblHead, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addComponent(lblHead, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        btnBack.setBackground(new java.awt.Color(255, 255, 255));
+        btnBack.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        btnBack.setForeground(new java.awt.Color(51, 51, 51));
+        btnBack.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnBack.setText("Back");
+        btnBack.setOpaque(true);
+        btnBack.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnBackMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnBackMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnBackMousePressed(evt);
+            }
+        });
+
+        btnDelete.setBackground(new java.awt.Color(133, 160, 168));
+        btnDelete.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        btnDelete.setForeground(new java.awt.Color(255, 255, 255));
+        btnDelete.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnDelete.setText("Delete");
+        btnDelete.setOpaque(true);
+        btnDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnDeleteMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnDeleteMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnDeleteMousePressed(evt);
+            }
+        });
+
+        btnUpdate.setBackground(new java.awt.Color(34, 70, 96));
+        btnUpdate.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        btnUpdate.setForeground(new java.awt.Color(255, 255, 255));
+        btnUpdate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnUpdate.setText("Update");
+        btnUpdate.setOpaque(true);
+        btnUpdate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnUpdateMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnUpdateMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnUpdateMousePressed(evt);
+            }
+        });
+
+        lblSearchBy.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        lblSearchBy.setText("Search from");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(66, 66, 66)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(210, 210, 210)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGap(6, 6, 6)
+                                    .addComponent(lblSearchBy, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(cboSearch, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(txfSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(66, Short.MAX_VALUE))
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(txfSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cboSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblSearchBy, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(51, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        Font fn = null;
+        try{
+            fn = Font.createFont(Font.TRUETYPE_FONT,getClass().getResourceAsStream("../Font/Roboto-Regular.ttf"));
+            Font f1 = fn.deriveFont(Font.PLAIN,40);
+            Font f2 = fn.deriveFont(Font.PLAIN,20);
+            Font f3 = fn.deriveFont(Font.PLAIN,14);
+            
+            lblHead.setFont(f1);
+            lblSearchBy.setFont(f3);
+            btnSearch.setFont(f2);
+            btnBack.setFont(f3);
+            btnDelete.setFont(f3);
+            btnUpdate.setFont(f3);
+            
+        } catch (Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }//GEN-LAST:event_formWindowActivated
+
+    private void btnSearchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMousePressed
+        
+        if(txfSearch.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Enter data to search");
+        }
+        else if (searchLoad == "All") {
+            GetDataFromAll();
+        }
+        else if (searchLoad == "First Name") {
+            GetDataFromName();
+        }
+        else if(searchLoad == "Member ID") {
+            GetDataFromID();
+        }
+    }//GEN-LAST:event_btnSearchMousePressed
+
+    private void cboSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboSearchActionPerformed
+        if(evt.getSource() == cboSearch){
+            searchLoad = (String) cboSearch.getSelectedItem();
+            System.out.println("string: " + searchLoad);
+        }
+    }//GEN-LAST:event_cboSearchActionPerformed
+
+    private void cboSearchItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboSearchItemStateChanged
+        if(evt.getSource() == cboSearch){
+            indexSearch = cboSearch.getSelectedIndex();
+            System.out.println("index: " + indexSearch);
+        }
+    }//GEN-LAST:event_cboSearchItemStateChanged
+
+    private void btnBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackMousePressed
+        parentMenu.setVisible(true);	
+        this.dispose(); 
+    }//GEN-LAST:event_btnBackMousePressed
+
+    private void btnDeleteMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteMousePressed
+        Members m = memberModel.getRow(selectedRow);
+        System.out.println(m.getId());
         
         Connection con = null;
         Statement stmt = null;
@@ -189,21 +404,120 @@ public class SearchForm extends JFrame implements ActionListener {
         try{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
-            String sql = "Delete from member where memberID=" + m.getId();
+            String sql = "Delete from tblSingle where memberId=" + m.getId();
             System.out.println(sql);
-            
             stmt.executeUpdate(sql);
+            
+            sql = "Delete from tblAddress where memberId=" + m.getId();
+            stmt.executeUpdate(sql);
+            
+            sql = "Delete from tblMember where memberId=" + m.getId();
+            stmt.executeUpdate(sql);
+
             stmt.close();
             con.close();
         } catch (SQLException ex){
             ex.printStackTrace();
         } finally {
-            //put code here
+            
         }
-        memModel.getDataFromDatabase();
-        memModel.fireTableRowsDeleted(selectedRow, selectedRow); //check
+        memberModel.getDataFromDatabase();
+        memberModel.fireTableRowsDeleted(selectedRow, selectedRow); //check
+    }//GEN-LAST:event_btnDeleteMousePressed
+
+    private void btnUpdateMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUpdateMousePressed
+        Members m = memberModel.getRow(selectedRow);
+        Update updateFrame = new Update(this,memberModel,m); 
+        this.setVisible(false);
+        
+    }//GEN-LAST:event_btnUpdateMousePressed
+
+    private void btnSearchMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMouseEntered
+        btnSearch.setBackground(new java.awt.Color(102,102,102)); 
+    }//GEN-LAST:event_btnSearchMouseEntered
+
+    private void btnBackMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackMouseEntered
+        setColor(btnBack);
+    }//GEN-LAST:event_btnBackMouseEntered
+
+    private void btnDeleteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteMouseEntered
+        setColor(btnDelete);
+    }//GEN-LAST:event_btnDeleteMouseEntered
+
+    private void btnUpdateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUpdateMouseEntered
+        setColor(btnUpdate);
+    }//GEN-LAST:event_btnUpdateMouseEntered
+
+    private void btnSearchMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMouseExited
+        btnSearch.setBackground(new java.awt.Color(34,70,96));
+    }//GEN-LAST:event_btnSearchMouseExited
+
+    private void btnBackMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackMouseExited
+        btnBack.setBackground(new java.awt.Color(255,255,255));
+    }//GEN-LAST:event_btnBackMouseExited
+
+    private void btnDeleteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteMouseExited
+        btnDelete.setBackground(new java.awt.Color(133,160,168));
+    }//GEN-LAST:event_btnDeleteMouseExited
+
+    private void btnUpdateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUpdateMouseExited
+        btnUpdate.setBackground(new java.awt.Color(34,70,96));
+    }//GEN-LAST:event_btnUpdateMouseExited
+
+    public void setColor(JLabel label){
+        label.setBackground(new java.awt.Color(102,102,102)); 
+    }
+ 
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        /*try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(SearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(SearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(SearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(SearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }*/
+        //</editor-fold>
         
         
-    } 
-    
+
+        /* Create and display the form */
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new SearchForm().setVisible(true);
+            }
+        });*/
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel btnBack;
+    private javax.swing.JLabel btnDelete;
+    private javax.swing.JPanel btnSearch;
+    private javax.swing.JLabel btnUpdate;
+    private javax.swing.JComboBox<String> cboSearch;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblHead;
+    private javax.swing.JLabel lblSearch;
+    private javax.swing.JLabel lblSearchBy;
+    private javax.swing.JTable resultTable;
+    private javax.swing.JTextField txfSearch;
+    // End of variables declaration//GEN-END:variables
 }

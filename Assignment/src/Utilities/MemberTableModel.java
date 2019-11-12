@@ -21,12 +21,19 @@ public class MemberTableModel extends AbstractTableModel{
     //Student objects will be saved in an arrayList
     
     private ArrayList<Members> list = new ArrayList<>();
-    private String[] columnNames = {"Member ID", "First Name", "Last Name", "Gender", "Email", "Phone", "Address", "Suburb", "Type", "No. of Member"};
+    
+    private String[] columnNames = {"Member ID", "First Name", "Last Name", "Gender", 
+                "Email", "Phone", "Address", "Suburb", "Type", "No. of Member"};
     
     //constructor
     public MemberTableModel() {
         //call a method
+        System.out.println(list);
         getDataFromDatabase();
+    }
+    
+    public MemberTableModel(ArrayList<Members> searchList){
+        list = searchList;
     }
     
     /* "AbstractTableModel" abstract class - Must implement atleast 3 methods
@@ -48,6 +55,7 @@ public class MemberTableModel extends AbstractTableModel{
     
     public Object getValueAt(int rowIndex, int columnIndex) {
         Members m = list.get(rowIndex);
+        
         switch(columnIndex)
         {
             case 0: return m.getId();
@@ -70,7 +78,7 @@ public class MemberTableModel extends AbstractTableModel{
         return columnNames[col];
     }
     
-    //this method will wxtract one object (Student) from the ArrayList at a time
+    //this method will extract one object (Student) from the ArrayList at a time
     public Members getRow(int row)
     {
         Members m = list.get(row);
@@ -133,10 +141,9 @@ public class MemberTableModel extends AbstractTableModel{
             }
             stmt.close();
             con.close();
-        }catch(SQLException ex)
-        {
+        }catch(SQLException ex) {
             ex.printStackTrace();
         }
     }
-    
+
 }

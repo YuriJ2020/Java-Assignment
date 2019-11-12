@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import Classes.Family;
 import Classes.Members;
 import Classes.Single;
 import Utilities.ConnectionDetails;
@@ -44,7 +45,7 @@ import javax.swing.plaf.FontUIResource;
  *
  * @author ppunme
  */
-public class AddSingle extends JFrame implements ActionListener, ItemListener
+public class AddMember extends JFrame implements ActionListener, ItemListener
 {
     public static ArrayList<Members> list;
     
@@ -56,12 +57,13 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
     private JTextField txfAddress, txfSuburb, txfPostcode;
 
     //Radio Buttons
-    private JRadioButton rbtSingle, rbtFamily;
     private JRadioButton rbtMale, rbtFemale;
-    
+    private JRadioButton rbtSingle, rbtFamily;
+
     //Combo Box
     private JComboBox cboStateLoad;
-    private JComboBox cboTypeLoad;
+    private JComboBox cboPackLoad;
+    private JComboBox cboAgentLoad;
 
     //Labels
     private JLabel lblHeading, lblID, lblFirst, lblLast, lblGender, lblEmail, lblPhone;
@@ -73,19 +75,19 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
     //set a color object using RGB
     Color myColor1 = new Color(255, 255, 255); //white
     Color myColor2 = new Color(234, 235, 237); //grey
-    Color myColor3 = new Color(163, 186, 195); //green
+    Color myColor3 = new Color(45,81,142);     //blue
     
     Font f1 = new Font("Helvetica", Font.BOLD,30);
     Font f2 = new Font("Helvetica", Font.PLAIN,16);
     
     private boolean validate = true;
     private final static double BASE_FEE = 50.00; 
-    private String gender;
-    private int indexState;
-    private String stateLoad;
-    private int indexType;
-    private String typeLoad;
     private int nextAvailableID;
+    
+    private String gender;
+    private String type;
+    private int indexState, indexPack, indexAgent;
+    private String stateLoad, packLoad, agentLoad;
 
     MainMenu parentMenu;
     
@@ -103,10 +105,10 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         }
     }
 	
-    public AddSingle(MainMenu menu, ArrayList<Members> membersArray) 
+    public AddMember(MainMenu menu, ArrayList<Members> membersArray) 
     {  	
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("Single Membership");
+        this.setTitle("Add a new Member");
         this.setVisible(true);
         this.setBounds(550,100,485,625);
         
@@ -125,19 +127,31 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         pnlHeading.add(lblHeading = new JLabel());
         lblHeading.setForeground(Color.white);
         lblHeading.setFont(f1);
-        lblHeading.setText("Add Single Membership");
+        lblHeading.setText("Add a new Member");
 
-        //create ButtonGroup for the radio buttons
-        JPanel pnlRadio = new JPanel();
-        pnlRadio.setLayout(new GridLayout(1, 2));
-        pnlRadio.setBackground(myColor1);
-        pnlRadio.add(rbtMale = new JRadioButton("Male"));
-        pnlRadio.add(rbtFemale = new JRadioButton("Female"));
-        
-        //only one radio button can be selected
+        //Create ButtonGroup for the radio buttons
+        //Make only one radio button can be selected
         ButtonGroup genderGroup = new ButtonGroup();
         genderGroup.add(rbtMale);
         genderGroup.add(rbtFemale);
+        
+        //create panal for Gender
+        JPanel pnlGender = new JPanel();
+        pnlGender.setLayout(new GridLayout(1, 2));
+        pnlGender.setBackground(myColor1);
+        pnlGender.add(rbtMale = new JRadioButton("Male"));
+        pnlGender.add(rbtFemale = new JRadioButton("Female"));
+        
+        //create panel for type of membership
+        JPanel pnlTypeRadio = new JPanel();
+        pnlTypeRadio.setLayout(new GridLayout(1, 2));
+        pnlTypeRadio.setBackground(myColor1);
+        pnlTypeRadio.add(rbtSingle = new JRadioButton("Single"));
+        pnlTypeRadio.add(rbtFamily = new JRadioButton("Family"));
+        
+        ButtonGroup typeGroup = new ButtonGroup();
+        typeGroup.add(rbtSingle);
+        typeGroup.add(rbtFamily);
 
         //create panel for the Main
     	JPanel pnlData = new JPanel(new GridBagLayout());
@@ -179,11 +193,11 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         
         g.gridx = 1;
         g.gridy = 3;
-        pnlData.add(pnlRadio, g);
+        pnlData.add(pnlGender, g);
         
         g.gridx = 0;
         g.gridy = 4;
-        pnlData.add(lblGender = new JLabel("Email  ", SwingConstants.RIGHT), g);
+        pnlData.add(lblEmail = new JLabel("Email  ", SwingConstants.RIGHT), g);
         
         g.gridx = 1;
         g.gridy = 4;
@@ -220,25 +234,31 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         pnlAddress.add(txfPostcode = new JTextField());
         
         //Create panel for the type detail
-        //String tLoad[] = {"Active Saver", "Bronze Plus", "Ultimate", "Make a Selection"};
-        String tLoad[] = {"Saver", "Bronze", "Ultimate", "Make a Selection"};
-        cboTypeLoad = new JComboBox(tLoad);
-        cboTypeLoad.setSelectedItem("Make a Selection");
+        String pLoad[] = {"Saver", "Bronze", "Ultimate", "Make a Selection"};
+        cboPackLoad = new JComboBox(pLoad);
+        cboPackLoad.setSelectedItem("Make a Selection");
+        
+        String aLoad[] = {"Make a Selection"};
+        cboAgentLoad = new JComboBox(aLoad);
+        cboAgentLoad.setSelectedItem("Maka a Selection");
         
     	JPanel pnlType = new JPanel();
         pnlType.setBackground(myColor1);
         pnlType.setBorder(new EmptyBorder(10, 10, 10, 10));
         pnlType.setLayout(new GridLayout(0,2));
-        pnlType.add(new JLabel("Member Type:     ", SwingConstants.RIGHT));
-    	pnlType.add(cboTypeLoad);
-        pnlType.add(new JLabel(""));
+        pnlType.add(new JLabel("Type     ", SwingConstants.RIGHT));
+        pnlType.add(pnlTypeRadio);
+        pnlType.add(new JLabel("Package     ", SwingConstants.RIGHT));
+    	pnlType.add(cboPackLoad);
+        pnlType.add(new JLabel("Agent     ", SwingConstants.RIGHT));
+    	pnlType.add(cboAgentLoad);
         
         //Create panel for the buttons
     	JPanel pnlButtons = new JPanel();
         pnlButtons.setBorder(new EmptyBorder(10, 10, 10, 10));
+        pnlButtons.add(btnExit = new JButton("Main menu"));
     	pnlButtons.add(btnAdd = new JButton("Add"));
     	pnlButtons.add(btnClear = new JButton("Clear"));
-    	pnlButtons.add(btnExit = new JButton("Main menu"));
         
         //Create panal for combine all panel
         JPanel pnlAll = new JPanel();
@@ -259,23 +279,30 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         btnExit.addActionListener(this);
         rbtMale.addActionListener(this);
         rbtFemale.addActionListener(this);
+        rbtSingle.addActionListener(this);
+        rbtFamily.addActionListener(this);
         cboStateLoad.addActionListener(this);
-        cboTypeLoad.addActionListener(this);
+        cboPackLoad.addActionListener(this);
+        cboAgentLoad.addActionListener(this);
         //addItemListener
         cboStateLoad.addItemListener(this);
-        cboTypeLoad.addItemListener(this);
-        
+        cboPackLoad.addItemListener(this);
+        cboAgentLoad.addItemListener(this);
     }	
     
     public void actionPerformed(ActionEvent e)
     {
         if(e.getSource() == btnAdd)
         {
-            addMember();
+            addNewMember();
         }
         if(e.getSource() == btnClear)
         {
             clearForm();
+        }
+        if(e.getSource() == btnExit)
+        {
+            mainMenu();
         }
         if (e.getSource() == rbtMale)
         {
@@ -285,17 +312,25 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         {
             gender = "Female"; //retrieve value from RadioButtons
         }
+        if (e.getSource() == rbtSingle)
+        {
+            type = "Single"; //retrieve value from RadioButtons
+        }
+        if (e.getSource() == rbtFamily)
+        {
+            type = "Family"; //retrieve value from RadioButtons
+        }
         if(e.getSource() == cboStateLoad)
         {
             stateLoad = (String) cboStateLoad.getSelectedItem();
         }
-        if(e.getSource() == cboTypeLoad)
+        if(e.getSource() == cboPackLoad)
         {
-            typeLoad = (String) cboTypeLoad.getSelectedItem();
+            packLoad = (String) cboPackLoad.getSelectedItem();
         }
-        if(e.getSource() == btnExit)
+        if(e.getSource() == cboAgentLoad)
         {
-            mainMenu();
+            agentLoad = (String) cboAgentLoad.getSelectedItem();
         }
     }
 	
@@ -305,14 +340,18 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         {
             indexState = cboStateLoad.getSelectedIndex();
         }
-        if(e.getSource()== cboTypeLoad)
+        if(e.getSource()== cboPackLoad)
         {
-            indexType = cboTypeLoad.getSelectedIndex();
+            indexPack = cboPackLoad.getSelectedIndex();
+        }
+        if(e.getSource()== cboAgentLoad)
+        {
+            indexAgent = cboAgentLoad.getSelectedIndex();
         }
     }
 	
-    //add Local student to the array
-    public void addMember()
+    //add Single member to the array
+    public void addNewMember()
     {
         //insert into arrayList
         int id;
@@ -324,36 +363,55 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         first = txfFirst.getText();
         last = txfLast.getText();
         email = txfEmail.getText();
-        phone = txfEmail.getText();
+        phone = txfPhone.getText();
         address = txfAddress.getText();
         suburb = txfSuburb.getText();
-        indexState = cboStateLoad.getSelectedIndex();
         postcode = txfPostcode.getText();
-        indexType = cboTypeLoad.getSelectedIndex();
 
         validate = true;
 
+        System.out.println("State: " + stateLoad + "\nPackage: " + packLoad + "\nAgent: " + agentLoad + "\nType: " + type + "\ngender: " + gender);
+        
         //check to see if each TextField have data
         if(!(first.equals("") || last.equals("") || email.equals("") || phone.equals("") || address.equals("")
                 || suburb.equals("") || postcode.equals("")))
         {
+            System.out.println("Done1");
+            if(!(stateLoad.equals("Make a Selection")))
+            {
+                System.out.println("Done2");
+                if(!(packLoad.equals("Make a Selection")))
+                {
+                    System.out.println("Done3");
+                    //if(!(agentLoad.equals("Make a Selection")))
+                    //{
+                        if(type.equals("Single")){ //type: Single
+                            //add to ArrayList
+                            list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad));
+                       
 
-                if(!(typeLoad.equals("Make a Selection"))){
-                    JOptionPane.showMessageDialog(null, stateLoad + " " + typeLoad);
-                    //add to ArrayList
-                    list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
-                    JOptionPane.showMessageDialog(null, list);
-                    
-                    nextAvailableID++;
-                    list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
+                            nextAvailableID++;
+                            list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
 
-                    validate = false; //all data valid
-                    addToDatabase();
+                            validate = false; //all data valid
+                            addToDatabase();
+                        }
+                        else //type: Family
+                        {
+                            //add to ArrayList
+                            list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, id));
+                            
+
+                            nextAvailableID++;
+                            list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
+
+                            JOptionPane.showMessageDialog(null, "Add Family");
+                            validate = false; //all data valid
+                        }
+                        
+                    //}                  
                 }
-                else{
-                    validate = true;
-                }
-           
+            }
         }
 
         if(validate)
@@ -366,6 +424,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
             clearForm();  //clear Frame for next record
         }
     }
+   
 	
     // clear the Frame
     private void clearForm()  
@@ -382,14 +441,10 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
         txfSuburb.setText("");
         cboStateLoad.setSelectedItem("Make a Selection");	
         txfPostcode.setText("");
-        cboTypeLoad.setSelectedItem("Make a Selection");						
-    }
-	
-    // close addSingle frame and return to main menu
-    public void mainMenu() 
-    {
-        parentMenu.setVisible(true);	
-        this.dispose(); 
+        rbtSingle.setSelected(false);
+        rbtFamily.setSelected(false);
+        cboPackLoad.setSelectedItem("Make a Selection");	
+        cboAgentLoad.setSelectedItem("Make a Selection");	
     }
  
     public void addToDatabase(){
@@ -478,10 +533,9 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
                 stmt.executeUpdate(sql);
                 
                 //insert data to single table
-                sql = "INSERT INTO tblSingle (type, baseFee, memberID) values ('"+ typeLoad + "','" + BASE_FEE + "','" + txfID.getText() + "')";
+                sql = "INSERT INTO tblSingle (type, baseFee, memberID) values ('"+ packLoad + "','" + BASE_FEE + "','" + txfID.getText() + "')";
                 stmt.executeUpdate(sql);
-                System.out.println("Member details have been added to single table");
-                JOptionPane.showMessageDialog(null, "Member details have been added to database");
+                System.out.println("Member details have been added to database");
             }
             
         } catch (SQLException sqlE) {
@@ -493,7 +547,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
             }
         } finally {
             
-        }//end try catch 
+        }
         
         try {
             if(stmt != null) {
@@ -502,7 +556,7 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
             System.out.println("Statement close");
         } catch (SQLException sqlE) {
             System.out.println("Error closing statement");
-        }//end try catch
+        }
         
         try{
             if (con != null) {
@@ -511,6 +565,13 @@ public class AddSingle extends JFrame implements ActionListener, ItemListener
             System.out.println("Connection close");
         } catch (SQLException sqlE) {
             System.out.println("Error Closing connection");
-        }//end try catch
+        }
+    }
+    
+    // close addSingle frame and return to main menu
+    public void mainMenu() 
+    {
+        parentMenu.setVisible(true);	
+        this.dispose(); 
     }
 }

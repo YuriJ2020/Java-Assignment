@@ -7,6 +7,9 @@ package GUI;
 
 import Classes.Family;
 import Classes.Members;
+import Classes.Single;
+import Utilities.ConnectionDetails;
+import Utilities.MemberTableModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -18,8 +21,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,19 +37,17 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.FontUIResource;
 
 /**
  *
  * @author ppunme
  */
-public class AddFamily extends JFrame implements ActionListener, ItemListener
+public class UpdateMember extends JFrame implements ActionListener, ItemListener
 {
     public static ArrayList<Members> list;
     
-    //buttons
+    //Buttons
     private JButton btnAdd, btnClear, btnExit;
 
     //TextFields
@@ -52,75 +56,54 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
 
     //Radio Buttons
     private JRadioButton rbtMale, rbtFemale;
-    
+    private JRadioButton rbtSingle, rbtFamily;
+
     //Combo Box
     private JComboBox cboStateLoad;
-    private JComboBox cboTypeLoad;
+    private JComboBox cboPackLoad;
+    private JComboBox cboAgentLoad;
 
     //Labels
     private JLabel lblHeading, lblID, lblFirst, lblLast, lblGender, lblEmail, lblPhone;
-
-    //Combo Box
-    private String[] sLoad = {"Part-Time","Full-Time","Make a Selection"};
-    private JComboBox cboStudyLoad = new JComboBox(sLoad);
-
+    
+    //Image
     private JLabel lblImage;
     private ImageIcon image;
     
     //set a color object using RGB
     Color myColor1 = new Color(255, 255, 255); //white
     Color myColor2 = new Color(234, 235, 237); //grey
-    Color myColor3 = new Color(163, 186, 195); //green
+    Color myColor3 = new Color(45,81,142);     //blue
     
     Font f1 = new Font("Helvetica", Font.BOLD,30);
     Font f2 = new Font("Helvetica", Font.PLAIN,16);
     
     private boolean validate = true;
-    private final static double BASE_FEE = 1000.00; 
-    private String gender;
-    private int indexState;
-    private String stateLoad;
-    private int indexType;
-    private int typeLoad;
+    private final static double BASE_FEE = 50.00; 
     private int nextAvailableID;
-
-    MainMenu parentMenu;
     
-    //set default font
-    public static void setUIFont(FontUIResource f) {
-        Enumeration keys = UIManager.getDefaults().keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            Object value = UIManager.get(key);
-            if (value instanceof FontUIResource) {
-                FontUIResource orig = (FontUIResource) value;
-                Font font = new Font(f.getFontName(), orig.getStyle(), f.getSize());
-                UIManager.put(key, new FontUIResource(font));
-            }
-        }
-    }
+    private String gender;
+    private String type;
+    private int indexState, indexPack, indexAgent;
+    private String stateLoad, packLoad, agentLoad;
+
+    SearchForm parentMenu;
+    MemberTableModel memberModel;
+    
 	
-    public AddFamily(MainMenu menu, ArrayList<Members> membersArray) 
+    public UpdateMember(SearchForm menu, MemberTableModel model, Members m) 
     {  	
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("Single Membership");
+        this.setTitle("Add a new Member");
         this.setVisible(true);
         this.setBounds(550,100,485,625);
         
-        //set default font
-        setUIFont(new FontUIResource(new Font("Helvetica", 0, 16))); 
         
         //re-create the main menu when this frame is closed
     	parentMenu = menu;
-        list = membersArray;
-        
-        nextAvailableID = 1;
-        /*f(list.size() == 0){
-            nextAvailableID = 1;
-        }
-        else{
-            nextAvailableID = list.size() + 1;
-        }*/
+        memberModel = model;
+
+        nextAvailableID = list.size() + 1;
         
         //create panel for Heading
         JPanel pnlHeading = new JPanel();
@@ -128,19 +111,31 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         pnlHeading.add(lblHeading = new JLabel());
         lblHeading.setForeground(Color.white);
         lblHeading.setFont(f1);
-        lblHeading.setText("Add Single Membership");
+        lblHeading.setText("Add a new Member");
 
-        //create ButtonGroup for the radio buttons
-        JPanel pnlRadio = new JPanel();
-        pnlRadio.setLayout(new GridLayout(1, 2));
-        pnlRadio.setBackground(myColor1);
-        pnlRadio.add(rbtMale = new JRadioButton("Male"));
-        pnlRadio.add(rbtFemale = new JRadioButton("Female"));
-        
-        //only one radio button can be selected
+        //Create ButtonGroup for the radio buttons
+        //Make only one radio button can be selected
         ButtonGroup genderGroup = new ButtonGroup();
         genderGroup.add(rbtMale);
         genderGroup.add(rbtFemale);
+        
+        //create panal for Gender
+        JPanel pnlGender = new JPanel();
+        pnlGender.setLayout(new GridLayout(1, 2));
+        pnlGender.setBackground(myColor1);
+        pnlGender.add(rbtMale = new JRadioButton("Male"));
+        pnlGender.add(rbtFemale = new JRadioButton("Female"));
+        
+        //create panel for type of membership
+        JPanel pnlTypeRadio = new JPanel();
+        pnlTypeRadio.setLayout(new GridLayout(1, 2));
+        pnlTypeRadio.setBackground(myColor1);
+        pnlTypeRadio.add(rbtSingle = new JRadioButton("Single"));
+        pnlTypeRadio.add(rbtFamily = new JRadioButton("Family"));
+        
+        ButtonGroup typeGroup = new ButtonGroup();
+        typeGroup.add(rbtSingle);
+        typeGroup.add(rbtFamily);
 
         //create panel for the Main
     	JPanel pnlData = new JPanel(new GridBagLayout());
@@ -182,7 +177,7 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         
         g.gridx = 1;
         g.gridy = 3;
-        pnlData.add(pnlRadio, g);
+        pnlData.add(pnlGender, g);
         
         g.gridx = 0;
         g.gridy = 4;
@@ -214,7 +209,7 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         pnlAddress.add(new JLabel());
         pnlAddress.add(new JLabel("ADDRESS", SwingConstants.CENTER));
         pnlAddress.add(new JLabel("Address   ", SwingConstants.RIGHT));
-        pnlAddress.add(txfAddress = new JTextField());  
+        pnlAddress.add(txfAddress = new JTextField());    
         pnlAddress.add(new JLabel("Suburb   ", SwingConstants.RIGHT));
         pnlAddress.add(txfSuburb = new JTextField());
         pnlAddress.add(new JLabel("State   ", SwingConstants.RIGHT));
@@ -222,25 +217,32 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         pnlAddress.add(new JLabel("Postcode   ", SwingConstants.RIGHT));
         pnlAddress.add(txfPostcode = new JTextField());
         
-        //Create panel for the noMember detail
-        String tLoad[] = {"less than 3 members", "3-5 members", "more than 5 members", "Make a Selection"};
-        cboTypeLoad = new JComboBox(tLoad);
-        cboTypeLoad.setSelectedItem("Make a Selection");
+        //Create panel for the type detail
+        String pLoad[] = {"Saver", "Bronze", "Ultimate", "Make a Selection"};
+        cboPackLoad = new JComboBox(pLoad);
+        cboPackLoad.setSelectedItem("Make a Selection");
+        
+        String aLoad[] = {"Make a Selection"};
+        cboAgentLoad = new JComboBox(aLoad);
+        cboAgentLoad.setSelectedItem("Maka a Selection");
         
     	JPanel pnlType = new JPanel();
         pnlType.setBackground(myColor1);
         pnlType.setBorder(new EmptyBorder(10, 10, 10, 10));
-        pnlType.setLayout(new GridLayout(0,3));
-        pnlType.add(new JLabel("Member Type:     ", SwingConstants.LEFT));
-    	pnlType.add(cboTypeLoad);
-        pnlType.add(new JLabel(""));
+        pnlType.setLayout(new GridLayout(0,2));
+        pnlType.add(new JLabel("Type     ", SwingConstants.RIGHT));
+        pnlType.add(pnlTypeRadio);
+        pnlType.add(new JLabel("Package     ", SwingConstants.RIGHT));
+    	pnlType.add(cboPackLoad);
+        pnlType.add(new JLabel("Agent     ", SwingConstants.RIGHT));
+    	pnlType.add(cboAgentLoad);
         
         //Create panel for the buttons
     	JPanel pnlButtons = new JPanel();
         pnlButtons.setBorder(new EmptyBorder(10, 10, 10, 10));
+        pnlButtons.add(btnExit = new JButton("Main menu"));
     	pnlButtons.add(btnAdd = new JButton("Add"));
     	pnlButtons.add(btnClear = new JButton("Clear"));
-    	pnlButtons.add(btnExit = new JButton("Main menu"));
         
         //Create panal for combine all panel
         JPanel pnlAll = new JPanel();
@@ -261,23 +263,30 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         btnExit.addActionListener(this);
         rbtMale.addActionListener(this);
         rbtFemale.addActionListener(this);
+        rbtSingle.addActionListener(this);
+        rbtFamily.addActionListener(this);
         cboStateLoad.addActionListener(this);
-        cboTypeLoad.addActionListener(this);
+        cboPackLoad.addActionListener(this);
+        cboAgentLoad.addActionListener(this);
         //addItemListener
         cboStateLoad.addItemListener(this);
-        cboTypeLoad.addItemListener(this);
-        
+        cboPackLoad.addItemListener(this);
+        cboAgentLoad.addItemListener(this);
     }	
     
     public void actionPerformed(ActionEvent e)
     {
         if(e.getSource() == btnAdd)
         {
-            addMember();
+            addNewMember();
         }
         if(e.getSource() == btnClear)
         {
             clearForm();
+        }
+        if(e.getSource() == btnExit)
+        {
+            mainMenu();
         }
         if (e.getSource() == rbtMale)
         {
@@ -287,17 +296,25 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         {
             gender = "Female"; //retrieve value from RadioButtons
         }
+        if (e.getSource() == rbtSingle)
+        {
+            type = "Single"; //retrieve value from RadioButtons
+        }
+        if (e.getSource() == rbtFamily)
+        {
+            type = "Family"; //retrieve value from RadioButtons
+        }
         if(e.getSource() == cboStateLoad)
         {
             stateLoad = (String) cboStateLoad.getSelectedItem();
         }
-        if(e.getSource() == cboTypeLoad)
+        if(e.getSource() == cboPackLoad)
         {
-            typeLoad = (Integer) cboTypeLoad.getSelectedItem();
+            packLoad = (String) cboPackLoad.getSelectedItem();
         }
-        if(e.getSource() == btnExit)
+        if(e.getSource() == cboAgentLoad)
         {
-            mainMenu();
+            agentLoad = (String) cboAgentLoad.getSelectedItem();
         }
     }
 	
@@ -307,57 +324,26 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         {
             indexState = cboStateLoad.getSelectedIndex();
         }
-        if(e.getSource()== cboTypeLoad)
+        if(e.getSource()== cboPackLoad)
         {
-            indexType = cboTypeLoad.getSelectedIndex();
+            indexPack = cboPackLoad.getSelectedIndex();
+        }
+        if(e.getSource()== cboAgentLoad)
+        {
+            indexAgent = cboAgentLoad.getSelectedIndex();
         }
     }
 	
-    //add Local student to the array
-    public void addMember()
+    //add Single member to the array
+    public void addNewMember()
     {
-        int id;
-        String first, last, email, phone, address, suburb, postcode;
+  
+    }
+    
+    //add Family member to the array
+    public void addFamily()
+    {
 
-        id = list.size()+1;
-
-        //get data from TextFields and ComboBox
-        first = txfFirst.getText();
-        last = txfLast.getText();
-        email = txfEmail.getText();
-        phone = txfEmail.getText();
-        address = txfAddress.getText();
-        suburb = txfSuburb.getText();
-        indexState = cboStateLoad.getSelectedIndex();
-        postcode = txfPostcode.getText();
-        indexType = cboTypeLoad.getSelectedIndex();
-
-        validate = true;
-
-        //check to see if each TextField have data
-        if(!(first.equals("")|| last.equals("")))
-        {
-            JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + gender + " " + email + " " + phone + " " + address + suburb + stateLoad + postcode + " " + typeLoad);
-            //add to ArrayList
-            list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, typeLoad));
-            //JOptionPane.showMessageDialog(null, list);
-            nextAvailableID++;
-            //list.get(id-1).calcFees(); //update the BASE_FEE($1000) for this type of student
-
-            validate = false; //all data valid	
-           
-        }
-
-        if(validate)
-        {
-            JOptionPane.showMessageDialog(null, "Please complete all options on the form");		
-        }
-        else
-        {   			   			
-            JOptionPane.showMessageDialog(null, "Student Record successfully added"); 			
-            //clear Frame for next record
-            clearForm(); 
-        }		
     }
 	
     // clear the Frame
@@ -369,20 +355,26 @@ public class AddFamily extends JFrame implements ActionListener, ItemListener
         txfLast.setText("");		
         rbtMale.setSelected(false);
         rbtFemale.setSelected(false);
-        cboStudyLoad.setSelectedItem("Make a Selection");						
+        txfEmail.setText("");
+        txfPhone.setText("");
+        txfAddress.setText("");
+        txfSuburb.setText("");
+        cboStateLoad.setSelectedItem("Make a Selection");	
+        txfPostcode.setText("");
+        rbtSingle.setSelected(false);
+        rbtFamily.setSelected(false);
+        cboPackLoad.setSelectedItem("Make a Selection");	
+        cboAgentLoad.setSelectedItem("Make a Selection");	
     }
-	
-    // close addProduct frame and return to main menu
-    public void  mainMenu() 
+ 
+    public void addToDatabase(){
+        //Insert into database
+    }
+    
+    // close addSingle frame and return to main menu
+    public void mainMenu() 
     {
         parentMenu.setVisible(true);	
-        this.dispose(); //release resources back to the OS
+        this.dispose(); 
     }
-    
-    /*public static void main(String[] args) {
-
-        AddSingle test = new AddSingle(list);
-    }*/ 
-    
- 
 }
