@@ -5,28 +5,27 @@
  */
 package GUI;
 
-import Classes.Members;
+import Classes.Agent;
+import Utilities.ConnectionDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -37,9 +36,9 @@ import javax.swing.plaf.FontUIResource;
  *
  * @author ppunme
  */
-public class AddAgent extends JFrame implements ActionListener, ItemListener
+public class AddAgent extends JFrame implements ActionListener
 {
-    public static ArrayList<Members> list;
+    public static ArrayList<Agent> agentList;
     
     //buttons
     private JButton btnAdd, btnClear, btnExit;
@@ -47,17 +46,9 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
     //TextFields
     private JTextField txfID, txfFirst, txfLast, txfPhone;
 
-    //Radio Buttons
-    private JRadioButton rbtMale, rbtFemale;
-    
-    //Combo Box
-    private JComboBox cboStateLoad;
-    private JComboBox cboAgent;
-
     //Labels
-    private JLabel lblHeading, lblID, lblFirst, lblLast, lblGender, lblPhone;
+    private JLabel lblHeading, lblID, lblFirst, lblLast, lblPhone;
 
-    
     //set a color object using RGB
     Color myColor1 = new Color(255, 255, 255); //white
     Color myColor2 = new Color(234, 235, 237); //grey
@@ -67,12 +58,7 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
     Font f2 = new Font("Helvetica", Font.PLAIN,16);
     
     private boolean validate = true;
-    private final static double BASE_FEE = 1000.00; 
-    private String gender;
-    private int indexState;
-    private String stateLoad;
-    private int indexType;
-    private int typeLoad;
+
     private int nextAvailableID;
 
     MainMenu parentMenu;
@@ -91,7 +77,7 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
         }
     }
 	
-    public AddAgent(MainMenu menu, ArrayList<Members> membersArray) 
+    public AddAgent(MainMenu menu, ArrayList<Agent> list) 
     {  	
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Add Sales Agent");
@@ -103,16 +89,10 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
         
         //re-create the main menu when this frame is closed
     	parentMenu = menu;
-        list = membersArray;
+        agentList = list;
         
         nextAvailableID = 1;
-        /*f(list.size() == 0){
-            nextAvailableID = 1;
-        }
-        else{
-            nextAvailableID = list.size() + 1;
-        }*/
-        
+  
         //create panel for Heading
         JPanel pnlHeading = new JPanel();
         pnlHeading.setBackground(myColor3);
@@ -120,18 +100,6 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
         lblHeading.setForeground(Color.white);
         lblHeading.setFont(f1);
         lblHeading.setText("Add new Agent");
-
-        //create ButtonGroup for the radio buttons
-        JPanel pnlRadio = new JPanel();
-        pnlRadio.setLayout(new GridLayout(1, 2));
-        pnlRadio.setBackground(myColor1);
-        pnlRadio.add(rbtMale = new JRadioButton("Male"));
-        pnlRadio.add(rbtFemale = new JRadioButton("Female"));
-        
-        //only one radio button can be selected
-        ButtonGroup genderGroup = new ButtonGroup();
-        genderGroup.add(rbtMale);
-        genderGroup.add(rbtFemale);
 
         //create panel for the Main
     	JPanel pnlData = new JPanel(new GridBagLayout());
@@ -168,14 +136,6 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
         pnlData.add(txfLast = new JTextField(), g);
         
         g.gridx = 0;
-        g.gridy = 3;
-    	pnlData.add(lblGender = new JLabel("Gender  ", SwingConstants.RIGHT), g);
-        
-        g.gridx = 1;
-        g.gridy = 3;
-        pnlData.add(pnlRadio, g);
-        
-        g.gridx = 0;
         g.gridy = 4;
         pnlData.add(lblPhone = new JLabel("Phone  ", SwingConstants.RIGHT), g);
         
@@ -201,37 +161,18 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
         //register buttons to accept events
         btnAdd.addActionListener(this);
         btnClear.addActionListener(this);
-        btnExit.addActionListener(this);
-        rbtMale.addActionListener(this);
-        rbtFemale.addActionListener(this);
-        cboStateLoad.addActionListener(this);
- 
-        //addItemListener
-        cboStateLoad.addItemListener(this);
-        
+        btnExit.addActionListener(this);      
     }	
     
     public void actionPerformed(ActionEvent e)
     {
         if(e.getSource() == btnAdd)
         {
-            addMember();
+            addAgent();
         }
         if(e.getSource() == btnClear)
         {
             clearForm();
-        }
-        if (e.getSource() == rbtMale)
-        {
-            gender = "Male"; //retrieve value from RadioButtons
-        }
-        if (e.getSource() == rbtFemale)
-        {
-            gender = "Female"; //retrieve value from RadioButtons
-        }
-        if(e.getSource() == cboStateLoad)
-        {
-            stateLoad = (String) cboStateLoad.getSelectedItem();
         }
         if(e.getSource() == btnExit)
         {
@@ -239,22 +180,13 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
         }
     }
 	
-    public void itemStateChanged(ItemEvent e)
-    {
-        if(e.getSource()==cboStateLoad)
-        {
-            indexState = cboStateLoad.getSelectedIndex();
-        }
-
-    }
-	
     //add Local student to the array
-    public void addMember()
+    public void addAgent()
     {
         int id;
         String first, last, email, phone, address, suburb, postcode;
 
-        id = list.size()+1;
+        id = agentList.size()+1;
 
         //get data from TextFields and ComboBox
         first = txfFirst.getText();
@@ -264,16 +196,16 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
         validate = true;
 
         //check to see if each TextField have data
-        if(!(first.equals("")|| last.equals("")))
+        if(!(first.equals("")|| last.equals("")|| phone.equals("")))
         {
-            JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + gender + " " + phone);
+            JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + " " + phone);
             //add to ArrayList
             
             nextAvailableID++;
-            //list.get(id-1).calcFees(); //update the BASE_FEE($1000) for this type of student
-
+            agentList.add(new Agent(id,first,last,phone));
+                    
             validate = false; //all data valid	
-           
+            addToDatabase();
         }
 
         if(validate)
@@ -287,16 +219,88 @@ public class AddAgent extends JFrame implements ActionListener, ItemListener
             clearForm(); 
         }		
     }
-	
+    
+    public void addToDatabase(){
+        //Insert into database
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet r = null;
+        
+        int MYSQL_DUPLICATE_PK = 1062; //1062 error code for duplicate primary key
+        
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            System.out.println("Connected to the database");
+            
+            //create table if it not exist
+            String tblMember = "CREATE TABLE if not exists tblAgent(" 
+                    + "agentID int not null AUTO_INCREMENT, "
+                    + "first varchar(50), "
+                    + "last varchar(50),"
+                    + "phone varchar(20)," 
+                    + "PRIMARY KEY (agentID))";
+                    
+            System.out.println(tblMember);        
+            stmt.executeUpdate(tblMember);
+            System.out.println("tblAgent has been created");
+            
+            //check agentID in database
+            String sql = "SELECT * from tblAgent where agentID=" + txfID.getText();
+            r = stmt.executeQuery(sql);
+            System.out.println(r);
+            
+            if(r.next())
+            { //found this member id in database
+                JOptionPane.showMessageDialog(null, "This agent id is already exist");
+            }
+            else 
+            {
+                //insert data to agent table
+                sql = "INSERT INTO tblAgent (agentID, first, last, phone) values"
+                        + "('" + txfID.getText() + "','" + txfFirst.getText() + "','" + txfLast.getText() 
+                        + "','" + txfPhone.getText() + "')";
+                stmt.executeUpdate(sql);
+                System.out.println("add data to tblAgent");
+            }
+            
+        } catch (SQLException sqlE) {
+            sqlE.printStackTrace();
+            System.err.println("ERROR: " + sqlE.getMessage());
+            if(sqlE.getErrorCode() == MYSQL_DUPLICATE_PK){ //duplicate primary key
+                JOptionPane.showMessageDialog(null, "Duplicate Member ID");
+                txfID.requestFocusInWindow();
+            }
+        } finally {
+            
+        }
+        
+        try {
+            if(stmt != null) {
+                stmt.close();
+            }
+            System.out.println("Statement close");
+        } catch (SQLException sqlE) {
+            System.out.println("Error closing statement");
+        }
+        
+        try{
+            if (con != null) {
+                con.close();
+            }
+            System.out.println("Connection close");
+        } catch (SQLException sqlE) {
+            System.out.println("Error Closing connection");
+        }
+    }
     // clear the Frame
     private void clearForm()  
     {
         //re-set all components
         txfID.setText(Integer.toString(nextAvailableID));
         txfFirst.setText("");	
-        txfLast.setText("");		
-        rbtMale.setSelected(false);
-        rbtFemale.setSelected(false);					
+        txfLast.setText("");
+        txfPhone.setText("");
     }
 	
     // close addProduct frame and return to main menu

@@ -1,6 +1,7 @@
 package Utilities;
 
 
+import Classes.Family;
 import Classes.Members;
 import Classes.Single;
 import java.sql.Connection;
@@ -23,7 +24,7 @@ public class MemberTableModel extends AbstractTableModel{
     private ArrayList<Members> list = new ArrayList<>();
     
     private String[] columnNames = {"Member ID", "First Name", "Last Name", "Gender", 
-                "Email", "Phone", "Address", "Suburb", "Type", "No. of Member"};
+                "Email", "Phone", "Address", "Suburb", "State", "Package", "No. of Member"};
     
     //constructor
     public MemberTableModel() {
@@ -66,6 +67,8 @@ public class MemberTableModel extends AbstractTableModel{
             case 5: return m.getPhone();
             case 6: return m.getAddress();
             case 7: return m.getSuburb();
+            case 8: return m.getState();
+            
           
         }
         return null;
@@ -113,11 +116,15 @@ public class MemberTableModel extends AbstractTableModel{
         return con;
     }
     
-    public void getDataFromDatabase()
+    public ArrayList<Members> getDataFromDatabase()
     {
         Connection con = null;
         Statement stmt = null;
         ResultSet r = null;
+        
+        Single singleMember = null;
+        Family famMember = null;
+        
         
         try{
             con = getConnection();
@@ -127,23 +134,31 @@ public class MemberTableModel extends AbstractTableModel{
             r = stmt.executeQuery(sql);
             System.out.println(r);
             
+            sql = "SELECT * FROM tblMember INNER JOIN tblFamily ON tblMember.memberID = tblSingle.memberID"
+                    + " INNER JOIN tblAddress ON tblMember.memberID = tblAddress.memberID";
+            
+            
             //clear out the arrayList
             list.clear();
             
             //loop through the records and add them to the ArrayList
             while(r.next())
             {
+                
                 //make sure column names from the DATABASE are spelt correctly
                 list.add(new Single(r.getInt("memberID"),r.getString("first"),
                         r.getString("last"),r.getString("gender"),r.getString("email"),
                         r.getString("phone"),r.getString("address"),r.getString("suburb"),
-                        r.getString("state"),r.getString("postcode"),r.getDouble("baseFee"),r.getString("type")));
+                        r.getString("state"),r.getString("postcode"),r.getDouble("baseFee"),r.getString("package")));
+            
+                
             }
             stmt.close();
             con.close();
         }catch(SQLException ex) {
             ex.printStackTrace();
         }
+        return list;
     }
 
 }

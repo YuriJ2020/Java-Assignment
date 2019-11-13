@@ -6,6 +6,7 @@
 package GUI;
 
 import Classes.Members;
+import Classes.Single;
 import Utilities.ConnectionDetails;
 import Utilities.MemberTableModel;
 import java.awt.Color;
@@ -30,7 +31,7 @@ public class SearchForm extends javax.swing.JFrame {
      * Creates new form SearchForm
      */
     String searchLoad;
-    ArrayList<Members> list = new ArrayList<>();
+    
     
     MainMenu parentMenu;
     
@@ -40,7 +41,8 @@ public class SearchForm extends javax.swing.JFrame {
     private int selectedRow;
     private boolean found;
     
-    MemberTableModel memberModel;
+    MemberTableModel memberModel = new MemberTableModel();
+    ArrayList<Members> list = new ArrayList<>();
     
     public SearchForm(MainMenu menu) {
         initComponents();
@@ -51,7 +53,7 @@ public class SearchForm extends javax.swing.JFrame {
      
         parentMenu = menu;
         
-        System.out.println(list);
+        //System.out.println(list);
         
         searchLoad = (String) cboSearch.getSelectedItem();
         System.out.println(searchLoad);
@@ -84,6 +86,9 @@ public class SearchForm extends javax.swing.JFrame {
     private void GetDataFromName() {
         ArrayList<Members> searchList = new ArrayList<>();
         
+        MemberTableModel memberModel = new MemberTableModel();
+        ArrayList<Members> list = memberModel.getDataFromDatabase();
+        
         for(Members m : list) {
             System.out.println(m.getName());
             if(m == null) {
@@ -98,7 +103,7 @@ public class SearchForm extends javax.swing.JFrame {
         
         if(found == true) {
             System.out.println("Found ");
-            MemberTableModel memberModel = new MemberTableModel(searchList);
+            memberModel = new MemberTableModel(searchList);
             resultTable.setModel(memberModel);
         } else {
             JOptionPane.showMessageDialog(null, "Member does not exist");
@@ -211,12 +216,12 @@ public class SearchForm extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addComponent(lblHead, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
+                .addComponent(lblHead, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         btnBack.setBackground(new java.awt.Color(255, 255, 255));
-        btnBack.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        btnBack.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         btnBack.setForeground(new java.awt.Color(51, 51, 51));
         btnBack.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnBack.setText("Back");
@@ -322,7 +327,7 @@ public class SearchForm extends javax.swing.JFrame {
                     .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -401,20 +406,40 @@ public class SearchForm extends javax.swing.JFrame {
         Connection con = null;
         Statement stmt = null;
         
+        
         try{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
-            String sql = "Delete from tblSingle where memberId=" + m.getId();
-            System.out.println(sql);
-            stmt.executeUpdate(sql);
             
-            sql = "Delete from tblAddress where memberId=" + m.getId();
-            stmt.executeUpdate(sql);
-            
-            sql = "Delete from tblMember where memberId=" + m.getId();
-            stmt.executeUpdate(sql);
+            if(m instanceof Single)
+            {
+                String sql = "Delete from tblSingle where memberId=" + m.getId();
+                System.out.println(sql);
+                stmt.executeUpdate(sql);
 
-            stmt.close();
+                sql = "Delete from tblAddress where memberId=" + m.getId();
+                stmt.executeUpdate(sql);
+
+                sql = "Delete from tblMember where memberId=" + m.getId();
+                stmt.executeUpdate(sql);
+
+                stmt.close();
+            } 
+            else 
+            {
+                String sql = "Delete from tblFamily where memberId=" + m.getId();
+                System.out.println(sql);
+                stmt.executeUpdate(sql);
+
+                sql = "Delete from tblAddress where memberId=" + m.getId();
+                stmt.executeUpdate(sql);
+
+                sql = "Delete from tblMember where memberId=" + m.getId();
+                stmt.executeUpdate(sql);
+
+                stmt.close();
+            }
+           
             con.close();
         } catch (SQLException ex){
             ex.printStackTrace();

@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -54,7 +55,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
 
     //TextFields
     private JTextField txfID, txfFirst, txfLast, txfEmail, txfPhone;
-    private JTextField txfAddress, txfSuburb, txfPostcode;
+    private JTextField txfAddress, txfSuburb, txfPostcode, txfNoMember;
 
     //Radio Buttons
     private JRadioButton rbtMale, rbtFemale;
@@ -238,9 +239,8 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         cboPackLoad = new JComboBox(pLoad);
         cboPackLoad.setSelectedItem("Make a Selection");
         
-        String aLoad[] = {"Make a Selection"};
-        cboAgentLoad = new JComboBox(aLoad);
-        cboAgentLoad.setSelectedItem("Maka a Selection");
+        cboAgentLoad = new JComboBox();
+        Utilities.DataAccessLayer.getAgentToCombobox(type, cboAgentLoad);
         
     	JPanel pnlType = new JPanel();
         pnlType.setBackground(myColor1);
@@ -249,6 +249,9 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         pnlType.add(new JLabel("Type     ", SwingConstants.RIGHT));
         pnlType.add(pnlTypeRadio);
         pnlType.add(new JLabel("Package     ", SwingConstants.RIGHT));
+    	pnlType.add(cboPackLoad);
+        pnlType.add(new JLabel("No. of Family Member     ", SwingConstants.RIGHT));
+        pnlType.add(txfNoMember = new JTextField());
     	pnlType.add(cboPackLoad);
         pnlType.add(new JLabel("Agent     ", SwingConstants.RIGHT));
     	pnlType.add(cboAgentLoad);
@@ -272,6 +275,12 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     	c.add(pnlHeading, BorderLayout.NORTH);
         c.add(pnlAll, BorderLayout.CENTER);
     	c.add(pnlButtons, BorderLayout.SOUTH);
+        
+        if(type.equals("Single")){
+            txfNoMember.setVisible(false);
+        } else {
+            cboPackLoad.setVisible(false);
+        }
         
         //register buttons to accept events
         btnAdd.addActionListener(this);
@@ -370,46 +379,42 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
 
         validate = true;
 
-        System.out.println("State: " + stateLoad + "\nPackage: " + packLoad + "\nAgent: " + agentLoad + "\nType: " + type + "\ngender: " + gender);
+        //check
+        System.out.println("State: " + stateLoad + "\nPackage: " + packLoad + "\nAgent: " + agentLoad + "\nType: " + type + "\ngender: " + gender); 
         
         //check to see if each TextField have data
         if(!(first.equals("") || last.equals("") || email.equals("") || phone.equals("") || address.equals("")
                 || suburb.equals("") || postcode.equals("")))
         {
-            System.out.println("Done1");
             if(!(stateLoad.equals("Make a Selection")))
             {
-                System.out.println("Done2");
                 if(!(packLoad.equals("Make a Selection")))
                 {
-                    System.out.println("Done3");
-                    //if(!(agentLoad.equals("Make a Selection")))
-                    //{
-                        if(type.equals("Single")){ //type: Single
-                            //add to ArrayList
-                            list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad));
-                       
-
-                            nextAvailableID++;
-                            list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
-
-                            validate = false; //all data valid
-                            addToDatabase();
-                        }
-                        else //type: Family
-                        {
-                            //add to ArrayList
-                            list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, id));
-                            
-
-                            nextAvailableID++;
-                            list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
-
-                            JOptionPane.showMessageDialog(null, "Add Family");
-                            validate = false; //all data valid
-                        }
+                    if(type.equals("Single")){ //type: Single
+                        //add to ArrayList
+                        list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad));
+  
+                        nextAvailableID++;
+                        list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
                         
-                    //}                  
+                        Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad);
+                        Utilities.DataAccessLayer.addToDatabase(s, type);
+                        
+                        validate = false; //all data valid
+                    }
+                    else //type: Family
+                    {
+                        //add to ArrayList
+                        list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, id));
+
+                        nextAvailableID++;
+                        list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
+
+                        Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, id);
+                        //Utilities.DataAccessLayer.addToDatabase(s, type);
+                        JOptionPane.showMessageDialog(null, "Add Family");
+                        validate = false; //all data valid
+                    }                         
                 }
             }
         }
@@ -447,128 +452,9 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         cboAgentLoad.setSelectedItem("Make a Selection");	
     }
  
-    public void addToDatabase(){
-        //Insert into database
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet r = null;
-        
-        int MYSQL_DUPLICATE_PK = 1062; //1062 error code for duplicate primary key
-        
-        try{
-            con = ConnectionDetails.getConnection();
-            stmt = con.createStatement();
-            System.out.println("Connected to the database");
-            
-            //create table if it not exist
-            //create tblMember
-            String tblMember = "CREATE TABLE if not exists tblMember(" 
-                    + "memberId int not null primary key, "
-                    + "first varchar(50), "
-                    + "last varchar(50),"
-                    + "gender varchar(20),"
-                    + "email varchar(50),"
-                    + "phone varchar(20))"; 
-            System.out.println(tblMember);        
-            stmt.executeUpdate(tblMember);
-            System.out.println("tblEmployees has been created");
-            
-            //create tblAddress
-            String tblAddress = "CREATE TABLE if not exists tblAddress("
-                    + "addressID int not null AUTO_INCREMENT,"
-                    + "address varchar(50)," 
-                    + "suburb varchar(50),"
-                    + "state varchar(50),"
-                    + "postcode int, " 
-                    + "memberID int, "
-                    + "PRIMARY KEY (addressID),"
-                    + "FOREIGN KEY (memberId) References tblMember(memberId))";
-            System.out.println(tblAddress);        
-            stmt.executeUpdate(tblAddress);
-            System.out.println("tblAddress has been created");
-            
-            //create tblSingle
-            String tblSingle = "CREATE TABLE if not exists tblSingle("
-                    + "singleID int not null AUTO_INCREMENT,"
-                    + "type varchar(50), " 
-                    + "baseFee double,"
-                    + "memberID int,"
-                    + "PRIMARY KEY (singleID),"
-                    + "FOREIGN KEY (memberId) References tblMember(memberId))";
-            System.out.println(tblSingle);        
-            stmt.executeUpdate(tblSingle);
-            System.out.println("tblSingle has been created");
-            
-            //create tblFamily
-            String tblFamily = "CREATE TABLE if not exists tblFamily("
-                    + "familyID int not null AUTO_INCREMENT,"
-                    + "noMember int, " 
-                    + "memberID int,"
-                    + "PRIMARY KEY (familyID),"
-                    + "FOREIGN KEY (memberId) References tblMember(memberId))";
-            System.out.println(tblFamily);        
-            stmt.executeUpdate(tblFamily);
-            System.out.println("tblFamily has been created");
-            
-            //check memberID in database
-            String sql = "SELECT * from tblMember where memberID=" + txfID.getText();
-            r = stmt.executeQuery(sql);
-            System.out.println(r);
-            
-            if(r.next())
-            { //found this member id in database
-                JOptionPane.showMessageDialog(null, "This member id is already exist");
-            }
-            else
-            {
-                //insert data to member table
-                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone) values"
-                        + "('" + txfID.getText() + "','" + txfFirst.getText() + "','" + txfLast.getText() 
-                        + "','" + gender + "','" + txfEmail.getText() + "','" + txfPhone.getText() + "')";
-                stmt.executeUpdate(sql);
-
-                //insert data to address table
-                sql = "INSERT INTO tblAddress (address, suburb, state, postcode, memberID) values ('"+ txfAddress.getText()
-                        + "','" + txfSuburb.getText() + "','" + stateLoad + "','" + txfPostcode.getText() + "','" + txfID.getText() + "')";
-                stmt.executeUpdate(sql);
-                
-                //insert data to single table
-                sql = "INSERT INTO tblSingle (type, baseFee, memberID) values ('"+ packLoad + "','" + BASE_FEE + "','" + txfID.getText() + "')";
-                stmt.executeUpdate(sql);
-                System.out.println("Member details have been added to database");
-            }
-            
-        } catch (SQLException sqlE) {
-            sqlE.printStackTrace();
-            System.err.println("ERROR: " + sqlE.getMessage());
-            if(sqlE.getErrorCode() == MYSQL_DUPLICATE_PK){ //duplicate primary key
-                JOptionPane.showMessageDialog(null, "Duplicate Member ID");
-                txfID.requestFocusInWindow();
-            }
-        } finally {
-            
-        }
-        
-        try {
-            if(stmt != null) {
-                stmt.close();
-            }
-            System.out.println("Statement close");
-        } catch (SQLException sqlE) {
-            System.out.println("Error closing statement");
-        }
-        
-        try{
-            if (con != null) {
-                con.close();
-            }
-            System.out.println("Connection close");
-        } catch (SQLException sqlE) {
-            System.out.println("Error Closing connection");
-        }
-    }
     
-    // close addSingle frame and return to main menu
+    
+    // close addMember frame and return to main menu
     public void mainMenu() 
     {
         parentMenu.setVisible(true);	

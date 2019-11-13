@@ -13,10 +13,10 @@ import java.sql.SQLException;
 public class ConnectionDetails {
     
     private static final String userName = "root"; // to use db
-    private static final String passWord = "root";
+    private static final String passWord = "mavis";
     private static final String driver = "com.mysql.jdbc.Driver";
     
-    private static final String url = "jdbc:mysql://localhost:8889/";
+    private static final String url = "jdbc:mysql://localhost:3306/";
     private static final String db = "insuranceMembers";
     
 

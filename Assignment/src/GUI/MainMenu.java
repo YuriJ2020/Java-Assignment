@@ -5,9 +5,8 @@
  */
 package GUI;
 
+import Classes.Agent;
 import Classes.Members;
-import Classes.Single;
-import Utilities.ConnectionDetails;
 import Utilities.ReadWrite;
 import java.awt.Color;
 import java.awt.Font;
@@ -19,16 +18,9 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.table.AbstractTableModel;
 
 /**
  *
@@ -43,7 +35,8 @@ public class MainMenu extends javax.swing.JFrame {
     private static String fileName = "Members.bin";
     
     public static ArrayList<Members> list = new ArrayList<Members>();
-    
+    public static ArrayList<Agent> agentList = new ArrayList<Agent>();
+    public static ArrayList<Members> restoredList = new ArrayList<>();
     private static int numMembers = 0; //count total no. of members records on file (to set the next ID)
     
     //open OutputFile
@@ -60,7 +53,7 @@ public class MainMenu extends javax.swing.JFrame {
         
         //read contents of file on loading the main menu GUI
         readFile();
-        JOptionPane.showMessageDialog(null, list.size() + " Member records have been loaded from file");
+        JOptionPane.showMessageDialog(null, restoredList.size() + " Member records have been loaded from file");
         System.out.println(list);
     }
 
@@ -443,15 +436,20 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddMemberMousePressed
 
     private void btnBackupMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackupMousePressed
+
         try{
-            writeData();
+            ReadWrite.writeData(fileName, list);
+        } catch(FileNotFoundException fnfEx){
+            System.err.println("Problem with the Members.bin file");
+            JOptionPane.showMessageDialog(null, "File \"Members.bin\" will be created");
+        } catch(ClassNotFoundException cnfEx){
+            System.err.println("Patient class does not exist");
+        } catch(NotSerializableException nsEx){
+            System.err.println("A class has not been serialised");
         }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, e.getMessage());	
-        }	
-        JOptionPane.showMessageDialog(null, "All Member records stored to file \"Members.bin\"");
-        //System.exit(0);  
+        catch(IOException ioEx){
+            System.err.println("Problem with reading data from file");
+        }
     }//GEN-LAST:event_btnBackupMousePressed
 
     private void btnHelpMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHelpMousePressed
@@ -461,6 +459,7 @@ public class MainMenu extends javax.swing.JFrame {
     private void btnRestoreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRestoreMousePressed
         try{
             readFile();
+            JOptionPane.showMessageDialog(null, restoredList.size() + " Member records have been loaded from file");
         }
         catch (Exception e)
         {
@@ -525,7 +524,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowActivated
 
     private void btnAddAgentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddAgentMousePressed
-        AddAgent addAgent = new AddAgent(this, list);
+        AddAgent addAgent = new AddAgent(this, agentList);
         this.setVisible(false);	
         
     }//GEN-LAST:event_btnAddAgentMousePressed
@@ -562,24 +561,6 @@ public class MainMenu extends javax.swing.JFrame {
         panel.setBackground(new java.awt.Color(255,255,255));
     }
     
-    public static void writeData(){
-        
-        try{
-            fos = new FileOutputStream(fileName);
-            oos = new ObjectOutputStream(fos);
-            
-            for (int i=0; i < list.size() && list.get(i) != null; i++)
-            {
-                oos.writeObject(list.get(i));
-            }
-            oos.close();    
-        }
-        catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-        
-    }
-    
     public static ArrayList<Members> readData()
     {
  
@@ -605,34 +586,34 @@ public class MainMenu extends javax.swing.JFrame {
     }
     
     public static void readFile()
-	{
-            boolean reading = true;
-            try
-            {
-                FileInputStream fiStream = new FileInputStream(fileName);
-                ObjectInputStream inStream = new ObjectInputStream(fiStream);
+    {
+        boolean reading = true;
+        try
+        {
+            FileInputStream fiStream = new FileInputStream(fileName);
+            ObjectInputStream inStream = new ObjectInputStream(fiStream);
 
-                //while (inStream.readObject() != null)
-                //while (inStream.available() != 0)
-                //while (inStream.read() != -1) 
-                while(reading)
-                {			
-                    list.add((Members)inStream.readObject());
-                    System.out.println(list);
-                    numMembers++;
-                }
-                inStream.close();
+            //while (inStream.readObject() != null)
+            //while (inStream.available() != 0)
+            //while (inStream.read() != -1) 
+            while(reading)
+            {			
+                restoredList.add((Members)inStream.readObject());
+                    
+                System.out.println(restoredList);
+                numMembers++;
             }
-            catch(EOFException ex)
-            {
-                    reading = false;
-            }
-            catch(Exception e)
-            {
-                    reading = false;
-            }
-	}
-
+            inStream.close();
+        }
+        catch(EOFException ex)
+        {
+            reading = false;
+        }
+        catch(Exception e)
+        {
+            reading = false;
+        }
+    }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

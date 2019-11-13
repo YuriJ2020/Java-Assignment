@@ -6,6 +6,7 @@
 package Utilities;
 
 import Classes.Members;
+import static GUI.MainMenu.list;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,6 +15,7 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -49,6 +51,25 @@ public class ReadWrite {
                                                 NotSerializableException,
                                                     IOException{
         
+        ArrayList<Members> backupList = new ArrayList<>();
+        
+        try{
+            FileOutputStream fos = new FileOutputStream(fileName);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            
+            for (int i=0; i < list.size() && list.get(i) != null; i++)
+            {
+                oos.writeObject(list.get(i));
+            }
+            JOptionPane.showMessageDialog(null, "All Member records stored to file \"Members.bin\"");
+            oos.close();    
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+}        
+        /*
         FileOutputStream fos = new FileOutputStream(fileName);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         
@@ -56,7 +77,7 @@ public class ReadWrite {
         oos.writeObject(list);
         
         oos.close();
-        
-    }
-}
+        */
+    
+
 

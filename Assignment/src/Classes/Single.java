@@ -9,33 +9,33 @@ import java.io.Serializable;
  */
 public class Single extends Members implements Serializable {
     
-    private String typeLoad;
+    private String packLoad;
     
     public Single(){
         super(0, "", "", "", "", "", "", "", "", "", 40.00);
-        this.typeLoad = typeLoad;
+        this.packLoad = packLoad;
     }
 
-    public Single(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee, String typeLoad) {
+    public Single(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee, String packLoad) {
         super(id, name, last, gender, email, phone, address, suburb, state, postcode, baseFee);
-        this.typeLoad = typeLoad;
+        this.packLoad = packLoad;
     }
 
-    public String getTypeLoad() {
-        return typeLoad;
+    public String getPackLoad() {
+        return packLoad;
     }
 
-    public void setTypeLoad(String type) {
-        this.typeLoad = typeLoad;
+    public void setPackLoad(String pack) {
+        this.packLoad = packLoad;
     }
          
     public void calcFees()
     {
-        if(getTypeLoad().equals("Active Saver"))
+        if(getPackLoad().equals("Active Saver"))
         {
             setBaseFee(getBaseFee() + 45);
         }
-        else if(getTypeLoad().equals("Bronze Plus"))
+        else if(getPackLoad().equals("Bronze Plus"))
         {
             setBaseFee(getBaseFee() + 60);
         }
@@ -47,7 +47,7 @@ public class Single extends Members implements Serializable {
 
     @Override
     public String toString() {
-        return super.toString() + "Type=" + typeLoad ;
+        return super.toString() + "Type=" + packLoad ;
     }
     
     
