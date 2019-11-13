@@ -82,7 +82,7 @@ public class AddAgent extends JFrame implements ActionListener
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Add Sales Agent");
         this.setVisible(true);
-        this.setBounds(550,100,325,400);
+        this.setBounds(600,100,325,400);
         
         //set default font
         setUIFont(new FontUIResource(new Font("Helvetica", 0, 16))); 
@@ -199,13 +199,16 @@ public class AddAgent extends JFrame implements ActionListener
         if(!(first.equals("")|| last.equals("")|| phone.equals("")))
         {
             JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + " " + phone);
-            //add to ArrayList
-            
             nextAvailableID++;
+            
+            //add to ArrayList
             agentList.add(new Agent(id,first,last,phone));
-                    
+            
+            //create an object to stored the details
+            Agent a = new Agent(id,first,last,phone);
+            Utilities.DataAccessLayer.addAgentToDatabase(a);
+            
             validate = false; //all data valid	
-            addToDatabase();
         }
 
         if(validate)
@@ -220,79 +223,7 @@ public class AddAgent extends JFrame implements ActionListener
         }		
     }
     
-    public void addToDatabase(){
-        //Insert into database
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet r = null;
-        
-        int MYSQL_DUPLICATE_PK = 1062; //1062 error code for duplicate primary key
-        
-        try{
-            con = ConnectionDetails.getConnection();
-            stmt = con.createStatement();
-            System.out.println("Connected to the database");
-            
-            //create table if it not exist
-            String tblMember = "CREATE TABLE if not exists tblAgent(" 
-                    + "agentID int not null AUTO_INCREMENT, "
-                    + "first varchar(50), "
-                    + "last varchar(50),"
-                    + "phone varchar(20)," 
-                    + "PRIMARY KEY (agentID))";
-                    
-            System.out.println(tblMember);        
-            stmt.executeUpdate(tblMember);
-            System.out.println("tblAgent has been created");
-            
-            //check agentID in database
-            String sql = "SELECT * from tblAgent where agentID=" + txfID.getText();
-            r = stmt.executeQuery(sql);
-            System.out.println(r);
-            
-            if(r.next())
-            { //found this member id in database
-                JOptionPane.showMessageDialog(null, "This agent id is already exist");
-            }
-            else 
-            {
-                //insert data to agent table
-                sql = "INSERT INTO tblAgent (agentID, first, last, phone) values"
-                        + "('" + txfID.getText() + "','" + txfFirst.getText() + "','" + txfLast.getText() 
-                        + "','" + txfPhone.getText() + "')";
-                stmt.executeUpdate(sql);
-                System.out.println("add data to tblAgent");
-            }
-            
-        } catch (SQLException sqlE) {
-            sqlE.printStackTrace();
-            System.err.println("ERROR: " + sqlE.getMessage());
-            if(sqlE.getErrorCode() == MYSQL_DUPLICATE_PK){ //duplicate primary key
-                JOptionPane.showMessageDialog(null, "Duplicate Member ID");
-                txfID.requestFocusInWindow();
-            }
-        } finally {
-            
-        }
-        
-        try {
-            if(stmt != null) {
-                stmt.close();
-            }
-            System.out.println("Statement close");
-        } catch (SQLException sqlE) {
-            System.out.println("Error closing statement");
-        }
-        
-        try{
-            if (con != null) {
-                con.close();
-            }
-            System.out.println("Connection close");
-        } catch (SQLException sqlE) {
-            System.out.println("Error Closing connection");
-        }
-    }
+    
     // clear the Frame
     private void clearForm()  
     {

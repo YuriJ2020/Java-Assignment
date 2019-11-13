@@ -240,7 +240,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         cboPackLoad.setSelectedItem("Make a Selection");
         
         cboAgentLoad = new JComboBox();
-        Utilities.DataAccessLayer.getAgentToCombobox(type, cboAgentLoad);
+        Utilities.DataAccessLayer.getAgentToCombobox(cboAgentLoad);
         
     	JPanel pnlType = new JPanel();
         pnlType.setBackground(myColor1);
@@ -250,9 +250,10 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         pnlType.add(pnlTypeRadio);
         pnlType.add(new JLabel("Package     ", SwingConstants.RIGHT));
     	pnlType.add(cboPackLoad);
-        pnlType.add(new JLabel("No. of Family Member     ", SwingConstants.RIGHT));
+        cboPackLoad.setEnabled(false);
+        pnlType.add(new JLabel("No. of Family Member ", SwingConstants.RIGHT));
         pnlType.add(txfNoMember = new JTextField());
-    	pnlType.add(cboPackLoad);
+        txfNoMember.setEnabled(false);
         pnlType.add(new JLabel("Agent     ", SwingConstants.RIGHT));
     	pnlType.add(cboAgentLoad);
         
@@ -276,12 +277,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         c.add(pnlAll, BorderLayout.CENTER);
     	c.add(pnlButtons, BorderLayout.SOUTH);
         
-        if(type.equals("Single")){
-            txfNoMember.setVisible(false);
-        } else {
-            cboPackLoad.setVisible(false);
-        }
-        
         //register buttons to accept events
         btnAdd.addActionListener(this);
         btnClear.addActionListener(this);
@@ -293,6 +288,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         cboStateLoad.addActionListener(this);
         cboPackLoad.addActionListener(this);
         cboAgentLoad.addActionListener(this);
+        
         //addItemListener
         cboStateLoad.addItemListener(this);
         cboPackLoad.addItemListener(this);
@@ -324,10 +320,14 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         if (e.getSource() == rbtSingle)
         {
             type = "Single"; //retrieve value from RadioButtons
+            cboPackLoad.setEnabled(true);
+            txfNoMember.setEnabled(false);
         }
         if (e.getSource() == rbtFamily)
         {
             type = "Family"; //retrieve value from RadioButtons
+            txfNoMember.setEnabled(true);
+            cboPackLoad.setEnabled(false);
         }
         if(e.getSource() == cboStateLoad)
         {
@@ -398,7 +398,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                         list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
                         
                         Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad);
-                        Utilities.DataAccessLayer.addToDatabase(s, type);
+                        Utilities.DataAccessLayer.addSingleToDatabase(s, type);
                         
                         validate = false; //all data valid
                     }
@@ -411,7 +411,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                         list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
 
                         Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, id);
-                        //Utilities.DataAccessLayer.addToDatabase(s, type);
+                        Utilities.DataAccessLayer.addFamilyToDatabase(f, type);
                         JOptionPane.showMessageDialog(null, "Add Family");
                         validate = false; //all data valid
                     }                         

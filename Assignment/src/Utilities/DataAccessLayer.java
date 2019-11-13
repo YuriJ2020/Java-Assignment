@@ -5,8 +5,11 @@
  */
 package Utilities;
 
+import Classes.Agent;
+import Classes.Family;
 import Classes.Single;
-import static GUI.Update.txfID;
+import static GUI.Update.txfEmail;
+import static GUI.Update.txfPhone;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +24,7 @@ import javax.swing.JOptionPane;
 public class DataAccessLayer{
     
     
-    public static void addToDatabase(Single s, String type){
+    public static void addSingleToDatabase(Single s, String type){
         //Insert into database
         Connection con = null;
         Statement stmt = null;
@@ -38,14 +41,19 @@ public class DataAccessLayer{
             //create tblMember
             String tblMember = "CREATE TABLE if not exists tblMember(" 
                     + "memberID int not null primary key AUTO_INCREMENT, "
-                    + "first varchar(50), "
+                    + "first varchar(50),"
                     + "last varchar(50),"
                     + "gender varchar(20),"
                     + "email varchar(50),"
-                    + "phone varchar(20))"; 
+                    + "phone varchar(20),"
+                    + "package varchar(50),"
+                    + "noMember int," 
+                    + "baseFee double,"
+                    + "type varchar(50)"
+                    + ")"; 
             System.out.println(tblMember);        
             stmt.executeUpdate(tblMember);
-            System.out.println("tblEmployees has been created");
+            System.out.println("tblMember has been created");
             
             //create tblAddress
             String tblAddress = "CREATE TABLE if not exists tblAddress("
@@ -61,77 +69,131 @@ public class DataAccessLayer{
             stmt.executeUpdate(tblAddress);
             System.out.println("tblAddress has been created");
             
-            //create tblSingle
-            String tblSingle = "CREATE TABLE if not exists tblSingle("
-                    + "singleID int not null AUTO_INCREMENT,"
-                    + "package varchar(50), " 
-                    + "baseFee double,"
-                    + "memberID int,"
-                    + "PRIMARY KEY (singleID),"
-                    + "FOREIGN KEY (memberID) References tblMember(memberID))";
-            System.out.println(tblSingle);        
-            stmt.executeUpdate(tblSingle);
-            System.out.println("tblSingle has been created");
-            
-            //create tblFamily
-            String tblFamily = "CREATE TABLE if not exists tblFamily("
-                    + "familyID int not null AUTO_INCREMENT,"
-                    + "noMember int, " 
-                    + "memberID int,"
-                    + "PRIMARY KEY (familyID),"
-                    + "FOREIGN KEY (memberId) References tblMember(memberId))";
-            System.out.println(tblFamily);        
-            stmt.executeUpdate(tblFamily);
-            System.out.println("tblFamily has been created");
-            
             //check memberID in database
-            String sql = "SELECT * from tblMember where memberID=" + txfID.getText();
+            String sql = "SELECT * from tblMember where memberID=" + s.getId();
             r = stmt.executeQuery(sql);
             System.out.println(r);
             
-            sql = "SELECT * from tblAddress where memberID=" + txfID.getText();
-            r = stmt.executeQuery(sql);
-            
-            sql = "SELECT * from tblSingle where memberID=" + txfID.getText();
+            sql = "SELECT * from tblAddress where memberID=" + s.getId();
             r = stmt.executeQuery(sql);
             
             if(r.next())
             { //found this member id in database
                 JOptionPane.showMessageDialog(null, "This member id is already exist");
             }
-            else if(type.equals("Single")) 
+            else
             {
                 //insert data to member table
-                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone) values"
-                        + "('" + s.getId() + "','" + s.getName() + "','" + s.getLast()
-                        + "','" + s.getGender() + "','" + s.getEmail() + "','" + s.getPhone() + "')";
+                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, package, baseFee, type) values"
+                        + "('" + s.getId() + "','" + s.getName() + "','" + s.getLast() + "','" + s.getGender() + "','" 
+                        + s.getEmail() + "','" + s.getPhone() + "','" + s.getPackLoad() + "','" + s.getBaseFee() + "','" + type + "')";
                 stmt.executeUpdate(sql);
 
                 //insert data to address table
                 sql = "INSERT INTO tblAddress (address, suburb, state, postcode, memberID) values ('"+ s.getAddress()
-                        + "','" + s.getSuburb() + "','" + s.getState() + "','" + s.getPostcode() + "','" + txfID.getText() + "')";
+                        + "','" + s.getSuburb() + "','" + s.getState() + "','" + s.getPostcode() + "','" + s.getId() + "')";
                 stmt.executeUpdate(sql);
-                
-                //insert data to single table
-                sql = "INSERT INTO tblSingle (package, baseFee, memberID) values ('"+ s.getPackLoad() + "','" + s.getBaseFee() + "','" + s.getId() + "')";
-                stmt.executeUpdate(sql);
-                System.out.println("Single Member details have been added to database");
-            } else {
-                //insert data to member table
-                /*sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone) values"
-                        + "('" + txfID.getText() + "','" + txfFirst.getText() + "','" + txfLast.getText() 
-                        + "','" + gender + "','" + txfEmail.getText() + "','" + txfPhone.getText() + "')";
+                System.out.println("Added Single member to Database");
+            } 
+        } catch (SQLException sqlE) {
+            sqlE.printStackTrace();
+            System.err.println("ERROR: " + sqlE.getMessage());
+            if(sqlE.getErrorCode() == MYSQL_DUPLICATE_PK){ //duplicate primary key
+                JOptionPane.showMessageDialog(null, "Duplicate Member ID");
+            }
+        } finally {
+            
+        }
+        
+        try {
+            if(stmt != null) {
+                stmt.close();
+            }
+            System.out.println("Statement close");
+        } catch (SQLException sqlE) {
+            System.out.println("Error closing statement");
+        }
+        
+        try{
+            if (con != null) {
+                con.close();
+            }
+            System.out.println("Connection close");
+        } catch (SQLException sqlE) {
+            System.out.println("Error Closing connection");
+        }
+    }
+    
+    public static void addFamilyToDatabase(Family f, String type){
+        //Insert into database
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet r = null;
+        
+        int MYSQL_DUPLICATE_PK = 1062; //1062 error code for duplicate primary key
+        
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            System.out.println("Connected to the database");
+            
+            //create table if it not exist
+            //create tblMember
+            String tblMember = "CREATE TABLE if not exists tblMember(" 
+                    + "memberID int not null primary key AUTO_INCREMENT, "
+                    + "first varchar(50),"
+                    + "last varchar(50),"
+                    + "gender varchar(20),"
+                    + "email varchar(50),"
+                    + "phone varchar(20),"
+                    + "package varchar(50),"
+                    + "noMember int," 
+                    + "baseFee double,"
+                    + "type varchar(50)"
+                    + ")"; 
+            System.out.println(tblMember);        
+            stmt.executeUpdate(tblMember);
+            System.out.println("tblMember has been created");
+            
+            //create tblAddress
+            String tblAddress = "CREATE TABLE if not exists tblAddress("
+                    + "addressID int not null AUTO_INCREMENT,"
+                    + "address varchar(50)," 
+                    + "suburb varchar(50),"
+                    + "state varchar(50),"
+                    + "postcode int, " 
+                    + "memberID int, "
+                    + "PRIMARY KEY (addressID),"
+                    + "FOREIGN KEY (memberID) References tblMember(memberID))";
+            System.out.println(tblAddress);        
+            stmt.executeUpdate(tblAddress);
+            System.out.println("tblAddress has been created");
+            
+            //check memberID in database
+            String sql = "SELECT * from tblMember where memberID=" + f.getId();
+            r = stmt.executeQuery(sql);
+            System.out.println(r);
+            
+            sql = "SELECT * from tblAddress where memberID=" + f.getId();
+            r = stmt.executeQuery(sql);
+            
+            if(r.next())
+            { //found this member id in database
+                JOptionPane.showMessageDialog(null, "This member id is already exist");
+            } 
+            else 
+            {
+                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, noMember, baseFee, type) values"
+                        + "('" + f.getId() + "','" + f.getName() + "','" + f.getLast() + "','" + f.getGender() + "','" 
+                        + f.getEmail() + "','" + f.getPhone() + "','" + f.getNoMembers() + "','" + f.getBaseFee() + "','" + type + "')";
                 stmt.executeUpdate(sql);
 
                 //insert data to address table
-                sql = "INSERT INTO tblAddress (address, suburb, state, postcode, memberID) values ('"+ txfAddress.getText()
-                        + "','" + txfSuburb.getText() + "','" + stateLoad + "','" + txfPostcode.getText() + "','" + txfID.getText() + "')";
+                sql = "INSERT INTO tblAddress (address, suburb, state, postcode, memberID) values ('"+ f.getAddress()
+                        + "','" + f.getSuburb() + "','" + f.getState() + "','" + f.getPostcode() + "','" + f.getId() + "')";
                 stmt.executeUpdate(sql);
+                System.out.println("Added Family member to Database");
                 
-                //insert data to single table
-                sql = "INSERT INTO tblMember (noMember, baseFee, memberID) values ('"+ packLoad + "','" + BASE_FEE + "','" + txfID.getText() + "')";
-                stmt.executeUpdate(sql);
-                System.out.println("Family Member details have been added to database");*/
             }
             
         } catch (SQLException sqlE) {
@@ -139,7 +201,79 @@ public class DataAccessLayer{
             System.err.println("ERROR: " + sqlE.getMessage());
             if(sqlE.getErrorCode() == MYSQL_DUPLICATE_PK){ //duplicate primary key
                 JOptionPane.showMessageDialog(null, "Duplicate Member ID");
-                txfID.requestFocusInWindow();
+            }
+        } finally {
+            
+        }
+        
+        try {
+            if(stmt != null) {
+                stmt.close();
+            }
+            System.out.println("Statement close");
+        } catch (SQLException sqlE) {
+            System.out.println("Error closing statement");
+        }
+        
+        try{
+            if (con != null) {
+                con.close();
+            }
+            System.out.println("Connection close");
+        } catch (SQLException sqlE) {
+            System.out.println("Error Closing connection");
+        }
+    }
+    
+    public static void addAgentToDatabase(Agent a){
+        //Insert into database
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet r = null;
+        
+        int MYSQL_DUPLICATE_PK = 1062; //1062 error code for duplicate primary key
+        
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            System.out.println("Connected to the database");
+            
+            //create table if it not exist
+            String tblMember = "CREATE TABLE if not exists tblAgent(" 
+                    + "agentID int not null AUTO_INCREMENT, "
+                    + "first varchar(50), "
+                    + "last varchar(50),"
+                    + "phone varchar(20)," 
+                    + "PRIMARY KEY (agentID))";
+                    
+            System.out.println(tblMember);        
+            stmt.executeUpdate(tblMember);
+            System.out.println("tblAgent has been created");
+            
+            //check agentID in database
+            String sql = "SELECT * from tblAgent where agentID=" + a.getId();
+            r = stmt.executeQuery(sql);
+            System.out.println(r);
+            
+            if(r.next())
+            { //found this member id in database
+                JOptionPane.showMessageDialog(null, "This agent id is already exist");
+            }
+            else 
+            {
+                //insert data to agent table
+                sql = "INSERT INTO tblAgent (agentID, first, last, phone) values"
+                        + "('" + a.getId() + "','" + a.getFirst() + "','" + a.getLast()
+                        + "','" + a.getPhone() + "')";
+                stmt.executeUpdate(sql);
+                System.out.println("add data to tblAgent");
+            }
+            
+        } catch (SQLException sqlE) {
+            sqlE.printStackTrace();
+            System.err.println("ERROR: " + sqlE.getMessage());
+            if(sqlE.getErrorCode() == MYSQL_DUPLICATE_PK){ //duplicate primary key
+                JOptionPane.showMessageDialog(null, "Duplicate Member ID");
             }
         } finally {
             
@@ -165,7 +299,7 @@ public class DataAccessLayer{
     }
     
     //Get agent name for database to ComboBox
-    public static void getAgentToCombobox(String type, JComboBox cboAgentLoad){
+    public static void getAgentToCombobox(JComboBox cboAgentLoad){
         Connection con = null;
         Statement stmt = null;
         ResultSet r = null;
