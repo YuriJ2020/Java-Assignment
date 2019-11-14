@@ -21,7 +21,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 /**
  *
  * @author ppunme
@@ -49,7 +48,7 @@ public class MainMenu extends javax.swing.JFrame {
         initComponents();
         
         this.setTitle("Main Menu");
-        this.setBounds(500, 100, 525, 570); // (x,y,width,height)
+        this.setBounds(500, 100, 525, 590); // (x,y,width,height)
         
         //read contents of file on loading the main menu GUI
         readFile();
@@ -385,7 +384,7 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGap(12, 12, 12))
         );
 
-        jPanel1.setBackground(new java.awt.Color(57, 51, 59));
+        jPanel1.setBackground(new java.awt.Color(100, 93, 102));
 
         lblBackup1.setForeground(new java.awt.Color(255, 255, 255));
         lblBackup1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -466,6 +465,7 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void btnBackupMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackupMousePressed
 
+        
         try{
             ReadWrite.writeData(fileName, list);
         } catch(FileNotFoundException fnfEx){
@@ -486,13 +486,20 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnHelpMousePressed
 
     private void btnRestoreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRestoreMousePressed
-        try{
-            readFile();
-            JOptionPane.showMessageDialog(null, restoredList.size() + " Member records have been loaded from file");
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, e.getMessage());	
+        
+        int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to restore from file backup?"
+                + "\nRestoring will erase all members from the database and save the data from the backup file."
+                + "\nPlease make sure you have recently made a backup file before you continue.",
+                "Select an Option",JOptionPane.YES_NO_OPTION);
+        // 0=yes, 1=no
+        
+        if(option == 0){
+            try{
+                readFile();
+                JOptionPane.showMessageDialog(null, restoredList.size() + " Member records have been loaded from file");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());	
+            }
         }
     }//GEN-LAST:event_btnRestoreMousePressed
 
@@ -665,6 +672,7 @@ public class MainMenu extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }*/
+        
         //</editor-fold>
 
         /* Create and display the form */

@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -30,13 +31,11 @@ public class SearchForm extends javax.swing.JFrame {
     /**
      * Creates new form SearchForm
      */
-    String searchLoad;
-    
-    
     MainMenu parentMenu;
     
     Color myColor1 = new Color(45,81,142);
     
+    String searchLoad;
     int indexSearch;
     private int selectedRow;
     private boolean found;
@@ -73,6 +72,10 @@ public class SearchForm extends javax.swing.JFrame {
             }
         });
         
+        //all columns displayed at the preferred widths
+        resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        //resultTable.setGridColor(Color.gray);
+        
     }
     
     private void GetDataFromAll() {  
@@ -87,8 +90,9 @@ public class SearchForm extends javax.swing.JFrame {
         ArrayList<Members> searchList = new ArrayList<>();
         
         MemberTableModel memberModel = new MemberTableModel();
-        ArrayList<Members> list = memberModel.getDataFromDatabase();
+        Utilities.DataAccessLayer.getDataFromDatabase(list);
         
+        System.out.println("Search List: " + searchList);
         for(Members m : list) {
             System.out.println(m.getName());
             if(m == null) {
@@ -280,6 +284,7 @@ public class SearchForm extends javax.swing.JFrame {
                 "Membere ID", "First Name", "Last Name", "Gender", "Email", "Phone", "Address"
             }
         ));
+        resultTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_NEXT_COLUMN);
         jScrollPane1.setViewportView(resultTable);
 
         javax.swing.GroupLayout pnlSearchLayout = new javax.swing.GroupLayout(pnlSearch);
@@ -464,7 +469,7 @@ public class SearchForm extends javax.swing.JFrame {
         } finally {
             
         }
-        memberModel.getDataFromDatabase();
+        //Utilities.DataAccessLayer.getDataFromDatabase();
         memberModel.fireTableRowsDeleted(selectedRow, selectedRow); //check
     }//GEN-LAST:event_btnDeleteMousePressed
 

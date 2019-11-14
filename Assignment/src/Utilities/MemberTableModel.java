@@ -23,14 +23,14 @@ public class MemberTableModel extends AbstractTableModel{
     
     private ArrayList<Members> list = new ArrayList<>();
     
-    private String[] columnNames = {"Member ID", "First Name", "Last Name", "Gender", 
-                "Email", "Phone", "Address", "Suburb", "State", "Package", "No. of Member"};
+    private String[] columnNames = {"ID", "First Name", "Last Name", "Gender", 
+                "Email", "Phone", "Address", "Suburb", "State", "Postcode", "Package", "No. of Member"};
     
     //constructor
     public MemberTableModel() {
         //call a method
+        Utilities.DataAccessLayer.getDataFromDatabase(list);
         System.out.println(list);
-        getDataFromDatabase();
     }
     
     public MemberTableModel(ArrayList<Members> searchList){
@@ -68,8 +68,17 @@ public class MemberTableModel extends AbstractTableModel{
             case 6: return m.getAddress();
             case 7: return m.getSuburb();
             case 8: return m.getState();
-            
-          
+            case 9: return m.getPostcode();
+            case 10: if(m instanceof Single){
+                Single s = (Single)m;
+                return s.getPackLoad();
+            } else {
+                return null;
+            }
+            case 11: if(m instanceof Family){
+                Family f = (Family)m;
+                return f.getNoMembers();
+            }
         }
         return null;
     }
@@ -86,79 +95,6 @@ public class MemberTableModel extends AbstractTableModel{
     {
         Members m = list.get(row);
         return m;
-    }
-    
-    //connect to the database
-    public Connection getConnection(){
-        Connection con = null;
-        
-        //get mySQL Connection details
-        String username = ConnectionDetails.getUserName();
-        String password = ConnectionDetails.getPassWord();
-        String url = ConnectionDetails.getUrl();
-        
-        System.out.println(url);
-        
-        try{
-            //load the SQL driver
-            Class.forName(ConnectionDetails.getDriver());
-            con = DriverManager.getConnection(url, username, password);
-            System.out.println("Connected to the Database");
-        }
-        catch(ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        catch(SQLException ex)
-        {
-            ex.printStackTrace();
-        }
-        return con;
-    }
-    
-    public ArrayList<Members> getDataFromDatabase()
-    {
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet r = null;
-        
-        Single singleMember = null;
-        Family famMember = null;
-        
-        
-        try{
-            con = getConnection();
-            stmt = con.createStatement();
-            String sql = "SELECT * FROM tblMember INNER JOIN tblSingle ON tblMember.memberID = tblSingle.memberID"
-                    + " INNER JOIN tblAddress ON tblMember.memberID = tblAddress.memberID";
-            r = stmt.executeQuery(sql);
-            System.out.println(r);
-            
-            sql = "SELECT * FROM tblMember INNER JOIN tblFamily ON tblMember.memberID = tblSingle.memberID"
-                    + " INNER JOIN tblAddress ON tblMember.memberID = tblAddress.memberID";
-            
-            
-            //clear out the arrayList
-            list.clear();
-            
-            //loop through the records and add them to the ArrayList
-            while(r.next())
-            {
-                
-                //make sure column names from the DATABASE are spelt correctly
-                list.add(new Single(r.getInt("memberID"),r.getString("first"),
-                        r.getString("last"),r.getString("gender"),r.getString("email"),
-                        r.getString("phone"),r.getString("address"),r.getString("suburb"),
-                        r.getString("state"),r.getString("postcode"),r.getDouble("baseFee"),r.getString("package")));
-            
-                
-            }
-            stmt.close();
-            con.close();
-        }catch(SQLException ex) {
-            ex.printStackTrace();
-        }
-        return list;
     }
 
 }

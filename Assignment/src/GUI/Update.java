@@ -39,7 +39,7 @@ public class Update extends javax.swing.JFrame {
         txfPhone.setText(m.getPhone());
         txfAddress.setText(m.getAddress());
         txfSuburb.setText(m.getSuburb());
-        txfPostcode.setText(m.getPostcode());
+        txfPostcode.setText(Integer.toString(m.getPostcode()));
         
         //cannot change the primary key
         txfID.setEditable(false);
@@ -334,7 +334,8 @@ public class Update extends javax.swing.JFrame {
             ex.printStackTrace();
         }
         
-        memberModel.getDataFromDatabase(); //get data from database again
+        //Utilities.DataAccessLayer.getDataFromDatabase();
+        //memberModel.getDataFromDatabase(); //get data from database again
         memberModel.fireTableDataChanged(); // refresh the JTable after changes
         this.dispose();             //close this frame
         parent.setVisible(true);    //make parent visible again

@@ -13,11 +13,11 @@ public class Family extends Members implements Serializable
     
     public Family()
     {
-        super(0, "", "", "", "", "", "", "", "", "", 40.00);
+        super(0, "", "", "", "", "", "", "", "", 0, 40.00);
         this.noMembers = noMembers;
     }
 
-    public Family(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee, int noMembers) {
+    public Family(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, int postcode, double baseFee, int noMembers) {
         super(id, name, last, gender, email, phone, address, suburb, state, postcode, baseFee);
         this.noMembers = noMembers;
     }
@@ -40,4 +40,11 @@ public class Family extends Members implements Serializable
             setBaseFee(getBaseFee() + 1000);
         }
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "No. of Members: " + noMembers;
+    }
+    
+    
 }

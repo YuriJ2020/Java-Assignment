@@ -20,11 +20,11 @@ public abstract class Members implements Serializable
     private String address;
     private String suburb;
     private String state;
-    private String postcode;
+    private int postcode;
     private double baseFee; //$40.00 per month
 
     //Constructor
-    public Members(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee) {
+    public Members(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, int postcode, double baseFee) {
         this.id = id;
         this.name = name;
         this.last = last;
@@ -114,11 +114,11 @@ public abstract class Members implements Serializable
         this.state = state;
     }
 
-    public String getPostcode() {
+    public int getPostcode() {
         return postcode;
     }
 
-    public void setPostcode(String postcode) {
+    public void setPostcode(int postcode) {
         this.postcode = postcode;
     }
 
@@ -132,10 +132,10 @@ public abstract class Members implements Serializable
 
     @Override
     public String toString() {
-        return "Member details" + "\n\nMember id: " + id + "\nName: " + name + "\nLast:" + last 
-                + "\nGender: " + gender + "\nEmail: " + email + "\nPhone: " + phone 
-                + "\nAddress: " + address + "\nSuburb: " + suburb + "\nState: " + state 
-                + "\nPostcode: " + postcode + "\nBase Fee: " + baseFee + "\n";
+        return "\n--Member details--" + "\n\nMember id: " + id + "\nName: " + name + " Last: " + last 
+                + " Gender: " + gender + "\nEmail: " + email + " Phone: " + phone 
+                + "\nAddress: " + address + " Suburb: " + suburb + "\nState: " + state 
+                + " Postcode: " + postcode + "\nBase Fee: " + baseFee + "\n";
     }
     
     

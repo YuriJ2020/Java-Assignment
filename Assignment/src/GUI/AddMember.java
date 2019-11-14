@@ -363,8 +363,8 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     public void addNewMember()
     {
         //insert into arrayList
-        int id;
-        String first, last, email, phone, address, suburb, postcode;
+        int id, postcode;
+        String first, last, email, phone, address, suburb;
 
         id = list.size()+1;
 
@@ -375,7 +375,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         phone = txfPhone.getText();
         address = txfAddress.getText();
         suburb = txfSuburb.getText();
-        postcode = txfPostcode.getText();
+        postcode = Integer.parseInt(txfPostcode.getText());
 
         validate = true;
 
@@ -384,13 +384,12 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         
         //check to see if each TextField have data
         if(!(first.equals("") || last.equals("") || email.equals("") || phone.equals("") || address.equals("")
-                || suburb.equals("") || postcode.equals("")))
+                || suburb.equals("") || postcode == 0))
         {
             if(!(stateLoad.equals("Make a Selection")))
             {
-                if(!(packLoad.equals("Make a Selection")))
-                {
-                    if(type.equals("Single")){ //type: Single
+                if(type.equals("Single")){ //type: Single
+                    if(!(packLoad.equals("Make a Selection"))){
                         //add to ArrayList
                         list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad));
   
@@ -402,7 +401,10 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                         
                         validate = false; //all data valid
                     }
-                    else //type: Family
+                } 
+                else //type: Family
+                {
+                    if(!(txfNoMember.equals("")))
                     {
                         //add to ArrayList
                         list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, id));

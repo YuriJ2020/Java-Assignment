@@ -12,11 +12,11 @@ public class Single extends Members implements Serializable {
     private String packLoad;
     
     public Single(){
-        super(0, "", "", "", "", "", "", "", "", "", 40.00);
+        super(0, "", "", "", "", "", "", "", "", 0, 40.00);
         this.packLoad = packLoad;
     }
 
-    public Single(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee, String packLoad) {
+    public Single(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, int postcode, double baseFee, String packLoad) {
         super(id, name, last, gender, email, phone, address, suburb, state, postcode, baseFee);
         this.packLoad = packLoad;
     }
@@ -47,7 +47,7 @@ public class Single extends Members implements Serializable {
 
     @Override
     public String toString() {
-        return super.toString() + "Type=" + packLoad ;
+        return super.toString() + "Type: " + packLoad ;
     }
     
     

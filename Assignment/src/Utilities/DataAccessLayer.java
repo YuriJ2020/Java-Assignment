@@ -7,13 +7,13 @@ package Utilities;
 
 import Classes.Agent;
 import Classes.Family;
+import Classes.Members;
 import Classes.Single;
-import static GUI.Update.txfEmail;
-import static GUI.Update.txfPhone;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
  * @author ppunme
  */
 public class DataAccessLayer{
-    
     
     public static void addSingleToDatabase(Single s, String type){
         //Insert into database
@@ -309,12 +308,21 @@ public class DataAccessLayer{
             stmt = con.createStatement();
             System.out.println("Connected to the database");
 
+            String tblAgent = "CREATE TABLE if not exists tblAgent(" 
+                    + "agentID int not null AUTO_INCREMENT, "
+                    + "first varchar(50), "
+                    + "last varchar(50),"
+                    + "phone varchar(20)," 
+                    + "PRIMARY KEY (agentID))";
+            stmt.executeUpdate(tblAgent);
+            System.out.println("tblAgent has been created");
+            
             r = stmt.executeQuery("select * from tblAgent");
             System.out.println(r);
          
             cboAgentLoad.addItem("Make a Selection");
             while (r.next()) {  
-                cboAgentLoad.addItem(r.getString("first"));  
+                cboAgentLoad.addItem(r.getString("first") + " "+ r.getString("last"));  
             }
 
             con.close();
@@ -322,5 +330,51 @@ public class DataAccessLayer{
             JOptionPane.showMessageDialog(null,"Failed to Connect to Database","Error Connection", JOptionPane.WARNING_MESSAGE);  
             System.exit(0);  
         }  
+    }
+    
+    public static void getDataFromDatabase(ArrayList<Members> list)
+    {
+        //ArrayList<Members> list = new ArrayList<>(); 
+        
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet r = null;
+        
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            String sql = "SELECT * FROM tblMember INNER JOIN tblAddress WHERE"
+                    + " tblMember.memberID = tblAddress.memberID";
+            r = stmt.executeQuery(sql);
+            System.out.println(sql);
+            System.out.println(r);
+            
+            //clear out the arrayList
+            list.clear();
+            
+            //loop through the records and add them to the ArrayList
+            while(r.next())
+            {     
+                if(r.getString("type").equals("Single")){
+                    //make sure column names from the DATABASE are spelt correctly
+                    list.add(new Single(r.getInt("memberID"),r.getString("first"),r.getString("last"),
+                            r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
+                            r.getString("suburb"),r.getString("state"),r.getInt("postcode"),
+                            r.getDouble("baseFee"),r.getString("package"))); 
+                } else {
+                    list.add(new Family(r.getInt("memberID"),r.getString("first"),r.getString("last"),
+                            r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
+                            r.getString("suburb"),r.getString("state"),r.getInt("postcode"),
+                            r.getDouble("baseFee"),r.getInt("noMember"))); 
+                }
+            } 
+                    
+                    
+            stmt.close();
+            con.close();
+        }catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+        //return list;
     }
 }
