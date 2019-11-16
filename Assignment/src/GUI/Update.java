@@ -39,7 +39,7 @@ public class Update extends javax.swing.JFrame {
         txfPhone.setText(m.getPhone());
         txfAddress.setText(m.getAddress());
         txfSuburb.setText(m.getSuburb());
-        txfPostcode.setText(Integer.toString(m.getPostcode()));
+        txfPostcode.setText(m.getPostcode());
         
         //cannot change the primary key
         txfID.setEditable(false);

@@ -20,11 +20,12 @@ public abstract class Members implements Serializable
     private String address;
     private String suburb;
     private String state;
-    private int postcode;
+    private String postcode;
     private double baseFee; //$40.00 per month
+    private int agentID;
 
     //Constructor
-    public Members(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, int postcode, double baseFee) {
+    public Members(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee, int agentID) {
         this.id = id;
         this.name = name;
         this.last = last;
@@ -36,6 +37,7 @@ public abstract class Members implements Serializable
         this.state = state;
         this.postcode = postcode;
         this.baseFee = baseFee;
+        this.agentID = agentID;
     }
     
     public abstract void calcFees();
@@ -114,11 +116,11 @@ public abstract class Members implements Serializable
         this.state = state;
     }
 
-    public int getPostcode() {
+    public String getPostcode() {
         return postcode;
     }
 
-    public void setPostcode(int postcode) {
+    public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
 
@@ -130,12 +132,20 @@ public abstract class Members implements Serializable
         this.baseFee = baseFee;
     }
 
+    public int getAgentID() {
+        return agentID;
+    }
+
+    public void setAgentID(int agentID) {
+        this.agentID = agentID;
+    }
+
     @Override
     public String toString() {
         return "\n--Member details--" + "\n\nMember id: " + id + "\nName: " + name + " Last: " + last 
                 + " Gender: " + gender + "\nEmail: " + email + " Phone: " + phone 
                 + "\nAddress: " + address + " Suburb: " + suburb + "\nState: " + state 
-                + " Postcode: " + postcode + "\nBase Fee: " + baseFee + "\n";
+                + " Postcode: " + postcode + "\nBase Fee: " + baseFee + "\n" + "\nAgent id: " + agentID;
     }
     
     

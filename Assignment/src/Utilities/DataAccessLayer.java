@@ -9,6 +9,7 @@ import Classes.Agent;
 import Classes.Family;
 import Classes.Members;
 import Classes.Single;
+import static GUI.AddMember.agentLoad;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,7 +40,7 @@ public class DataAccessLayer{
             //create table if it not exist
             //create tblMember
             String tblMember = "CREATE TABLE if not exists tblMember(" 
-                    + "memberID int not null primary key AUTO_INCREMENT, "
+                    + "memberID int not null AUTO_INCREMENT, "
                     + "first varchar(50),"
                     + "last varchar(50),"
                     + "gender varchar(20),"
@@ -48,8 +49,10 @@ public class DataAccessLayer{
                     + "package varchar(50),"
                     + "noMember int," 
                     + "baseFee double,"
-                    + "type varchar(50)"
-                    + ")"; 
+                    + "type varchar(50),"
+                    + "agentID int,"
+                    + "PRIMARY KEY (memberID),"
+                    + "FOREIGN KEY (agentID) References tblAgent(agentID))";
             System.out.println(tblMember);        
             stmt.executeUpdate(tblMember);
             System.out.println("tblMember has been created");
@@ -60,10 +63,10 @@ public class DataAccessLayer{
                     + "address varchar(50)," 
                     + "suburb varchar(50),"
                     + "state varchar(50),"
-                    + "postcode int, " 
+                    + "postcode varchar(10), " 
                     + "memberID int, "
                     + "PRIMARY KEY (addressID),"
-                    + "FOREIGN KEY (memberID) References tblMember(memberID))";
+                    + "FOREIGN KEY (memberID) References tblMember(memberID))";    
             System.out.println(tblAddress);        
             stmt.executeUpdate(tblAddress);
             System.out.println("tblAddress has been created");
@@ -82,16 +85,20 @@ public class DataAccessLayer{
             }
             else
             {
+                System.out.println("agent id");
                 //insert data to member table
-                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, package, baseFee, type) values"
+                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, package, baseFee, type, agentID) values"
                         + "('" + s.getId() + "','" + s.getName() + "','" + s.getLast() + "','" + s.getGender() + "','" 
-                        + s.getEmail() + "','" + s.getPhone() + "','" + s.getPackLoad() + "','" + s.getBaseFee() + "','" + type + "')";
+                        + s.getEmail() + "','" + s.getPhone() + "','" + s.getPackLoad() + "','" + s.getBaseFee() + "','" 
+                        + type + "','" + s.getAgentID() + "')";
                 stmt.executeUpdate(sql);
+                System.out.println(sql);
 
                 //insert data to address table
                 sql = "INSERT INTO tblAddress (address, suburb, state, postcode, memberID) values ('"+ s.getAddress()
                         + "','" + s.getSuburb() + "','" + s.getState() + "','" + s.getPostcode() + "','" + s.getId() + "')";
                 stmt.executeUpdate(sql);
+                System.out.println(sql);
                 System.out.println("Added Single member to Database");
             } 
         } catch (SQLException sqlE) {
@@ -139,7 +146,7 @@ public class DataAccessLayer{
             //create table if it not exist
             //create tblMember
             String tblMember = "CREATE TABLE if not exists tblMember(" 
-                    + "memberID int not null primary key AUTO_INCREMENT, "
+                    + "memberID int not null AUTO_INCREMENT, "
                     + "first varchar(50),"
                     + "last varchar(50),"
                     + "gender varchar(20),"
@@ -148,8 +155,10 @@ public class DataAccessLayer{
                     + "package varchar(50),"
                     + "noMember int," 
                     + "baseFee double,"
-                    + "type varchar(50)"
-                    + ")"; 
+                    + "type varchar(50),"
+                    + "agentID int,"
+                    + "PRIMARY KEY (memberID),"
+                    + "FOREIGN KEY (agentID) References tblAgent(agentID))";
             System.out.println(tblMember);        
             stmt.executeUpdate(tblMember);
             System.out.println("tblMember has been created");
@@ -160,7 +169,7 @@ public class DataAccessLayer{
                     + "address varchar(50)," 
                     + "suburb varchar(50),"
                     + "state varchar(50),"
-                    + "postcode int, " 
+                    + "postcode varchar(10), " 
                     + "memberID int, "
                     + "PRIMARY KEY (addressID),"
                     + "FOREIGN KEY (memberID) References tblMember(memberID))";
@@ -182,9 +191,10 @@ public class DataAccessLayer{
             } 
             else 
             {
-                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, noMember, baseFee, type) values"
+                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, noMember, baseFee, type, agentID) values"
                         + "('" + f.getId() + "','" + f.getName() + "','" + f.getLast() + "','" + f.getGender() + "','" 
-                        + f.getEmail() + "','" + f.getPhone() + "','" + f.getNoMembers() + "','" + f.getBaseFee() + "','" + type + "')";
+                        + f.getEmail() + "','" + f.getPhone() + "','" + f.getNoMembers() + "','" + f.getBaseFee() + "','" 
+                        + type + "','" + f.getAgentID() + "')";
                 stmt.executeUpdate(sql);
 
                 //insert data to address table
@@ -192,7 +202,6 @@ public class DataAccessLayer{
                         + "','" + f.getSuburb() + "','" + f.getState() + "','" + f.getPostcode() + "','" + f.getId() + "')";
                 stmt.executeUpdate(sql);
                 System.out.println("Added Family member to Database");
-                
             }
             
         } catch (SQLException sqlE) {
@@ -224,7 +233,8 @@ public class DataAccessLayer{
         }
     }
     
-    public static void addAgentToDatabase(Agent a){
+    public static void addAgentToDatabase(Agent a)
+    {
         //Insert into database
         Connection con = null;
         Statement stmt = null;
@@ -255,7 +265,7 @@ public class DataAccessLayer{
             System.out.println(r);
             
             if(r.next())
-            { //found this member id in database
+            { //found this agent id in database
                 JOptionPane.showMessageDialog(null, "This agent id is already exist");
             }
             else 
@@ -297,8 +307,9 @@ public class DataAccessLayer{
         }
     }
     
-    //Get agent name for database to ComboBox
-    public static void getAgentToCombobox(JComboBox cboAgentLoad){
+    //Get Agent name for database to ComboBox
+    public static void getAgentToCombobox(JComboBox cboAgentLoad)
+    {
         Connection con = null;
         Statement stmt = null;
         ResultSet r = null;
@@ -322,7 +333,7 @@ public class DataAccessLayer{
          
             cboAgentLoad.addItem("Make a Selection");
             while (r.next()) {  
-                cboAgentLoad.addItem(r.getString("first") + " "+ r.getString("last"));  
+                cboAgentLoad.addItem(r.getString("first"));  
             }
 
             con.close();
@@ -332,10 +343,39 @@ public class DataAccessLayer{
         }  
     }
     
-    public static void getDataFromDatabase(ArrayList<Members> list)
+    public static int getAgentID()
     {
-        //ArrayList<Members> list = new ArrayList<>(); 
+        int agentID;
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet r = null;
         
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            System.out.println("Agent Load: " + agentLoad);
+            String sql = "SELECT * FROM tblAgent WHERE first LIKE '%" + agentLoad + "%'";
+            //SELECT * FROM tblAgent WHERE CONCAT(first, ' ', last) LIKE '%Jon aa%'
+            r = stmt.executeQuery(sql);
+            System.out.println(sql);
+            
+            r.next();
+            agentID = r.getInt("agentID");
+            
+            stmt.close();
+            con.close();
+            
+            return agentID;
+            
+        }catch(SQLException ex) {
+            ex.printStackTrace();
+            return agentID = 0;
+        }
+    }
+    
+    public static void getDataFromDatabase(ArrayList<Members> list)
+    {     
+        String agentName;
         Connection con = null;
         Statement stmt = null;
         ResultSet r = null;
@@ -347,8 +387,7 @@ public class DataAccessLayer{
                     + " tblMember.memberID = tblAddress.memberID";
             r = stmt.executeQuery(sql);
             System.out.println(sql);
-            System.out.println(r);
-            
+
             //clear out the arrayList
             list.clear();
             
@@ -359,22 +398,54 @@ public class DataAccessLayer{
                     //make sure column names from the DATABASE are spelt correctly
                     list.add(new Single(r.getInt("memberID"),r.getString("first"),r.getString("last"),
                             r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
-                            r.getString("suburb"),r.getString("state"),r.getInt("postcode"),
-                            r.getDouble("baseFee"),r.getString("package"))); 
+                            r.getString("suburb"),r.getString("state"),r.getString("postcode"),
+                            r.getDouble("baseFee"),r.getString("package"),r.getInt("agentID"))); 
                 } else {
                     list.add(new Family(r.getInt("memberID"),r.getString("first"),r.getString("last"),
                             r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
-                            r.getString("suburb"),r.getString("state"),r.getInt("postcode"),
-                            r.getDouble("baseFee"),r.getInt("noMember"))); 
+                            r.getString("suburb"),r.getString("state"),r.getString("postcode"),
+                            r.getDouble("baseFee"),r.getInt("noMember"),r.getInt("agentID"))); 
                 }
-            } 
-                    
-                    
+          
+            }  
+            
             stmt.close();
             con.close();
+            
         }catch(SQLException ex) {
             ex.printStackTrace();
         }
-        //return list;
+    }
+    
+    public static void getAgentList(ArrayList<Agent> agentList){
+        String agentName;
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet r = null;
+        
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            String sql = "SELECT * FROM tblMember INNER JOIN tblAgent WHERE"
+                    + " tblMember.agentID = tblAddress.agentID";
+            r = stmt.executeQuery(sql);
+            System.out.println(sql);
+
+            //clear out the arrayList
+            agentList.clear();
+            
+            //loop through the records and add them to the ArrayList
+            while(r.next())
+            {     
+                
+          
+            }  
+            
+            stmt.close();
+            con.close();
+            
+        }catch(SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

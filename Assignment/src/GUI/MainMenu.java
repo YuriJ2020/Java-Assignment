@@ -48,7 +48,7 @@ public class MainMenu extends javax.swing.JFrame {
         initComponents();
         
         this.setTitle("Main Menu");
-        this.setBounds(500, 100, 525, 590); // (x,y,width,height)
+        this.setBounds(500, 100, 528, 580); // (x,y,width,height)
         
         //read contents of file on loading the main menu GUI
         readFile();
@@ -88,8 +88,6 @@ public class MainMenu extends javax.swing.JFrame {
         btnHelp = new javax.swing.JPanel();
         icHelp = new javax.swing.JLabel();
         lblHelp = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        lblBackup1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -384,26 +382,6 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGap(12, 12, 12))
         );
 
-        jPanel1.setBackground(new java.awt.Color(100, 93, 102));
-
-        lblBackup1.setForeground(new java.awt.Color(255, 255, 255));
-        lblBackup1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblBackup1.setText("Exit");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblBackup1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblBackup1, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout pnlAllLayout = new javax.swing.GroupLayout(pnlAll);
         pnlAll.setLayout(pnlAllLayout);
         pnlAllLayout.setHorizontalGroup(
@@ -416,7 +394,6 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(btnHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(39, 39, 39)
                 .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(39, 39, 39)
@@ -439,9 +416,7 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnRestore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(27, 27, 27)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -697,11 +672,9 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JLabel icHelp;
     private javax.swing.JLabel icRestore;
     private javax.swing.JLabel icSearch;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblAddFamily;
     private javax.swing.JLabel lblAddSingle;
     private javax.swing.JLabel lblBackup;
-    private javax.swing.JLabel lblBackup1;
     private javax.swing.JLabel lblHead1;
     private javax.swing.JLabel lblHead2;
     private javax.swing.JLabel lblHelp;

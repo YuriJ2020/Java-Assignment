@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import Classes.Agent;
 import Classes.Members;
 import Classes.Single;
 import Utilities.ConnectionDetails;
@@ -42,17 +43,16 @@ public class SearchForm extends javax.swing.JFrame {
     
     MemberTableModel memberModel = new MemberTableModel();
     ArrayList<Members> list = new ArrayList<>();
+    ArrayList<Agent> agentList = new ArrayList<>();
     
     public SearchForm(MainMenu menu) {
         initComponents();
    
         this.setTitle("Search Form");
         this.setVisible(true);
-        this.setBounds(400, 100, 680, 668); // (x,y,width,height)
+        this.setBounds(400, 100, 609, 600); // (x,y,width,height)
      
         parentMenu = menu;
-        
-        //System.out.println(list);
         
         searchLoad = (String) cboSearch.getSelectedItem();
         System.out.println(searchLoad);
@@ -61,7 +61,6 @@ public class SearchForm extends javax.swing.JFrame {
         resultTable.setModel(memberModel);
         
         resultTable.setSelectionMode(selectedRow);
-        
         //the following uses an anonymous inner class
         ListSelectionModel rowSM = resultTable.getSelectionModel();
         rowSM.addListSelectionListener(new ListSelectionListener(){
@@ -74,25 +73,74 @@ public class SearchForm extends javax.swing.JFrame {
         
         //all columns displayed at the preferred widths
         resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        //resultTable.setGridColor(Color.gray);
-        
     }
     
-    private void GetDataFromAll() {  
-                   
-    }
-    
-    private void GetDataFromID() {
-
-    }
-    
-    private void GetDataFromName() {
-        ArrayList<Members> searchList = new ArrayList<>();
-        
-        MemberTableModel memberModel = new MemberTableModel();
+    private void SearchFromAll() {  
+        ArrayList<Members> searchList = new ArrayList<>();     
         Utilities.DataAccessLayer.getDataFromDatabase(list);
+
+        String search = txfSearch.getText();
         
-        System.out.println("Search List: " + searchList);
+        for(Members m : list) {
+            System.out.println(m.getId());
+            if(m == null) {
+                break;
+            } else {
+                if((m.getId() == Integer.parseInt(search)) || m.getName().equalsIgnoreCase(search) || m.getLast().equalsIgnoreCase(search)||
+                        m.getGender().equalsIgnoreCase(search) || m.getEmail().equalsIgnoreCase(search) || m.getPhone().equalsIgnoreCase(search)||
+                        m.getEmail().equalsIgnoreCase(search) || m.getAddress().equalsIgnoreCase(search) || m.getSuburb().equalsIgnoreCase(search)||
+                        m.getState().equalsIgnoreCase(search) || m.getPostcode().equalsIgnoreCase(search) || m.getBaseFee() == Double.parseDouble(search) ||
+                        m.getAgentID() == Integer.parseInt(search)){
+                    found = true;
+                    searchList.add(m);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "This Member does not exist");
+                }
+            }
+        }
+        
+        if(found == true) {
+            System.out.println("Found: " + found);
+            memberModel = new MemberTableModel(searchList);
+            resultTable.setModel(memberModel);
+        } else {
+            JOptionPane.showMessageDialog(null, "This Member does not exist");
+        }           
+    }
+    
+    private void SearchFromID() {
+        ArrayList<Members> searchList = new ArrayList<>();     
+        Utilities.DataAccessLayer.getDataFromDatabase(list);
+
+        for(Members m : list) {
+            System.out.println(m.getId());
+            if(m == null) {
+                break;
+            } else {
+                if(m.getId() == (Integer.parseInt(txfSearch.getText()))){
+                    found = true;
+                    searchList.add(m);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "This Member does not exist");
+                }
+            }
+        }
+        
+        if(found == true) {
+            System.out.println("Found: " + found);
+            memberModel = new MemberTableModel(searchList);
+            resultTable.setModel(memberModel);
+        } else {
+            JOptionPane.showMessageDialog(null, "This Member does not exist");
+        }
+    }
+    
+    private void SearchFromName() {
+        ArrayList<Members> searchList = new ArrayList<>();     
+        Utilities.DataAccessLayer.getDataFromDatabase(list);
+
         for(Members m : list) {
             System.out.println(m.getName());
             if(m == null) {
@@ -106,12 +154,16 @@ public class SearchForm extends javax.swing.JFrame {
         }
         
         if(found == true) {
-            System.out.println("Found ");
+            System.out.println("Found: " + found);
             memberModel = new MemberTableModel(searchList);
             resultTable.setModel(memberModel);
         } else {
             JOptionPane.showMessageDialog(null, "Member does not exist");
         }
+    }
+    
+    private void GetDataFromAgent() {
+        
     }
 
     /**
@@ -123,9 +175,8 @@ public class SearchForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jInternalFrame1 = new javax.swing.JInternalFrame();
         pnlAll = new javax.swing.JPanel();
-        pnlHead = new javax.swing.JPanel();
-        lblHead = new javax.swing.JLabel();
         pnlSearch = new javax.swing.JPanel();
         lblSearchBy = new javax.swing.JLabel();
         btnBack = new javax.swing.JLabel();
@@ -137,6 +188,20 @@ public class SearchForm extends javax.swing.JFrame {
         cboSearch = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane(resultTable);
         resultTable = new javax.swing.JTable();
+        lblHead = new javax.swing.JLabel();
+
+        jInternalFrame1.setVisible(true);
+
+        javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
+        jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
+        jInternalFrame1Layout.setHorizontalGroup(
+            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jInternalFrame1Layout.setVerticalGroup(
+            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -145,32 +210,9 @@ public class SearchForm extends javax.swing.JFrame {
             }
         });
 
-        pnlAll.setBackground(new java.awt.Color(88, 89, 96));
+        pnlAll.setBackground(new java.awt.Color(34, 70, 96));
 
-        pnlHead.setBackground(new java.awt.Color(88, 89, 96));
-
-        lblHead.setBackground(new java.awt.Color(255, 255, 255));
-        lblHead.setFont(new java.awt.Font("Adobe Caslon Pro", 0, 40)); // NOI18N
-        lblHead.setForeground(new java.awt.Color(243, 243, 243));
-        lblHead.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblHead.setText("Search Form");
-
-        javax.swing.GroupLayout pnlHeadLayout = new javax.swing.GroupLayout(pnlHead);
-        pnlHead.setLayout(pnlHeadLayout);
-        pnlHeadLayout.setHorizontalGroup(
-            pnlHeadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHeadLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblHead)
-                .addGap(234, 234, 234))
-        );
-        pnlHeadLayout.setVerticalGroup(
-            pnlHeadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHeadLayout.createSequentialGroup()
-                .addContainerGap(44, Short.MAX_VALUE)
-                .addComponent(lblHead)
-                .addGap(23, 23, 23))
-        );
+        pnlSearch.setBackground(new java.awt.Color(255, 255, 255));
 
         lblSearchBy.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
         lblSearchBy.setText("Search from");
@@ -255,13 +297,13 @@ public class SearchForm extends javax.swing.JFrame {
         );
         btnSearchLayout.setVerticalGroup(
             btnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnSearchLayout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
-                .addComponent(lblSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+            .addGroup(btnSearchLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(lblSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
-        cboSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Member ID", "First Name", "Last Name", "Phone", "Address", "Sales Agent", " " }));
+        cboSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Member ID", "First Name", "Sales Agent", " " }));
         cboSearch.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cboSearchItemStateChanged(evt);
@@ -292,7 +334,7 @@ public class SearchForm extends javax.swing.JFrame {
         pnlSearchLayout.setHorizontalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSearchLayout.createSequentialGroup()
-                .addGap(47, 47, 47)
+                .addGap(34, 34, 34)
                 .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlSearchLayout.createSequentialGroup()
                         .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -306,11 +348,13 @@ public class SearchForm extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSearchLayout.createSequentialGroup()
                                 .addComponent(lblSearchBy, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(cboSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txfSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cboSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12))
+                            .addGroup(pnlSearchLayout.createSequentialGroup()
+                                .addComponent(txfSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                         .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         pnlSearchLayout.setVerticalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,11 +362,11 @@ public class SearchForm extends javax.swing.JFrame {
                 .addGap(34, 34, 34)
                 .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnlSearchLayout.createSequentialGroup()
-                        .addComponent(txfSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txfSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblSearchBy, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cboSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cboSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+                            .addComponent(lblSearchBy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -331,26 +375,36 @@ public class SearchForm extends javax.swing.JFrame {
                     .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
+
+        lblHead.setBackground(new java.awt.Color(255, 255, 255));
+        lblHead.setFont(new java.awt.Font(".SF NS Text", 0, 40)); // NOI18N
+        lblHead.setForeground(new java.awt.Color(255, 255, 255));
+        lblHead.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblHead.setText("Search Form");
 
         javax.swing.GroupLayout pnlAllLayout = new javax.swing.GroupLayout(pnlAll);
         pnlAll.setLayout(pnlAllLayout);
         pnlAllLayout.setHorizontalGroup(
             pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlHead, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlAllLayout.createSequentialGroup()
-                .addGap(52, 52, 52)
+                .addGap(35, 35, 35)
                 .addComponent(pnlSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAllLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblHead)
+                .addGap(182, 182, 182))
         );
         pnlAllLayout.setVerticalGroup(
             pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAllLayout.createSequentialGroup()
-                .addComponent(pnlHead, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(22, 22, 22)
+                .addComponent(lblHead, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -393,20 +447,23 @@ public class SearchForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Enter data to search");
         }
         else if (searchLoad == "All") {
-            GetDataFromAll();
+            SearchFromAll();
+        }
+        else if (searchLoad == "Member ID") {
+            SearchFromID();
         }
         else if (searchLoad == "First Name") {
-            GetDataFromName();
+            SearchFromName();
         }
-        else if(searchLoad == "Member ID") {
-            GetDataFromID();
+        else if (searchLoad == "Sales Agent") {
+            GetDataFromAgent();
         }
+        
     }//GEN-LAST:event_btnSearchMousePressed
 
     private void cboSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboSearchActionPerformed
         if(evt.getSource() == cboSearch){
             searchLoad = (String) cboSearch.getSelectedItem();
-            System.out.println("string: " + searchLoad);
         }
     }//GEN-LAST:event_cboSearchActionPerformed
 
@@ -559,12 +616,12 @@ public class SearchForm extends javax.swing.JFrame {
     private javax.swing.JPanel btnSearch;
     private javax.swing.JLabel btnUpdate;
     private javax.swing.JComboBox<String> cboSearch;
+    private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblHead;
     private javax.swing.JLabel lblSearch;
     private javax.swing.JLabel lblSearchBy;
     private javax.swing.JPanel pnlAll;
-    private javax.swing.JPanel pnlHead;
     private javax.swing.JPanel pnlSearch;
     private javax.swing.JTable resultTable;
     private javax.swing.JTextField txfSearch;

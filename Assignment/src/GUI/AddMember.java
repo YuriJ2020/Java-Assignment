@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import Classes.Agent;
 import Classes.Family;
 import Classes.Members;
 import Classes.Single;
@@ -21,7 +22,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -49,6 +49,7 @@ import javax.swing.plaf.FontUIResource;
 public class AddMember extends JFrame implements ActionListener, ItemListener
 {
     public static ArrayList<Members> list;
+    public static ArrayList<Agent> agentList  = new ArrayList<>();
     
     //Buttons
     private JButton btnAdd, btnClear, btnExit;
@@ -68,6 +69,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
 
     //Labels
     private JLabel lblHeading, lblID, lblFirst, lblLast, lblGender, lblEmail, lblPhone;
+    private JLabel lblPack, lblNoMember;
     
     //Image
     private JLabel lblImage;
@@ -88,7 +90,8 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     private String gender;
     private String type;
     private int indexState, indexPack, indexAgent;
-    private String stateLoad, packLoad, agentLoad;
+    public static String stateLoad, packLoad, agentLoad;
+    private int agentID;
 
     MainMenu parentMenu;
     
@@ -131,17 +134,17 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         lblHeading.setText("Add a new Member");
 
         //Create ButtonGroup for the radio buttons
-        //Make only one radio button can be selected
-        ButtonGroup genderGroup = new ButtonGroup();
-        genderGroup.add(rbtMale);
-        genderGroup.add(rbtFemale);
-        
         //create panal for Gender
         JPanel pnlGender = new JPanel();
         pnlGender.setLayout(new GridLayout(1, 2));
         pnlGender.setBackground(myColor1);
         pnlGender.add(rbtMale = new JRadioButton("Male"));
         pnlGender.add(rbtFemale = new JRadioButton("Female"));
+        
+        //Make only one radio button can be selected
+        ButtonGroup genderGroup = new ButtonGroup();
+        genderGroup.add(rbtMale);
+        genderGroup.add(rbtFemale);
         
         //create panel for type of membership
         JPanel pnlTypeRadio = new JPanel();
@@ -170,7 +173,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         g.gridx = 1;
         g.gridy = 0;
     	pnlData.add(txfID = new JTextField(Integer.toString(nextAvailableID)), g);
-    	txfID.setEnabled(false); //make this field not interactive
+    	//txfID.setEnabled(false); //make this field not interactive
         
         g.gridx = 0;
         g.gridy = 1;
@@ -246,35 +249,39 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         pnlType.setBackground(myColor1);
         pnlType.setBorder(new EmptyBorder(10, 10, 10, 10));
         pnlType.setLayout(new GridLayout(0,2));
+        pnlType.add(new JLabel("Agent name    ", SwingConstants.RIGHT));
+    	pnlType.add(cboAgentLoad);
         pnlType.add(new JLabel("Type     ", SwingConstants.RIGHT));
         pnlType.add(pnlTypeRadio);
-        pnlType.add(new JLabel("Package     ", SwingConstants.RIGHT));
+        pnlType.add(lblPack = new JLabel("Package     ", SwingConstants.RIGHT));
     	pnlType.add(cboPackLoad);
-        cboPackLoad.setEnabled(false);
-        pnlType.add(new JLabel("No. of Family Member ", SwingConstants.RIGHT));
+        lblPack.setVisible(false);
+        cboPackLoad.setVisible(false);
+        pnlType.add(lblNoMember = new JLabel("No. of Family Member ", SwingConstants.RIGHT));
         pnlType.add(txfNoMember = new JTextField());
-        txfNoMember.setEnabled(false);
-        pnlType.add(new JLabel("Agent     ", SwingConstants.RIGHT));
-    	pnlType.add(cboAgentLoad);
+        System.out.println(txfNoMember);
+        lblNoMember.setVisible(false);
+        txfNoMember.setVisible(false);
         
-        //Create panel for the buttons
+        
+        //Panel for the buttons
     	JPanel pnlButtons = new JPanel();
         pnlButtons.setBorder(new EmptyBorder(10, 10, 10, 10));
         pnlButtons.add(btnExit = new JButton("Main menu"));
     	pnlButtons.add(btnAdd = new JButton("Add"));
     	pnlButtons.add(btnClear = new JButton("Clear"));
-        
+
         //Create panal for combine all panel
-        JPanel pnlAll = new JPanel();
-        pnlAll.setLayout(new GridLayout(3, 0));
-        pnlAll.add(pnlData);
-        pnlAll.add(pnlAddress);
-        pnlAll.add(pnlType);
+        JPanel pnlCenter = new JPanel();
+        pnlCenter.setLayout(new GridLayout(3, 0));
+        pnlCenter.add(pnlData);
+        pnlCenter.add(pnlAddress);
+        pnlCenter.add(pnlType);
         
         //Add panels to the JFrame container
     	Container c = this.getContentPane();
     	c.add(pnlHeading, BorderLayout.NORTH);
-        c.add(pnlAll, BorderLayout.CENTER);
+        c.add(pnlCenter, BorderLayout.CENTER);
     	c.add(pnlButtons, BorderLayout.SOUTH);
         
         //register buttons to accept events
@@ -320,14 +327,18 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         if (e.getSource() == rbtSingle)
         {
             type = "Single"; //retrieve value from RadioButtons
-            cboPackLoad.setEnabled(true);
-            txfNoMember.setEnabled(false);
+            lblPack.setVisible(true);
+            cboPackLoad.setVisible(true);
+            lblNoMember.setVisible(false);
+            txfNoMember.setVisible(false);
         }
         if (e.getSource() == rbtFamily)
         {
             type = "Family"; //retrieve value from RadioButtons
-            txfNoMember.setEnabled(true);
-            cboPackLoad.setEnabled(false);
+            lblNoMember.setVisible(true);
+            txfNoMember.setVisible(true);
+            lblPack.setVisible(false);
+            cboPackLoad.setVisible(false);
         }
         if(e.getSource() == cboStateLoad)
         {
@@ -340,6 +351,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         if(e.getSource() == cboAgentLoad)
         {
             agentLoad = (String) cboAgentLoad.getSelectedItem();
+            System.out.println("Agent: " + agentLoad);
         }
     }
 	
@@ -363,9 +375,10 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     public void addNewMember()
     {
         //insert into arrayList
-        int id, postcode;
-        String first, last, email, phone, address, suburb;
-
+        int id, noMember;
+        String first, last, email, phone, address, suburb, postcode;
+        String output = "<html>";
+        
         id = list.size()+1;
 
         //get data from TextFields and ComboBox
@@ -375,64 +388,86 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         phone = txfPhone.getText();
         address = txfAddress.getText();
         suburb = txfSuburb.getText();
-        postcode = Integer.parseInt(txfPostcode.getText());
+        postcode = txfPostcode.getText();
 
         validate = true;
-
-        //check
-        System.out.println("State: " + stateLoad + "\nPackage: " + packLoad + "\nAgent: " + agentLoad + "\nType: " + type + "\ngender: " + gender); 
         
-        //check to see if each TextField have data
-        if(!(first.equals("") || last.equals("") || email.equals("") || phone.equals("") || address.equals("")
-                || suburb.equals("") || postcode == 0))
+        if(Utilities.Validation.CheckNull(first, last, gender, email, phone, address, suburb, postcode, type) ||
+            agentLoad == null || agentLoad.equals("Make a Selection") || stateLoad == null || stateLoad.equals("Make a Selection")) 
         {
-            if(!(stateLoad.equals("Make a Selection")))
-            {
-                if(type.equals("Single")){ //type: Single
-                    if(!(packLoad.equals("Make a Selection"))){
-                        //add to ArrayList
-                        list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad));
-  
-                        nextAvailableID++;
-                        list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
-                        
-                        Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad);
-                        Utilities.DataAccessLayer.addSingleToDatabase(s, type);
-                        
-                        validate = false; //all data valid
-                    }
-                } 
-                else //type: Family
-                {
-                    if(!(txfNoMember.equals("")))
-                    {
-                        //add to ArrayList
-                        list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, id));
+            output += "Please complete all options on the form<br>";
+            validate = false;
+        }
+        else{
+            if(!Utilities.Validation.isString(first, last)){
+            output += "-  First name and Last name cannot contains numeric<br>";
+            validate = false;    
+            }
+            if(!Utilities.Validation.checkEmail(email)){
+                output += "-  Invalid Email<br>";
+                validate = false;
+            }
+            if(!Utilities.Validation.checkPhone(phone)){
+                output += "-  Invalid Phone number<br>";
+                validate = false;
+            }
+            if(!Utilities.Validation.checkPost(postcode)){
+                output += "-  Post codes must be in the range of 2000 – 9999<br>";
+                validate = false;
+            }
+            
+            
+            
+        }
+        if(validate){
+            //get agent ID from comboBox
+            agentID = Utilities.DataAccessLayer.getAgentID();
+            System.out.println(agentID);
+            if(type.equals("Single")){ //type: Single
+                if(!(packLoad.equals("Make a Selection") || packLoad == null)){
+                    //add to ArrayList
+                    list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, agentID));
 
-                        nextAvailableID++;
-                        list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
+                    nextAvailableID++;
+                    list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
 
-                        Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, id);
-                        Utilities.DataAccessLayer.addFamilyToDatabase(f, type);
-                        JOptionPane.showMessageDialog(null, "Add Family");
-                        validate = false; //all data valid
-                    }                         
+                    Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, agentID);
+                    Utilities.DataAccessLayer.addSingleToDatabase(s, type);
+
+                    //validate = false; //all data valid
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Please complete all fields");
                 }
             }
-        }
+            
+            else //type: Family
+            {
+                if(!(txfNoMember.equals("")))
+                {
+                    noMember = Integer.parseInt(txfNoMember.getText());
+                    //add to ArrayList
+                    list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, agentID));
 
-        if(validate)
-        {
-            JOptionPane.showMessageDialog(null, "Please complete all options on the form");		
-        }
-        else
-        {   			   			
+                    nextAvailableID++;
+                    list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
+
+                    Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, agentID);
+                    Utilities.DataAccessLayer.addFamilyToDatabase(f, type);
+                    JOptionPane.showMessageDialog(null, "Add Family");
+                } 
+                else{// txfNoMember is blank
+                    JOptionPane.showMessageDialog(null, "Please complete all fields");
+                }
+            }
             JOptionPane.showMessageDialog(null, "Member Record successfully added"); 			
             clearForm();  //clear Frame for next record
+            
+        } else {
+            JOptionPane.showMessageDialog(null, output);
         }
     }
    
-	
     // clear the Frame
     private void clearForm()  
     {
