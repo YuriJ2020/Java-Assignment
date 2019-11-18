@@ -33,7 +33,6 @@ public class MainMenu extends javax.swing.JFrame {
     public static ArrayList<Members> list = new ArrayList<Members>();
     public static ArrayList<Agent> agentList = new ArrayList<Agent>();
     public static ArrayList<Members> restoredList = new ArrayList<>();
-    private static int numMembers = 0; //count total no. of members records on file (to set the next ID)
     
     //open OutputFile
     private static FileOutputStream fos; 
@@ -455,7 +454,7 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddMemberMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMemberMousePressed
-        AddMember addMember = new AddMember(this);
+        AddMember addMember = new AddMember(this, list);
         this.setVisible(false);	
     }//GEN-LAST:event_btnAddMemberMousePressed
 

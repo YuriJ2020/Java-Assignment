@@ -85,7 +85,7 @@ public class SearchForm extends javax.swing.JFrame {
         for(Members m : list) {
             //convert number to String
             String memberIDString = Integer.toString(m.getId());
-            String feeString = Double.toString(m.getBaseFee());
+            String feeString = Double.toString(m.getFee());
             String agentIDString = Integer.toString(m.getAgentID());
             
             if(memberIDString.equalsIgnoreCase(search) || m.getName().equalsIgnoreCase(search) || m.getLast().equalsIgnoreCase(search)||

@@ -12,14 +12,14 @@ public class Single extends Members implements Serializable {
     private String packLoad;
     
     public Single(){
-        super(0, "", "", "", "", "", "", "", "", "", 40.00, "", 0);
+        super("", "", "", "", "", "", "", "", "", 40.00, "", 0);
         this.packLoad = packLoad;
     }
 
-    public Single(int id, String name, String last, String gender, String email, String phone, 
-            String address, String suburb, String state, String postcode, double baseFee, 
+    public Single(String name, String last, String gender, String email, String phone, 
+            String address, String suburb, String state, String postcode, double fee, 
             String packLoad, String type, int agentID) {
-        super(id, name, last, gender, email, phone, address, suburb, state, postcode, baseFee, type, agentID);
+        super(name, last, gender, email, phone, address, suburb, state, postcode, fee, type, agentID);
         this.packLoad = packLoad;
     }
 
@@ -33,17 +33,21 @@ public class Single extends Members implements Serializable {
          
     public void calcFees()
     {
-        if(getPackLoad().equals("Active Saver"))
+        System.out.println("Pack: " + packLoad);
+        if(packLoad.equalsIgnoreCase("Saver"))
         {
-            setBaseFee(getBaseFee() + 45);
+            System.out.println("Saver");
+            setFee(getFee());
         }
-        else if(getPackLoad().equals("Bronze Plus"))
+        else if(packLoad.equalsIgnoreCase("Bronze"))
         {
-            setBaseFee(getBaseFee() + 60);
+            System.out.println("Bronze");
+            setFee(getFee() * 1.5); //Bronze Package pay 150%
         }
         else
         {
-            setBaseFee(getBaseFee() + 80);
+            System.out.println("Ultimate");
+            setFee(getFee() * 2); //Ultimate Package pay 200%
         }
     }
 

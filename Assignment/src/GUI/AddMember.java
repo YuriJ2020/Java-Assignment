@@ -50,7 +50,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     private JButton btnAdd, btnClear, btnExit;
 
     //TextFields
-    private JTextField txfID, txfFirst, txfLast, txfEmail, txfPhone;
+    private JTextField txfFirst, txfLast, txfEmail, txfPhone;
     private JTextField txfAddress, txfSuburb, txfPostcode, txfNoMember;
 
     //Radio Buttons
@@ -63,12 +63,8 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     private JComboBox cboAgentLoad;
 
     //Labels
-    private JLabel lblHeading, lblID, lblFirst, lblLast, lblGender, lblEmail, lblPhone;
+    private JLabel lblHeading, lblFirst, lblLast, lblGender, lblEmail, lblPhone;
     private JLabel lblPack, lblNoMember;
-    
-    //Image
-    private JLabel lblImage;
-    private ImageIcon image;
     
     //set a color object using RGB
     Color myColor1 = new Color(255, 255, 255); //white
@@ -104,7 +100,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         }
     }
 	
-    public AddMember(MainMenu menu) 
+    public AddMember(MainMenu menu, ArrayList<Members> memberArray) 
     {  	
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Add a new Member");
@@ -116,6 +112,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         
         //re-create the main menu when this frame is closed
     	parentMenu = menu;
+        list = memberArray;
         
         //create panel for Heading
         JPanel pnlHeading = new JPanel();
@@ -156,16 +153,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         GridBagConstraints g = new GridBagConstraints();
         g.weightx = 3;
         g.fill = GridBagConstraints.HORIZONTAL;
-        
-        lblID = new JLabel("ID  ", SwingConstants.RIGHT);
-        g.gridx = 0;
-        g.gridy = 0;
-        pnlData.add(lblID, g);
-        
-        g.gridx = 1;
-        g.gridy = 0;
-    	pnlData.add(txfID = new JTextField(Integer.toString(nextAvailableID)), g);
-    	//txfID.setEnabled(false); //make this field not interactive
         
         g.gridx = 0;
         g.gridy = 1;
@@ -416,13 +403,15 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
             if(type.equals("Single")){ //type: Single
                 if(!(packLoad.equals("Make a Selection") || packLoad == null)){
                     //add to ArrayList
-                    //System.out.println(id + first + last + gender + email + phone + address + suburb + stateLoad + postcode + BASE_FEE + packLoad + agentID);
-                    //System.out.println(list);
-                    //list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, agentID));
-                    //System.out.println("Done1");
+                    System.out.println(id+"\t"+first+"\t"+last+"\t"+gender+"\t"+email+"\t"+phone+"\t"+address+"\t"+suburb+"\t"+stateLoad+"\t"+postcode+"\t"+BASE_FEE+"\t"+packLoad+"\t"+type+"\t"+ agentID);
+                    list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, type, agentID));
                    
-                    //list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
-
+                    JOptionPane.showMessageDialog(null, "Old Fee: " + list.get(list.size()-1).getFee());
+                    System.out.println("Size: " + list.size());
+                    System.out.println("CalcFee: " + list.get(list.size()-1));
+                    list.get(list.size()-1).calcFees(); //update the BASE_FEE($50) for this type of member
+                    JOptionPane.showMessageDialog(null, "New Fee: " + list.get(list.size()-1).getFee());
+                    
                     Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, type, agentID);
                     Utilities.DataAccessLayer.addSingleToDatabase(s);
                 }

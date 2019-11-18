@@ -36,10 +36,15 @@ public class Family extends Members implements Serializable
     {
         if(noMembers < 3)
         {
-            setBaseFee(getBaseFee() + 500);
+            setFee(getFee() * 1.2);
         }
-        else{
-            setBaseFee(getBaseFee() + 1000);
+        else if(noMembers < 5)
+        {
+            setFee(getFee() * 1.8);
+        }
+        else
+        {
+            setFee(getFee() * 2.5);
         }
     }
 

@@ -103,7 +103,7 @@ public class DataAccessLayer{
                 //insert data to member table
                 sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, package, baseFee, type, agentID) values"
                         + "('" + s.getId() + "','" + s.getName() + "','" + s.getLast() + "','" + s.getGender() + "','" 
-                        + s.getEmail() + "','" + s.getPhone() + "','" + s.getPackLoad() + "','" + s.getBaseFee() + "','" 
+                        + s.getEmail() + "','" + s.getPhone() + "','" + s.getPackLoad() + "','" + s.getFee() + "','" 
                         + s.getType() + "','" + s.getAgentID() + "')";
                 stmt.executeUpdate(sql);
                 System.out.println(sql);
@@ -206,7 +206,7 @@ public class DataAccessLayer{
             {
                 sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, noMember, baseFee, type, agentID) values"
                         + "('" + f.getId() + "','" + f.getName() + "','" + f.getLast() + "','" + f.getGender() + "','" 
-                        + f.getEmail() + "','" + f.getPhone() + "','" + f.getNoMembers() + "','" + f.getBaseFee() + "','" 
+                        + f.getEmail() + "','" + f.getPhone() + "','" + f.getNoMembers() + "','" + f.getFee() + "','" 
                         + f.getType() + "','" + f.getAgentID() + "')";
                 stmt.executeUpdate(sql);
 

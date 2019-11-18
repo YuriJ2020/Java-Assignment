@@ -50,6 +50,7 @@ public class ReadWrite {
                 restoredList.add((Members)ois.readObject());	         
             }
             ois.close();
+            System.out.println(restoredList);
         }
         catch(EOFException ex)
         {
