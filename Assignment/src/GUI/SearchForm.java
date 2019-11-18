@@ -81,28 +81,25 @@ public class SearchForm extends javax.swing.JFrame {
         
         found = false;
         String search = txfSearch.getText();
-        
+
         for(Members m : list) {
-            System.out.println(m.getId());
-            if(m == null) {
-                break;
-            } else {
-                if((m.getId() == Integer.parseInt(search)) || m.getName().equalsIgnoreCase(search) || m.getLast().equalsIgnoreCase(search)||
-                        m.getGender().equalsIgnoreCase(search) || m.getEmail().equalsIgnoreCase(search) || m.getPhone().equalsIgnoreCase(search)||
-                        m.getEmail().equalsIgnoreCase(search) || m.getAddress().equalsIgnoreCase(search) || m.getSuburb().equalsIgnoreCase(search)||
-                        m.getState().equalsIgnoreCase(search) || m.getPostcode().equalsIgnoreCase(search) || m.getBaseFee() == Double.parseDouble(search) ||
-                        m.getAgentID() == Integer.parseInt(search)){
-                    found = true;
-                    searchList.add(m);
-                }
-                else {
-                    JOptionPane.showMessageDialog(null, "This Member does not exist");
-                }
-            }
+            //convert number to String
+            String memberIDString = Integer.toString(m.getId());
+            String feeString = Double.toString(m.getBaseFee());
+            String agentIDString = Integer.toString(m.getAgentID());
+            
+            if(memberIDString.equalsIgnoreCase(search) || m.getName().equalsIgnoreCase(search) || m.getLast().equalsIgnoreCase(search)||
+                m.getGender().equalsIgnoreCase(search) || m.getEmail().equalsIgnoreCase(search) || m.getPhone().equalsIgnoreCase(search)||
+                m.getEmail().equalsIgnoreCase(search) || m.getAddress().equalsIgnoreCase(search) || m.getSuburb().equalsIgnoreCase(search)||
+                m.getState().equalsIgnoreCase(search) || m.getPostcode().equalsIgnoreCase(search) || feeString.equalsIgnoreCase(search) ||
+                agentIDString.equalsIgnoreCase(search)){
+        
+                found = true;
+                searchList.add(m);
+            }      
         }
         
         if(found == true) {
-            System.out.println("Found: " + found);
             memberModel = new MemberTableModel(searchList);
             resultTable.setModel(memberModel);
         } else {
@@ -117,7 +114,6 @@ public class SearchForm extends javax.swing.JFrame {
         found = false;
         
         for(Members m : list) {
-            System.out.println(m.getId());
             try{
                 if(m.getId() == (Integer.parseInt(txfSearch.getText()))){
                     found = true;
@@ -127,7 +123,7 @@ public class SearchForm extends javax.swing.JFrame {
                 nEx.getMessage();
             }
         }
-        System.out.println("found " + found);
+
         if(found == true) {
             memberModel = new MemberTableModel(searchList);
             resultTable.setModel(memberModel);
@@ -143,7 +139,6 @@ public class SearchForm extends javax.swing.JFrame {
         found = false;
 
         for(Members m : list) {
-            System.out.println(m.getName());
             if(m.getName().equalsIgnoreCase(txfSearch.getText())){
                 found = true;
                 searchList.add(m);
@@ -159,7 +154,28 @@ public class SearchForm extends javax.swing.JFrame {
     }
     
     private void SearchFromAgent() {
+        ArrayList<Members> searchList = new ArrayList<>();     
+        Utilities.DataAccessLayer.getDataFromDatabase(list);
+
+        found = false;
         
+        for(Members m : list) {
+            try{
+                if(m.getAgentID() == (Integer.parseInt(txfSearch.getText()))){
+                    found = true;
+                    searchList.add(m);
+                }
+            } catch (NumberFormatException nEx) { //if enter String
+                nEx.getMessage();
+            }
+        }
+
+        if(found == true) {
+            memberModel = new MemberTableModel(searchList);
+            resultTable.setModel(memberModel);
+        } else {
+            JOptionPane.showMessageDialog(null, "This member does not exist");
+        }
     }
 
     /**

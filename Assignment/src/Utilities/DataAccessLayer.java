@@ -10,7 +10,10 @@ import Classes.Family;
 import Classes.Members;
 import Classes.Single;
 import static GUI.AddMember.agentLoad;
-import static GUI.AddMember.stateLoad;
+import static GUI.UpdateForm.stateLoad;
+import static GUI.UpdateForm.packLoad;
+import static GUI.UpdateForm.gender;
+import static GUI.UpdateForm.type;
 import static GUI.UpdateForm.agentID;
 import static GUI.UpdateForm.txfEmail;
 import static GUI.UpdateForm.txfFirst;
@@ -20,6 +23,7 @@ import static GUI.UpdateForm.txfPhone;
 import static GUI.UpdateForm.txfAddress;
 import static GUI.UpdateForm.txfSuburb;
 import static GUI.UpdateForm.txfPostcode;
+import static GUI.UpdateForm.txfNoMember;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -84,10 +88,11 @@ public class DataAccessLayer{
             //check memberID in database
             String sql = "SELECT * from tblMember where memberID=" + s.getId();
             r = stmt.executeQuery(sql);
-            System.out.println(r);
+            System.out.println(sql);
             
             sql = "SELECT * from tblAddress where memberID=" + s.getId();
             r = stmt.executeQuery(sql);
+            System.out.println(sql);
             
             if(r.next())
             { //found this member id in database
@@ -95,7 +100,6 @@ public class DataAccessLayer{
             }
             else
             {
-                System.out.println("agent id");
                 //insert data to member table
                 sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, package, baseFee, type, agentID) values"
                         + "('" + s.getId() + "','" + s.getName() + "','" + s.getLast() + "','" + s.getGender() + "','" 
@@ -190,7 +194,6 @@ public class DataAccessLayer{
             //check memberID in database
             String sql = "SELECT * from tblMember where memberID=" + f.getId();
             r = stmt.executeQuery(sql);
-            System.out.println(r);
             
             sql = "SELECT * from tblAddress where memberID=" + f.getId();
             r = stmt.executeQuery(sql);
@@ -272,7 +275,6 @@ public class DataAccessLayer{
             //check agentID in database
             String sql = "SELECT * from tblAgent where agentID=" + a.getId();
             r = stmt.executeQuery(sql);
-            System.out.println(r);
             
             if(r.next())
             { //found this agent id in database
@@ -339,7 +341,6 @@ public class DataAccessLayer{
             System.out.println("tblAgent has been created");
             
             r = stmt.executeQuery("select * from tblAgent");
-            System.out.println(r);
          
             cboAgentLoad.addItem("Make a Selection");
             while (r.next()) {  
@@ -394,7 +395,7 @@ public class DataAccessLayer{
             stmt = con.createStatement();
             System.out.println("get Agent ID: " + agentID);
             String sql = "SELECT * FROM tblAgent WHERE agentID =" + agentID ;
-            //SELECT * FROM tblAgent WHERE CONCAT(first, ' ', last) LIKE '%Jon aa%'
+       
             r = stmt.executeQuery(sql);
             System.out.println(sql);
             
@@ -485,13 +486,40 @@ public class DataAccessLayer{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
             
-            String sql = "UPDATE tblMember SET first='" + txfFirst.getText()
-                    + "',last='" + txfLast.getText() + "',gender='" + txfEmail.getText() 
+            System.out.println("-- UPDATE --");
+            System.out.println(txfFirst.getText());
+            System.out.println(txfLast.getText());
+            System.out.println(gender);
+            System.out.println(txfPhone.getText());
+            System.out.println(txfEmail.getText());
+            System.out.println(packLoad);
+            System.out.println(txfNoMember.getText());
+            System.out.println(type);
+            System.out.println(agentID);
+            System.out.println(txfID.getText());
+            System.out.println(txfAddress.getText());
+            System.out.println(txfSuburb.getText());
+            System.out.println(stateLoad);
+            System.out.println(txfPostcode.getText());
+            
+            if(type.equals("Single")){
+                String sql = "UPDATE tblMember SET first='" + txfFirst.getText()
+                    + "',last='" + txfLast.getText() + "',gender='" + gender 
                     + "',phone='" + txfPhone.getText() + "',email='" + txfEmail.getText() 
+                    + "',package='" + packLoad + "',type='" + type + "',agentID='" + agentID 
                     + "' WHERE memberId=" + txfID.getText();
             stmt.executeUpdate(sql);
             
-            sql = "UPDATE tblAddress SET address='" + txfAddress.getText() + "',suburb='" 
+            
+            } else {
+                String sql = "UPDATE tblMember SET first='" + txfFirst.getText()
+                    + "',last='" + txfLast.getText() + "',gender='" + gender 
+                    + "',phone='" + txfPhone.getText() + "',email='" + txfEmail.getText() 
+                    + "',noMember='" + txfNoMember.getText() + "',type='" + type 
+                    + "',agentID='" + agentID + "' WHERE memberId=" + txfID.getText();
+            }
+            
+            String sql = "UPDATE tblAddress SET address='" + txfAddress.getText() + "',suburb='" 
                     + txfSuburb.getText() + "',state='" + stateLoad + "',postcode='" 
                     + txfPostcode.getText() + "' WHERE memberId=" + txfID.getText();
             stmt.executeUpdate(sql);

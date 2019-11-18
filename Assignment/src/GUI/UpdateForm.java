@@ -10,6 +10,8 @@ import Classes.Family;
 import Classes.Members;
 import Classes.Single;
 import Utilities.MemberTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.ButtonGroup;
 
@@ -17,15 +19,20 @@ import javax.swing.ButtonGroup;
  *
  * @author ppunme
  */
-public class UpdateForm extends javax.swing.JFrame {
+public class UpdateForm extends javax.swing.JFrame implements ActionListener{
     
     SearchForm parent;
     MemberTableModel memberModel;
     
     private ArrayList<Members> list = new ArrayList<>();
-    public static int agentID;
+    
     private String agentName;
-    private String stateLoad;
+    public static int agentID;
+    public static String gender;
+    public static String type;
+    public static String stateLoad;
+    public static String agentLoad;
+    public static String packLoad;
     
     /** Creates new form Update */
     public UpdateForm(SearchForm menu, MemberTableModel model, Members m) {
@@ -42,7 +49,7 @@ public class UpdateForm extends javax.swing.JFrame {
         //get Selected agent name from m.getAgentID()
         agentID = m.getAgentID();
         agentName = Utilities.DataAccessLayer.getAgentName();
-        System.out.println(agentName);
+        System.out.println("agent name: " + agentName);
         
         //make only one radio button can be selected
         ButtonGroup genderGroup = new ButtonGroup();
@@ -67,9 +74,11 @@ public class UpdateForm extends javax.swing.JFrame {
         if(m.getGender().equalsIgnoreCase("Male")){
             rbtMale.setSelected(true);
             rbtFemale.setSelected(false);
+            gender = "Male";
         } else {
             rbtFemale.setSelected(true);
             rbtMale.setSelected(false);
+            gender = "Female";
         }
         
         if (m instanceof Single) {
@@ -77,6 +86,7 @@ public class UpdateForm extends javax.swing.JFrame {
             cboPack.setSelectedItem(((Single) m).getPackLoad());
             lblNoMember.setVisible(false);
             txfNoMember.setVisible(false);
+            type = "Single";
         } 
         
         if (m instanceof Family) {
@@ -84,13 +94,59 @@ public class UpdateForm extends javax.swing.JFrame {
             txfNoMember.setText(Integer.toString(((Family) m).getNoMembers()));
             lblPack.setVisible(false);
             cboPack.setVisible(false);
+            type = "Family";
         }
+        
+        //if comboBox does not change
+        packLoad = ((Single) m).getPackLoad();
+        stateLoad = m.getState();
         
         //cannot change the primary key
         txfID.setEnabled(false);
         txfID.setToolTipText("CANNOT CHANGE PRIMARY KEY");
         
-        stateLoad = (String) cboState.getSelectedItem();
+        rbtMale.addActionListener(this);
+        rbtFemale.addActionListener(this);
+        rbtSingle.addActionListener(this);
+        rbtFamily.addActionListener(this);
+        cboState.addActionListener(this);
+        cboPack.addActionListener(this);
+        cboAgent.addActionListener(this);
+    }
+    
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == rbtMale)
+        {
+            gender = "Male"; //retrieve value from RadioButtons
+        }
+        if (e.getSource() == rbtFemale)
+        {
+            gender = "Female"; //retrieve value from RadioButtons
+        }
+        if (e.getSource() == rbtSingle)
+        {
+            type = "Single"; //retrieve value from RadioButtons
+        }
+        if (e.getSource() == rbtFamily)
+        {
+            type = "Family"; //retrieve value from RadioButtons
+        }
+        if(e.getSource() == cboState)
+        {
+            stateLoad = (String) cboState.getSelectedItem();
+        }
+        if(e.getSource() == cboPack)
+        {
+            packLoad = (String) cboPack.getSelectedItem();
+        }
+        if(e.getSource() == cboAgent)
+        {
+            agentLoad = (String) cboAgent.getSelectedItem();
+            System.out.println("Agent: " + agentLoad);
+            agentID = Utilities.DataAccessLayer.getAgentID();
+            System.out.println("New Agent ID: " + agentID);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -455,11 +511,11 @@ public class UpdateForm extends javax.swing.JFrame {
 
     public void updateMember(){
         Utilities.DataAccessLayer.updateMember();
-        memberModel.getDataFromDatabase();
-        memberModel.fireTableDataChanged();
+        memberModel.getDataFromDatabase(); //get datafrom database again
+        memberModel.fireTableDataChanged(); //refresh table
         
-        this.dispose();             //close this frame
-        parent.setVisible(true);    //make parent visible again
+        this.dispose();             
+        parent.setVisible(true); 
     }
     
     /**
