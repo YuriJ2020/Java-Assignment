@@ -10,6 +10,16 @@ import Classes.Family;
 import Classes.Members;
 import Classes.Single;
 import static GUI.AddMember.agentLoad;
+import static GUI.AddMember.stateLoad;
+import static GUI.UpdateForm.agentID;
+import static GUI.UpdateForm.txfEmail;
+import static GUI.UpdateForm.txfFirst;
+import static GUI.UpdateForm.txfID;
+import static GUI.UpdateForm.txfLast;
+import static GUI.UpdateForm.txfPhone;
+import static GUI.UpdateForm.txfAddress;
+import static GUI.UpdateForm.txfSuburb;
+import static GUI.UpdateForm.txfPostcode;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +34,7 @@ import javax.swing.JOptionPane;
  */
 public class DataAccessLayer{
     
-    public static void addSingleToDatabase(Single s, String type){
+    public static void addSingleToDatabase(Single s){
         //Insert into database
         Connection con = null;
         Statement stmt = null;
@@ -90,7 +100,7 @@ public class DataAccessLayer{
                 sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, package, baseFee, type, agentID) values"
                         + "('" + s.getId() + "','" + s.getName() + "','" + s.getLast() + "','" + s.getGender() + "','" 
                         + s.getEmail() + "','" + s.getPhone() + "','" + s.getPackLoad() + "','" + s.getBaseFee() + "','" 
-                        + type + "','" + s.getAgentID() + "')";
+                        + s.getType() + "','" + s.getAgentID() + "')";
                 stmt.executeUpdate(sql);
                 System.out.println(sql);
 
@@ -130,7 +140,7 @@ public class DataAccessLayer{
         }
     }
     
-    public static void addFamilyToDatabase(Family f, String type){
+    public static void addFamilyToDatabase(Family f){
         //Insert into database
         Connection con = null;
         Statement stmt = null;
@@ -194,7 +204,7 @@ public class DataAccessLayer{
                 sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, noMember, baseFee, type, agentID) values"
                         + "('" + f.getId() + "','" + f.getName() + "','" + f.getLast() + "','" + f.getGender() + "','" 
                         + f.getEmail() + "','" + f.getPhone() + "','" + f.getNoMembers() + "','" + f.getBaseFee() + "','" 
-                        + type + "','" + f.getAgentID() + "')";
+                        + f.getType() + "','" + f.getAgentID() + "')";
                 stmt.executeUpdate(sql);
 
                 //insert data to address table
@@ -343,6 +353,7 @@ public class DataAccessLayer{
         }  
     }
     
+    //Get Agent id from selected agent name
     public static int getAgentID()
     {
         int agentID;
@@ -354,10 +365,9 @@ public class DataAccessLayer{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
             System.out.println("Agent Load: " + agentLoad);
-            String sql = "SELECT * FROM tblAgent WHERE first LIKE '%" + agentLoad + "%'";
+            String sql = "SELECT * FROM tblAgent WHERE first ='" + agentLoad + "'";
             //SELECT * FROM tblAgent WHERE CONCAT(first, ' ', last) LIKE '%Jon aa%'
             r = stmt.executeQuery(sql);
-            System.out.println(sql);
             
             r.next();
             agentID = r.getInt("agentID");
@@ -373,9 +383,39 @@ public class DataAccessLayer{
         }
     }
     
+    public static String getAgentName(){
+        
+        String agentName;
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet r = null;
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            System.out.println("get Agent ID: " + agentID);
+            String sql = "SELECT * FROM tblAgent WHERE agentID =" + agentID ;
+            //SELECT * FROM tblAgent WHERE CONCAT(first, ' ', last) LIKE '%Jon aa%'
+            r = stmt.executeQuery(sql);
+            System.out.println(sql);
+            
+            r.next();
+            agentName = r.getString("first");
+            System.out.println(agentName);
+            
+            stmt.close();
+            con.close();
+               
+            return agentName;
+            
+        }catch(SQLException ex) {
+            ex.printStackTrace();
+            return agentName = "";
+        }
+    }
+    
+    
     public static void getDataFromDatabase(ArrayList<Members> list)
     {     
-        String agentName;
         Connection con = null;
         Statement stmt = null;
         ResultSet r = null;
@@ -399,52 +439,67 @@ public class DataAccessLayer{
                     list.add(new Single(r.getInt("memberID"),r.getString("first"),r.getString("last"),
                             r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
                             r.getString("suburb"),r.getString("state"),r.getString("postcode"),
-                            r.getDouble("baseFee"),r.getString("package"),r.getInt("agentID"))); 
+                            r.getDouble("baseFee"),r.getString("package"),r.getString("type"),r.getInt("agentID"))); 
                 } else {
                     list.add(new Family(r.getInt("memberID"),r.getString("first"),r.getString("last"),
                             r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
                             r.getString("suburb"),r.getString("state"),r.getString("postcode"),
-                            r.getDouble("baseFee"),r.getInt("noMember"),r.getInt("agentID"))); 
+                            r.getDouble("baseFee"),r.getInt("noMember"),r.getString("type"),r.getInt("agentID"))); 
                 }
-          
             }  
-            
             stmt.close();
             con.close();
-            
         }catch(SQLException ex) {
             ex.printStackTrace();
         }
     }
     
-    public static void getAgentList(ArrayList<Agent> agentList){
-        String agentName;
+    public static void deleteMember(Members m){
         Connection con = null;
         Statement stmt = null;
-        ResultSet r = null;
+             
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            
+            String sql = "Delete from tblAddress where memberID=" + m.getId();
+            stmt.executeUpdate(sql);
+            
+            sql = "Delete from tblMember where memberID=" + m.getId();
+            stmt.executeUpdate(sql);
+
+            stmt.close();
+            con.close();
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        } finally {
+            
+        }
+    }
+    
+    public static void updateMember(){
+        Connection con = null;
+        Statement stmt = null;
         
         try{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
-            String sql = "SELECT * FROM tblMember INNER JOIN tblAgent WHERE"
-                    + " tblMember.agentID = tblAddress.agentID";
-            r = stmt.executeQuery(sql);
-            System.out.println(sql);
-
-            //clear out the arrayList
-            agentList.clear();
             
-            //loop through the records and add them to the ArrayList
-            while(r.next())
-            {     
-                
-          
-            }  
+            String sql = "UPDATE tblMember SET first='" + txfFirst.getText()
+                    + "',last='" + txfLast.getText() + "',gender='" + txfEmail.getText() 
+                    + "',phone='" + txfPhone.getText() + "',email='" + txfEmail.getText() 
+                    + "' WHERE memberId=" + txfID.getText();
+            stmt.executeUpdate(sql);
+            
+            sql = "UPDATE tblAddress SET address='" + txfAddress.getText() + "',suburb='" 
+                    + txfSuburb.getText() + "',state='" + stateLoad + "',postcode='" 
+                    + txfPostcode.getText() + "' WHERE memberId=" + txfID.getText();
+            stmt.executeUpdate(sql);
+            JOptionPane.showMessageDialog(null, "Member details have been updated");
             
             stmt.close();
             con.close();
-            
-        }catch(SQLException ex) {
+        }catch(SQLException ex){
             ex.printStackTrace();
         }
     }

@@ -78,7 +78,8 @@ public class SearchForm extends javax.swing.JFrame {
     private void SearchFromAll() {  
         ArrayList<Members> searchList = new ArrayList<>();     
         Utilities.DataAccessLayer.getDataFromDatabase(list);
-
+        
+        found = false;
         String search = txfSearch.getText();
         
         for(Members m : list) {
@@ -113,56 +114,51 @@ public class SearchForm extends javax.swing.JFrame {
         ArrayList<Members> searchList = new ArrayList<>();     
         Utilities.DataAccessLayer.getDataFromDatabase(list);
 
+        found = false;
+        
         for(Members m : list) {
             System.out.println(m.getId());
-            if(m == null) {
-                break;
-            } else {
+            try{
                 if(m.getId() == (Integer.parseInt(txfSearch.getText()))){
                     found = true;
                     searchList.add(m);
                 }
-                else {
-                    JOptionPane.showMessageDialog(null, "This Member does not exist");
-                }
+            } catch (NumberFormatException nEx) { //if enter String
+                nEx.getMessage();
             }
         }
-        
+        System.out.println("found " + found);
         if(found == true) {
-            System.out.println("Found: " + found);
             memberModel = new MemberTableModel(searchList);
             resultTable.setModel(memberModel);
         } else {
-            JOptionPane.showMessageDialog(null, "This Member does not exist");
+            JOptionPane.showMessageDialog(null, "This member does not exist");
         }
     }
     
     private void SearchFromName() {
         ArrayList<Members> searchList = new ArrayList<>();     
         Utilities.DataAccessLayer.getDataFromDatabase(list);
+        
+        found = false;
 
         for(Members m : list) {
             System.out.println(m.getName());
-            if(m == null) {
-                break;
-            } else {
-                if(m.getName().equalsIgnoreCase(txfSearch.getText())){
-                    found = true;
-                    searchList.add(m);
-                }
+            if(m.getName().equalsIgnoreCase(txfSearch.getText())){
+                found = true;
+                searchList.add(m);
             }
         }
         
         if(found == true) {
-            System.out.println("Found: " + found);
             memberModel = new MemberTableModel(searchList);
             resultTable.setModel(memberModel);
         } else {
-            JOptionPane.showMessageDialog(null, "Member does not exist");
+            JOptionPane.showMessageDialog(null, "This member does not exist");
         }
     }
     
-    private void GetDataFromAgent() {
+    private void SearchFromAgent() {
         
     }
 
@@ -204,21 +200,16 @@ public class SearchForm extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowActivated(java.awt.event.WindowEvent evt) {
-                formWindowActivated(evt);
-            }
-        });
 
         pnlAll.setBackground(new java.awt.Color(34, 70, 96));
 
         pnlSearch.setBackground(new java.awt.Color(255, 255, 255));
 
-        lblSearchBy.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        lblSearchBy.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
         lblSearchBy.setText("Search from");
 
         btnBack.setBackground(new java.awt.Color(136, 132, 130));
-        btnBack.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        btnBack.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
         btnBack.setForeground(new java.awt.Color(255, 255, 255));
         btnBack.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnBack.setText("Back");
@@ -236,7 +227,7 @@ public class SearchForm extends javax.swing.JFrame {
         });
 
         btnDelete.setBackground(new java.awt.Color(220, 161, 56));
-        btnDelete.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        btnDelete.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnDelete.setText("Delete");
@@ -254,7 +245,7 @@ public class SearchForm extends javax.swing.JFrame {
         });
 
         btnUpdate.setBackground(new java.awt.Color(220, 161, 56));
-        btnUpdate.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        btnUpdate.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
         btnUpdate.setForeground(new java.awt.Color(255, 255, 255));
         btnUpdate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnUpdate.setText("Update");
@@ -284,7 +275,7 @@ public class SearchForm extends javax.swing.JFrame {
             }
         });
 
-        lblSearch.setFont(new java.awt.Font("Helvetica", 0, 20)); // NOI18N
+        lblSearch.setFont(new java.awt.Font(".SF NS Text", 0, 20)); // NOI18N
         lblSearch.setForeground(new java.awt.Color(255, 255, 255));
         lblSearch.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblSearch.setText("Search");
@@ -303,7 +294,8 @@ public class SearchForm extends javax.swing.JFrame {
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
-        cboSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Member ID", "First Name", "Sales Agent", " " }));
+        cboSearch.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
+        cboSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Member ID", "First Name", "Sales Agent" }));
         cboSearch.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cboSearchItemStateChanged(evt);
@@ -317,7 +309,7 @@ public class SearchForm extends javax.swing.JFrame {
 
         jScrollPane1.setBorder(null);
 
-        resultTable.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        resultTable.setFont(new java.awt.Font(".SF NS Text", 0, 12)); // NOI18N
         resultTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -379,7 +371,7 @@ public class SearchForm extends javax.swing.JFrame {
         );
 
         lblHead.setBackground(new java.awt.Color(255, 255, 255));
-        lblHead.setFont(new java.awt.Font(".SF NS Text", 0, 40)); // NOI18N
+        lblHead.setFont(new java.awt.Font("Andale Mono", 0, 40)); // NOI18N
         lblHead.setForeground(new java.awt.Color(255, 255, 255));
         lblHead.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblHead.setText("Search Form");
@@ -395,7 +387,7 @@ public class SearchForm extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAllLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblHead)
-                .addGap(182, 182, 182))
+                .addGap(170, 170, 170))
         );
         pnlAllLayout.setVerticalGroup(
             pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -404,7 +396,7 @@ public class SearchForm extends javax.swing.JFrame {
                 .addComponent(lblHead, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -421,30 +413,12 @@ public class SearchForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-        Font fn = null;
-        try{
-            fn = Font.createFont(Font.TRUETYPE_FONT,getClass().getResourceAsStream("../Font/Roboto-Regular.ttf"));
-            Font f1 = fn.deriveFont(Font.PLAIN,40);
-            Font f2 = fn.deriveFont(Font.PLAIN,20);
-            Font f3 = fn.deriveFont(Font.PLAIN,14);
-            
-            lblHead.setFont(f1);
-            lblSearchBy.setFont(f3);
-            btnSearch.setFont(f2);
-            btnBack.setFont(f3);
-            btnDelete.setFont(f3);
-            btnUpdate.setFont(f3);
-            
-        } catch (Exception e){
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }//GEN-LAST:event_formWindowActivated
-
     private void btnSearchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMousePressed
         
         if(txfSearch.getText().equals("")){
             JOptionPane.showMessageDialog(null, "Enter data to search");
+            memberModel = new MemberTableModel();
+            resultTable.setModel(memberModel);
         }
         else if (searchLoad == "All") {
             SearchFromAll();
@@ -456,7 +430,7 @@ public class SearchForm extends javax.swing.JFrame {
             SearchFromName();
         }
         else if (searchLoad == "Sales Agent") {
-            GetDataFromAgent();
+            SearchFromAgent();
         }
         
     }//GEN-LAST:event_btnSearchMousePressed
@@ -481,60 +455,19 @@ public class SearchForm extends javax.swing.JFrame {
 
     private void btnDeleteMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteMousePressed
         Members m = memberModel.getRow(selectedRow);
-        System.out.println(m.getId());
+        Utilities.DataAccessLayer.deleteMember(m);
         
-        Connection con = null;
-        Statement stmt = null;
-        
-        
-        try{
-            con = ConnectionDetails.getConnection();
-            stmt = con.createStatement();
-            
-            if(m instanceof Single)
-            {
-                String sql = "Delete from tblSingle where memberId=" + m.getId();
-                System.out.println(sql);
-                stmt.executeUpdate(sql);
-
-                sql = "Delete from tblAddress where memberId=" + m.getId();
-                stmt.executeUpdate(sql);
-
-                sql = "Delete from tblMember where memberId=" + m.getId();
-                stmt.executeUpdate(sql);
-
-                stmt.close();
-            } 
-            else 
-            {
-                String sql = "Delete from tblFamily where memberId=" + m.getId();
-                System.out.println(sql);
-                stmt.executeUpdate(sql);
-
-                sql = "Delete from tblAddress where memberId=" + m.getId();
-                stmt.executeUpdate(sql);
-
-                sql = "Delete from tblMember where memberId=" + m.getId();
-                stmt.executeUpdate(sql);
-
-                stmt.close();
-            }
-           
-            con.close();
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        } finally {
-            
-        }
-        //Utilities.DataAccessLayer.getDataFromDatabase();
+        //refresh table
         memberModel.fireTableRowsDeleted(selectedRow, selectedRow); //check
+        
+        memberModel = new MemberTableModel();
+        resultTable.setModel(memberModel);
     }//GEN-LAST:event_btnDeleteMousePressed
 
     private void btnUpdateMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUpdateMousePressed
         Members m = memberModel.getRow(selectedRow);
-        Update updateFrame = new Update(this,memberModel,m); 
+        UpdateForm updateFrame = new UpdateForm(this,memberModel,m); 
         this.setVisible(false);
-        
     }//GEN-LAST:event_btnUpdateMousePressed
 
     private void btnSearchMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMouseEntered
@@ -558,15 +491,15 @@ public class SearchForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSearchMouseExited
 
     private void btnBackMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackMouseExited
-        btnBack.setBackground(new java.awt.Color(255,255,255));
+        btnBack.setBackground(new java.awt.Color(136,132,130));
     }//GEN-LAST:event_btnBackMouseExited
 
     private void btnDeleteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteMouseExited
-        btnDelete.setBackground(new java.awt.Color(133,160,168));
+        btnDelete.setBackground(new java.awt.Color(220,161,56)); 
     }//GEN-LAST:event_btnDeleteMouseExited
 
     private void btnUpdateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUpdateMouseExited
-        btnUpdate.setBackground(new java.awt.Color(34,70,96));
+        btnUpdate.setBackground(new java.awt.Color(220,161,56));
     }//GEN-LAST:event_btnUpdateMouseExited
 
     public void setColor(JLabel label){
@@ -623,7 +556,7 @@ public class SearchForm extends javax.swing.JFrame {
     private javax.swing.JLabel lblSearchBy;
     private javax.swing.JPanel pnlAll;
     private javax.swing.JPanel pnlSearch;
-    private javax.swing.JTable resultTable;
+    private static javax.swing.JTable resultTable;
     private javax.swing.JTextField txfSearch;
     // End of variables declaration//GEN-END:variables
 }

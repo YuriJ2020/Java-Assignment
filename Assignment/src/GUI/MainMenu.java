@@ -10,13 +10,10 @@ import Classes.Members;
 import Utilities.ReadWrite;
 import java.awt.Color;
 import java.awt.Font;
-import java.io.EOFException;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -31,7 +28,7 @@ public class MainMenu extends javax.swing.JFrame {
      * Creates new form MainMenu
      */
     //input and output file
-    private static String fileName = "Members.bin";
+    final static String fileName = "Members.bin";
     
     public static ArrayList<Members> list = new ArrayList<Members>();
     public static ArrayList<Agent> agentList = new ArrayList<Agent>();
@@ -49,12 +46,7 @@ public class MainMenu extends javax.swing.JFrame {
         
         this.setTitle("Main Menu");
         this.setBounds(500, 100, 528, 580); // (x,y,width,height)
-        
-        //read contents of file on loading the main menu GUI
-        readFile();
-        JOptionPane.showMessageDialog(null, restoredList.size() + " Member records have been loaded from file");
-        System.out.println(list);
-        System.out.println("Restored List: " + restoredList);
+
     }
 
     /**
@@ -77,17 +69,18 @@ public class MainMenu extends javax.swing.JFrame {
         icRestore = new javax.swing.JLabel();
         lblRestore = new javax.swing.JLabel();
         btnAddMember = new javax.swing.JPanel();
-        lblAddFamily = new javax.swing.JLabel();
-        icAddFamily = new javax.swing.JLabel();
+        lblAddMember = new javax.swing.JLabel();
+        icAddMember = new javax.swing.JLabel();
         btnSearch = new javax.swing.JPanel();
         icSearch = new javax.swing.JLabel();
         lblSearch = new javax.swing.JLabel();
         btnAddAgent = new javax.swing.JPanel();
-        icAddSingle = new javax.swing.JLabel();
-        lblAddSingle = new javax.swing.JLabel();
+        icAddAgent = new javax.swing.JLabel();
+        lblAddAgent = new javax.swing.JLabel();
         btnHelp = new javax.swing.JPanel();
         icHelp = new javax.swing.JLabel();
         lblHelp = new javax.swing.JLabel();
+        btnExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -103,7 +96,7 @@ public class MainMenu extends javax.swing.JFrame {
 
         lblHead1.setFont(new java.awt.Font("Lucida Grande", 0, 36)); // NOI18N
         lblHead1.setForeground(new java.awt.Color(255, 255, 255));
-        lblHead1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblHead1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblHead1.setText("Health Insurance");
 
         lblHead2.setFont(new java.awt.Font("Lucida Grande", 0, 20)); // NOI18N
@@ -121,8 +114,8 @@ public class MainMenu extends javax.swing.JFrame {
                         .addGap(169, 169, 169)
                         .addComponent(lblHead2))
                     .addGroup(pnlHeadLayout.createSequentialGroup()
-                        .addGap(92, 92, 92)
-                        .addComponent(lblHead1, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(109, 109, 109)
+                        .addComponent(lblHead1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlHeadLayout.setVerticalGroup(
@@ -136,6 +129,7 @@ public class MainMenu extends javax.swing.JFrame {
         );
 
         btnBackup.setBackground(new java.awt.Color(255, 255, 255));
+        btnBackup.setToolTipText("Backup All data to Binary file named 'Members.bin'");
         btnBackup.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnBackupMouseEntered(evt);
@@ -176,6 +170,7 @@ public class MainMenu extends javax.swing.JFrame {
         );
 
         btnRestore.setBackground(new java.awt.Color(255, 255, 255));
+        btnRestore.setToolTipText("Restored the data from binary file");
         btnRestore.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnRestoreMouseEntered(evt);
@@ -216,6 +211,7 @@ public class MainMenu extends javax.swing.JFrame {
         );
 
         btnAddMember.setBackground(new java.awt.Color(255, 255, 255));
+        btnAddMember.setToolTipText("Add Membership details to the system");
         btnAddMember.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnAddMemberMouseEntered(evt);
@@ -228,13 +224,13 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        lblAddFamily.setForeground(new java.awt.Color(102, 102, 102));
-        lblAddFamily.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblAddFamily.setText("Add Member");
+        lblAddMember.setForeground(new java.awt.Color(102, 102, 102));
+        lblAddMember.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAddMember.setText("Add Member");
 
-        icAddFamily.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icAddFamily.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-user-green.png"))); // NOI18N
-        icAddFamily.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        icAddMember.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        icAddMember.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-user-green.png"))); // NOI18N
+        icAddMember.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         javax.swing.GroupLayout btnAddMemberLayout = new javax.swing.GroupLayout(btnAddMember);
         btnAddMember.setLayout(btnAddMemberLayout);
@@ -243,20 +239,21 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(btnAddMemberLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(btnAddMemberLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(icAddFamily, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                    .addComponent(lblAddFamily, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
+                    .addComponent(icAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                    .addComponent(lblAddMember, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
                 .addContainerGap())
         );
         btnAddMemberLayout.setVerticalGroup(
             btnAddMemberLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnAddMemberLayout.createSequentialGroup()
-                .addComponent(icAddFamily, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(icAddMember, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblAddFamily)
+                .addComponent(lblAddMember)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         btnSearch.setBackground(new java.awt.Color(255, 255, 255));
+        btnSearch.setToolTipText("Search for member in the system");
         btnSearch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnSearchMouseEntered(evt);
@@ -298,6 +295,7 @@ public class MainMenu extends javax.swing.JFrame {
         );
 
         btnAddAgent.setBackground(new java.awt.Color(255, 255, 255));
+        btnAddAgent.setToolTipText("Add Sales Agent details to the system");
         btnAddAgent.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnAddAgent.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -311,13 +309,13 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        icAddSingle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icAddSingle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-business-red.png"))); // NOI18N
-        icAddSingle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        icAddAgent.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        icAddAgent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-business-red.png"))); // NOI18N
+        icAddAgent.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        lblAddSingle.setForeground(new java.awt.Color(102, 102, 102));
-        lblAddSingle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblAddSingle.setText("Add Agent");
+        lblAddAgent.setForeground(new java.awt.Color(102, 102, 102));
+        lblAddAgent.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAddAgent.setText("Add Agent");
 
         javax.swing.GroupLayout btnAddAgentLayout = new javax.swing.GroupLayout(btnAddAgent);
         btnAddAgent.setLayout(btnAddAgentLayout);
@@ -326,21 +324,22 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(btnAddAgentLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(btnAddAgentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(icAddSingle, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                    .addComponent(lblAddSingle, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
+                    .addComponent(icAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                    .addComponent(lblAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
                 .addContainerGap())
         );
         btnAddAgentLayout.setVerticalGroup(
             btnAddAgentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnAddAgentLayout.createSequentialGroup()
-                .addComponent(icAddSingle, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(icAddAgent, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblAddSingle, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblAddAgent, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12))
         );
 
         btnHelp.setBackground(new java.awt.Color(255, 255, 255));
         btnHelp.setForeground(new java.awt.Color(255, 255, 255));
+        btnHelp.setToolTipText("Help Document");
         btnHelp.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnHelpMouseEntered(evt);
@@ -382,6 +381,23 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGap(12, 12, 12))
         );
 
+        btnExit.setBackground(new java.awt.Color(153, 153, 153));
+        btnExit.setForeground(new java.awt.Color(255, 255, 255));
+        btnExit.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnExit.setText("Exit");
+        btnExit.setOpaque(true);
+        btnExit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnExitMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnExitMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnExitMousePressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlAllLayout = new javax.swing.GroupLayout(pnlAll);
         pnlAll.setLayout(pnlAllLayout);
         pnlAllLayout.setHorizontalGroup(
@@ -393,13 +409,16 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(btnAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(39, 39, 39)
-                .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(39, 39, 39)
-                .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRestore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnlAllLayout.createSequentialGroup()
+                        .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(39, 39, 39)
+                        .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnRestore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(75, Short.MAX_VALUE))
         );
         pnlAllLayout.setVerticalGroup(
@@ -416,7 +435,9 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnRestore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -434,26 +455,12 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddMemberMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMemberMousePressed
-        AddMember addMember = new AddMember(this, list);
+        AddMember addMember = new AddMember(this);
         this.setVisible(false);	
     }//GEN-LAST:event_btnAddMemberMousePressed
 
     private void btnBackupMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackupMousePressed
-
-        
-        try{
-            ReadWrite.writeData(fileName, list);
-        } catch(FileNotFoundException fnfEx){
-            System.err.println("Problem with the Members.bin file");
-            JOptionPane.showMessageDialog(null, "File \"Members.bin\" will be created");
-        } catch(ClassNotFoundException cnfEx){
-            System.err.println("Patient class does not exist");
-        } catch(NotSerializableException nsEx){
-            System.err.println("A class has not been serialised");
-        }
-        catch(IOException ioEx){
-            System.err.println("Problem with reading data from file");
-        }
+        writeData();
     }//GEN-LAST:event_btnBackupMousePressed
 
     private void btnHelpMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHelpMousePressed
@@ -470,8 +477,7 @@ public class MainMenu extends javax.swing.JFrame {
         
         if(option == 0){
             try{
-                readFile();
-                JOptionPane.showMessageDialog(null, restoredList.size() + " Member records have been loaded from file");
+                readData();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());	
             }
@@ -480,7 +486,6 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void btnAddMemberMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMemberMouseEntered
         setColor(btnAddMember);
-        btnAddMember.setToolTipText("Add Family Membership details to the system");
     }//GEN-LAST:event_btnAddMemberMouseEntered
 
     private void btnHelpMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHelpMouseEntered
@@ -521,13 +526,13 @@ public class MainMenu extends javax.swing.JFrame {
             
             lblHead1.setFont(f1);
             lblHead2.setFont(f2);
-            //lblAddMember.setFont(f3);
-            lblAddSingle.setFont(f3);
-            lblAddFamily.setFont(f3);
+            lblAddAgent.setFont(f3);
+            lblAddMember.setFont(f3);
             lblSearch.setFont(f3);
             lblHelp.setFont(f3);
             lblBackup.setFont(f3);
             lblRestore.setFont(f3);
+            btnExit.setFont(f3);
             
         } catch (Exception e){
             JOptionPane.showMessageDialog(null, e);
@@ -546,11 +551,9 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void btnAddAgentMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddAgentMouseEntered
         setColor(btnAddAgent);
-        btnAddAgent.setToolTipText("Add Insurance broker details to the system");
     }//GEN-LAST:event_btnAddAgentMouseEntered
 
     private void btnSearchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMousePressed
-       
         SearchForm search = new SearchForm(this);
         this.setVisible(false);	
         
@@ -564,6 +567,36 @@ public class MainMenu extends javax.swing.JFrame {
         setColor(btnSearch);
     }//GEN-LAST:event_btnSearchMouseEntered
 
+    private void btnExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExitMouseEntered
+        btnExit.setBackground(new java.awt.Color(181,177,178));
+    }//GEN-LAST:event_btnExitMouseEntered
+
+    private void btnExitMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExitMouseExited
+        btnExit.setBackground(new java.awt.Color(153,153,153));
+    }//GEN-LAST:event_btnExitMouseExited
+
+    private void btnExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExitMousePressed
+        int w = 200;
+        
+        String exit = "<html><body width='%1s'>"
+                + "<p>Do you want to backup the data to binary file "
+                + "before you close the program?";
+        int optionExit = JOptionPane.showConfirmDialog(null, String.format(exit, w, w),"Exit the program",JOptionPane.YES_NO_OPTION);
+        
+        if(optionExit == 0){
+            try{
+                System.out.println("saved");
+                writeData();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());	
+            }
+        } 
+        else {
+            System.exit(0);
+        }
+        System.exit(0);
+    }//GEN-LAST:event_btnExitMousePressed
+
     public void setColor(JPanel panel){
         panel.setBackground(new java.awt.Color(181,177,178)); 
     }
@@ -572,59 +605,49 @@ public class MainMenu extends javax.swing.JFrame {
         panel.setBackground(new java.awt.Color(255,255,255));
     }
     
-    public static ArrayList<Members> readData()
-    {
- 
-        ArrayList<Members> list = new ArrayList<>();
+    public static void writeData(){
         
+        Utilities.DataAccessLayer.getDataFromDatabase(list);
+        System.out.println("Backup list" + list);
+
         try{
-           list = ReadWrite.readData(fileName);
+            ReadWrite.writeData(fileName, list);
+            JOptionPane.showMessageDialog(null, "All Members records stored to file \"Members.bin\"");
         }
         catch(FileNotFoundException fnfEx){
-            System.err.println("Problem with the Members.bin file");
-            JOptionPane.showMessageDialog(null, "File \"Members.bin\" will be created");
+            System.err.println("Problem with the binary file");
         }
         catch(ClassNotFoundException cnfEx){
-            System.err.println("Patient class does not exist");
+            System.err.println("Problem with the Patient class");
         }
         catch(NotSerializableException nsEx){
             System.err.println("A class has not been serialised");
         }
-        catch(IOException ioEx){
-            System.err.println("Problem with reading data from file");
+        catch (IOException ioEx){
+            System.err.println("Issue(s) with saving data to file");
         }
-        return list;
     }
     
-    public static void readFile()
-    {
-        boolean reading = true;
-        try
-        {
-            FileInputStream fiStream = new FileInputStream(fileName);
-            ObjectInputStream inStream = new ObjectInputStream(fiStream);
-
-            //while (inStream.readObject() != null)
-            //while (inStream.available() != 0)
-            //while (inStream.read() != -1) 
-            while(reading)
-            {			
-                restoredList.add((Members)inStream.readObject());
-                    
-                System.out.println(restoredList);
-                numMembers++;
-            }
-            inStream.close();
+    public static void readData(){
+        Utilities.DataAccessLayer.getDataFromDatabase(restoredList);
+        try{
+            ReadWrite.readData(fileName);
+            JOptionPane.showMessageDialog(null, restoredList.size() + " student records have been loaded from file");
         }
-        catch(EOFException ex)
-        {
-            reading = false;
+        catch(FileNotFoundException fnfEx){
+            System.err.println("Problem with the binary file");
         }
-        catch(Exception e)
-        {
-            reading = false;
+        catch(ClassNotFoundException cnfEx){
+            System.err.println("Problem with the Patient class");
+        }
+        catch(NotSerializableException nsEx){
+            System.err.println("A class has not been serialised");
+        }
+        catch (IOException ioEx){
+            System.err.println("Issue(s) with saving data to file");
         }
     }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -663,17 +686,18 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JPanel btnAddAgent;
     private javax.swing.JPanel btnAddMember;
     private javax.swing.JPanel btnBackup;
+    private javax.swing.JLabel btnExit;
     private javax.swing.JPanel btnHelp;
     private javax.swing.JPanel btnRestore;
     private javax.swing.JPanel btnSearch;
-    private javax.swing.JLabel icAddFamily;
-    private javax.swing.JLabel icAddSingle;
+    private javax.swing.JLabel icAddAgent;
+    private javax.swing.JLabel icAddMember;
     private javax.swing.JLabel icBackup;
     private javax.swing.JLabel icHelp;
     private javax.swing.JLabel icRestore;
     private javax.swing.JLabel icSearch;
-    private javax.swing.JLabel lblAddFamily;
-    private javax.swing.JLabel lblAddSingle;
+    private javax.swing.JLabel lblAddAgent;
+    private javax.swing.JLabel lblAddMember;
     private javax.swing.JLabel lblBackup;
     private javax.swing.JLabel lblHead1;
     private javax.swing.JLabel lblHead2;

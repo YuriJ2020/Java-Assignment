@@ -9,7 +9,6 @@ import Classes.Agent;
 import Classes.Family;
 import Classes.Members;
 import Classes.Single;
-import Utilities.ConnectionDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -21,10 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.swing.ButtonGroup;
@@ -109,7 +104,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         }
     }
 	
-    public AddMember(MainMenu menu, ArrayList<Members> membersArray) 
+    public AddMember(MainMenu menu) 
     {  	
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Add a new Member");
@@ -121,9 +116,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         
         //re-create the main menu when this frame is closed
     	parentMenu = menu;
-        list = membersArray;
-
-        nextAvailableID = list.size() + 1;
         
         //create panel for Heading
         JPanel pnlHeading = new JPanel();
@@ -242,6 +234,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         cboPackLoad = new JComboBox(pLoad);
         cboPackLoad.setSelectedItem("Make a Selection");
         
+        //get agent name from database to Combobox
         cboAgentLoad = new JComboBox();
         Utilities.DataAccessLayer.getAgentToCombobox(cboAgentLoad);
         
@@ -262,7 +255,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         System.out.println(txfNoMember);
         lblNoMember.setVisible(false);
         txfNoMember.setVisible(false);
-        
         
         //Panel for the buttons
     	JPanel pnlButtons = new JPanel();
@@ -379,7 +371,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         String first, last, email, phone, address, suburb, postcode;
         String output = "<html>";
         
-        id = list.size()+1;
+        id = Integer.parseInt(txfID.getText());
 
         //get data from TextFields and ComboBox
         first = txfFirst.getText();
@@ -416,8 +408,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                 validate = false;
             }
             
-            
-            
         }
         if(validate){
             //get agent ID from comboBox
@@ -426,15 +416,15 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
             if(type.equals("Single")){ //type: Single
                 if(!(packLoad.equals("Make a Selection") || packLoad == null)){
                     //add to ArrayList
-                    list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, agentID));
+                    //System.out.println(id + first + last + gender + email + phone + address + suburb + stateLoad + postcode + BASE_FEE + packLoad + agentID);
+                    //System.out.println(list);
+                    //list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, agentID));
+                    //System.out.println("Done1");
+                   
+                    //list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
 
-                    nextAvailableID++;
-                    list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
-
-                    Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, agentID);
-                    Utilities.DataAccessLayer.addSingleToDatabase(s, type);
-
-                    //validate = false; //all data valid
+                    Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, type, agentID);
+                    Utilities.DataAccessLayer.addSingleToDatabase(s);
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Please complete all fields");
@@ -447,13 +437,12 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                 {
                     noMember = Integer.parseInt(txfNoMember.getText());
                     //add to ArrayList
-                    list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, agentID));
+                    //list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, type, agentID));
 
-                    nextAvailableID++;
-                    list.get(id-1).calcFees(); //update the BASE_FEE($50) for this type of member
+                    //list.get(id).calcFees(); //update the BASE_FEE($50) for this type of member
 
-                    Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, agentID);
-                    Utilities.DataAccessLayer.addFamilyToDatabase(f, type);
+                    Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, type, agentID);
+                    Utilities.DataAccessLayer.addFamilyToDatabase(f);
                     JOptionPane.showMessageDialog(null, "Add Family");
                 } 
                 else{// txfNoMember is blank
@@ -461,8 +450,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                 }
             }
             JOptionPane.showMessageDialog(null, "Member Record successfully added"); 			
-            clearForm();  //clear Frame for next record
-            
+            clearForm();  //clear Frame for next record  
         } else {
             JOptionPane.showMessageDialog(null, output);
         }
@@ -488,8 +476,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         cboPackLoad.setSelectedItem("Make a Selection");	
         cboAgentLoad.setSelectedItem("Make a Selection");	
     }
- 
-    
     
     // close addMember frame and return to main menu
     public void mainMenu() 

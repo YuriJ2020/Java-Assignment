@@ -22,10 +22,13 @@ public abstract class Members implements Serializable
     private String state;
     private String postcode;
     private double baseFee; //$40.00 per month
+    private String type;
     private int agentID;
 
     //Constructor
-    public Members(int id, String name, String last, String gender, String email, String phone, String address, String suburb, String state, String postcode, double baseFee, int agentID) {
+    public Members(int id, String name, String last, String gender, String email, 
+            String phone, String address, String suburb, String state, String postcode, 
+            double baseFee, String type, int agentID) {
         this.id = id;
         this.name = name;
         this.last = last;
@@ -37,6 +40,7 @@ public abstract class Members implements Serializable
         this.state = state;
         this.postcode = postcode;
         this.baseFee = baseFee;
+        this.type = type;
         this.agentID = agentID;
     }
     
@@ -132,6 +136,14 @@ public abstract class Members implements Serializable
         this.baseFee = baseFee;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public int getAgentID() {
         return agentID;
     }
@@ -142,10 +154,11 @@ public abstract class Members implements Serializable
 
     @Override
     public String toString() {
-        return "\n--Member details--" + "\n\nMember id: " + id + "\nName: " + name + " Last: " + last 
-                + " Gender: " + gender + "\nEmail: " + email + " Phone: " + phone 
-                + "\nAddress: " + address + " Suburb: " + suburb + "\nState: " + state 
-                + " Postcode: " + postcode + "\nBase Fee: " + baseFee + "\n" + "\nAgent id: " + agentID;
+        return "\n--Member details--" + "\nMember id: " + id + "\nName: " + name + " " + last 
+                + "\t\t" + gender + "\t" + email + "\t" + phone 
+                + "\nAddress: " + address + "\t" + suburb + "\t" + state 
+                + "\t" + postcode + "\nBase Fee: " + baseFee + "\tType: " + type 
+                + "\tAgent id: " + agentID;
     }
     
     
