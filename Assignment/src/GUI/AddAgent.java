@@ -6,7 +6,7 @@
 package GUI;
 
 import Classes.Agent;
-import Utilities.ConnectionDetails;
+import static GUI.AddMember.agentLoad;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -15,10 +15,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.swing.JButton;
@@ -59,8 +55,6 @@ public class AddAgent extends JFrame implements ActionListener
     
     private boolean validate = true;
 
-    private int nextAvailableID;
-
     MainMenu parentMenu;
     
     //set default font
@@ -90,8 +84,6 @@ public class AddAgent extends JFrame implements ActionListener
         //re-create the main menu when this frame is closed
     	parentMenu = menu;
         agentList = list;
-        
-        nextAvailableID = 1;
   
         //create panel for Heading
         JPanel pnlHeading = new JPanel();
@@ -116,8 +108,7 @@ public class AddAgent extends JFrame implements ActionListener
         
         g.gridx = 1;
         g.gridy = 0;
-    	pnlData.add(txfID = new JTextField(Integer.toString(nextAvailableID)), g);
-    	txfID.setEnabled(false); //make this field not interactive
+    	pnlData.add(txfID = new JTextField(), g);
         
         g.gridx = 0;
         g.gridy = 1;
@@ -143,15 +134,13 @@ public class AddAgent extends JFrame implements ActionListener
         g.gridy = 4;
         pnlData.add(txfPhone = new JTextField(10), g);
         
-        
         //Create panel for the buttons
     	JPanel pnlButtons = new JPanel();
         pnlButtons.setBorder(new EmptyBorder(10, 10, 10, 10));
-    	pnlButtons.add(btnAdd = new JButton("Add"));
+        pnlButtons.add(btnExit = new JButton("Main menu"));
     	pnlButtons.add(btnClear = new JButton("Clear"));
-    	pnlButtons.add(btnExit = new JButton("Main menu"));
-        
-        
+        pnlButtons.add(btnAdd = new JButton("Add"));
+    	
         //Add panels to the JFrame container
     	Container c = this.getContentPane();
     	c.add(pnlHeading, BorderLayout.NORTH);
@@ -185,41 +174,44 @@ public class AddAgent extends JFrame implements ActionListener
     {
         int id;
         String first, last, email, phone, address, suburb, postcode;
-
-        id = agentList.size()+1;
+        String output = "<html>";
 
         //get data from TextFields and ComboBox
+        id = Integer.parseInt(txfID.getText());
         first = txfFirst.getText();
         last = txfLast.getText();
         phone = txfPhone.getText();
 
         validate = true;
-
-        //check to see if each TextField have data
-        if(!(first.equals("")|| last.equals("")|| phone.equals("")))
+        
+        if((first.equals("")|| last.equals("")|| phone.equals("") || id == 0))
         {
-            JOptionPane.showMessageDialog(null, id + " " + first + " " + last + " " + " " + phone);
-            nextAvailableID++;
-            
+            output += "Please complete all options on the form<br>";
+            validate = false;
+        }
+        else{
+            if(!Utilities.Validation.isString(first, last)){
+            output += "-  First name and Last name cannot contains numeric<br>";
+            validate = false;    
+            }
+            if(!Utilities.Validation.checkPhone(phone)){
+                output += "-  Invalid Phone number<br>";
+                validate = false;
+            }
+        }
+
+        if(validate)
+        {
             //add to ArrayList
             agentList.add(new Agent(id,first,last,phone));
             
             //create an object to stored the details
             Agent a = new Agent(id,first,last,phone);
             Utilities.DataAccessLayer.addAgentToDatabase(a);
-            
-            validate = false; //all data valid	
-        }
-
-        if(validate)
-        {
-            JOptionPane.showMessageDialog(null, "Please complete all options on the form");		
         }
         else
         {   			   			
-            JOptionPane.showMessageDialog(null, "Agent Record successfully added"); 			
-            //clear Frame for next record
-            clearForm(); 
+            JOptionPane.showMessageDialog(null, output);			
         }		
     }
     
@@ -228,7 +220,7 @@ public class AddAgent extends JFrame implements ActionListener
     private void clearForm()  
     {
         //re-set all components
-        txfID.setText(Integer.toString(nextAvailableID));
+        txfID.setText("");
         txfFirst.setText("");	
         txfLast.setText("");
         txfPhone.setText("");

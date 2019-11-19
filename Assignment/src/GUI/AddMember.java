@@ -222,8 +222,8 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     	JPanel pnlButtons = new JPanel();
         pnlButtons.setBorder(new EmptyBorder(10, 10, 10, 10));
         pnlButtons.add(btnExit = new JButton("Main menu"));
-    	pnlButtons.add(btnAdd = new JButton("Add"));
     	pnlButtons.add(btnClear = new JButton("Clear"));
+        pnlButtons.add(btnAdd = new JButton("Add"));
 
         //Create panal for combine all panel
         JPanel pnlCenter = new JPanel();
@@ -367,7 +367,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                     totalFee = list.get(list.size()-1).getFee();
                     
                     Utilities.DataAccessLayer.addMemberToDatabase(first, last, gender, email, phone, totalFee, packLoad, noMember, type, agentID);
-                    JOptionPane.showMessageDialog(null, "Member Record successfully added");
+
                     clearForm();  //clear Frame for next record  
                 }
           
@@ -387,7 +387,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                     totalFee = list.get(list.size()-1).getFee();
                    
                     Utilities.DataAccessLayer.addMemberToDatabase(first, last, gender, email, phone, totalFee, packLoad, noMember, type, agentID);
-                    JOptionPane.showMessageDialog(null, "Member Record successfully added");
+                    
                     clearForm();  //clear Frame for next record  
                 } 
                 else{// txfNoMember is blank

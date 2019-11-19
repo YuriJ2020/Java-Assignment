@@ -86,6 +86,8 @@ public class DataAccessLayer{
                 stmt.executeUpdate(sql);
                 System.out.println(sql);
                 System.out.println("Added Single member to Database");
+                JOptionPane.showMessageDialog(null, "Member Record successfully added");
+                
             } else { //Family
                 sql = "INSERT INTO tblMember (first, last, gender, email, phone, noMember, fee, type, agentID) values"
                         + "('" + first + "','" + last + "','" + gender + "','" + email + "','" 
@@ -93,6 +95,7 @@ public class DataAccessLayer{
                 stmt.executeUpdate(sql);
                 System.out.println(sql);
                 System.out.println("Added Family member to Database");
+                JOptionPane.showMessageDialog(null, "Member Record successfully added");
             }
         } catch (SQLException sqlE) {
             sqlE.printStackTrace();
@@ -168,6 +171,7 @@ public class DataAccessLayer{
                         + "','" + a.getPhone() + "')";
                 stmt.executeUpdate(sql);
                 System.out.println("add data to tblAgent");
+                JOptionPane.showMessageDialog(null, "Agent Record successfully added");
             }
             
         } catch (SQLException sqlE) {

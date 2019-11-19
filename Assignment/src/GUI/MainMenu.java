@@ -9,7 +9,9 @@ import Classes.Agent;
 import Classes.Members;
 import Utilities.ReadWrite;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -462,7 +464,15 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBackupMousePressed
 
     private void btnHelpMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHelpMousePressed
-        // TODO add your handling code here:
+        //This pdf document is located in the root directory of this NetBeans project
+        String document = "User Documentation.pdf";  //could also have a file path here to another directory
+        try{
+            File f = new File(document);
+            Desktop.getDesktop().open(f);
+        }
+        catch(IOException ioE){
+            System.err.print(ioE.getMessage());
+        } 
     }//GEN-LAST:event_btnHelpMousePressed
 
     private void btnRestoreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRestoreMousePressed
