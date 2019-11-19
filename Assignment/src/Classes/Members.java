@@ -11,6 +11,7 @@ import java.io.Serializable;
 //Abstract class
 public abstract class Members implements Serializable
 {
+    private int id;
     private String name;
     private String last;
     private String gender;
@@ -25,9 +26,10 @@ public abstract class Members implements Serializable
     private int agentID;
 
     //Constructor
-    public Members(String name, String last, String gender, String email, 
+    public Members(int id, String name, String last, String gender, String email, 
             String phone, String address, String suburb, String state, String postcode, 
             double fee, String type, int agentID) {
+        this.id = id;
         this.name = name;
         this.last = last;
         this.gender = gender;
@@ -46,6 +48,14 @@ public abstract class Members implements Serializable
     //----Abstract Method----
 
     //GET and SET methods
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -144,7 +154,7 @@ public abstract class Members implements Serializable
 
     @Override
     public String toString() {
-        return "\n--Member details--" + "\nName: " + name + " " + last 
+        return "\n--Member details--" + "\nMember id: " + id + "\nName: " + name + " " + last 
                 + "\t\t" + gender + "\t" + email + "\t" + phone 
                 + "\nAddress: " + address + "\t" + suburb + "\t" + state 
                 + "\t" + postcode + "\nBase Fee: " + baseFee + "\tType: " + type 

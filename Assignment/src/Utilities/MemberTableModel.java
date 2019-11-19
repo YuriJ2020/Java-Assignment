@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -20,7 +19,7 @@ public class MemberTableModel extends AbstractTableModel {
     private ArrayList<Members> list = new ArrayList<>();
 
     private String[] columnNames = {"ID", "First Name", "Last Name", "Gender",
-        "Email", "Phone", "Address", "Suburb", "State", "Postcode", "Package", "No. of Member", "Type", "Agent ID"};
+        "Email", "Phone", "Address", "Suburb", "State", "Postcode", "Package", "No. of Member", "Fee", "Type", "Agent ID"};
 
     //constructor
     public MemberTableModel() {
@@ -85,8 +84,10 @@ public class MemberTableModel extends AbstractTableModel {
                     return null;
                 }
             case 12:
-                return m.getType();
+                return m.getFee();
             case 13:
+                return m.getType();
+            case 14:
                 return m.getAgentID();              
         }
         return null;

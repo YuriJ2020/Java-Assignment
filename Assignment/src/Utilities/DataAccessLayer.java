@@ -25,6 +25,7 @@ import static GUI.UpdateForm.txfSuburb;
 import static GUI.UpdateForm.txfPostcode;
 import static GUI.UpdateForm.txfNoMember;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -524,6 +525,86 @@ public class DataAccessLayer{
                     + txfPostcode.getText() + "' WHERE memberId=" + txfID.getText();
             stmt.executeUpdate(sql);
             JOptionPane.showMessageDialog(null, "Member details have been updated");
+            
+            stmt.close();
+            con.close();
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+    }
+    
+    public static void restoreData(ArrayList<Members> restoredList){
+        Connection con = null;
+        Statement stmt = null;
+        
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+   
+            //create table if it not exist
+            //create tblMember
+            String tblMember = "CREATE TABLE if not exists tblMember(" 
+                    + "memberID int not null AUTO_INCREMENT, "
+                    + "first varchar(50),"
+                    + "last varchar(50),"
+                    + "gender varchar(20),"
+                    + "email varchar(50),"
+                    + "phone varchar(20),"
+                    + "package varchar(50),"
+                    + "noMember int," 
+                    + "baseFee double,"
+                    + "type varchar(50),"
+                    + "agentID int,"
+                    + "PRIMARY KEY (memberID),"
+                    + "FOREIGN KEY (agentID) References tblAgent(agentID))";
+            System.out.println(tblMember);        
+            stmt.executeUpdate(tblMember);
+            System.out.println("tblMember has been created");
+            
+            //create tblAddress
+            String tblAddress = "CREATE TABLE if not exists tblAddress("
+                    + "addressID int not null AUTO_INCREMENT,"
+                    + "address varchar(50)," 
+                    + "suburb varchar(50),"
+                    + "state varchar(50),"
+                    + "postcode varchar(10), " 
+                    + "memberID int, "
+                    + "PRIMARY KEY (addressID),"
+                    + "FOREIGN KEY (memberID) References tblMember(memberID))";    
+            System.out.println(tblAddress);        
+            stmt.executeUpdate(tblAddress);
+            System.out.println("tblAddress has been created");
+            
+            //Delete All data in database
+            String sql = "DELETE FROM tblAddress";
+            stmt.executeUpdate(sql);
+            
+            sql = "DELETE FROM tblMember";
+            stmt.executeUpdate(sql);
+            
+            Members m;
+            if(m instanceof Single){
+                String packLoad = ((Single) m).getPackLoad();
+            }
+            
+            //Insert data from binary file to database
+            System.out.println("HERE" + restoredList.size());
+            sql =  "INSERT INTO tblMember (memberID, first, last, gender, email, phone, "
+                    + "package, noMember, baseFee, type, agentID) values (?,?,?,?,?,?,?,?,?,?,?)";
+            PreparedStatement pr = con.prepareStatement(sql);
+            for(int i=0; i<restoredList.size(); i++){
+                pr.setInt(1,restoredList.get(i).getId());
+                pr.setString(2,restoredList.get(i).getName());
+                pr.setString(3,restoredList.get(i).getLast());
+                pr.setString(4,restoredList.get(i).getGender());
+                pr.setString(5,restoredList.get(i).getEmail());
+                pr.setString(6,restoredList.get(i).getPhone());
+                pr.setString(3,packLoad
+                (((Family) m).getNoMembers())
+            }
+            
+        
+            
             
             stmt.close();
             con.close();

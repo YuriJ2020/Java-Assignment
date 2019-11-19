@@ -7,6 +7,7 @@ package GUI;
 
 import Classes.Agent;
 import Classes.Members;
+import Classes.Single;
 import Utilities.ReadWrite;
 import java.awt.Color;
 import java.awt.Font;
@@ -468,6 +469,7 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void btnRestoreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRestoreMousePressed
         
+        
         int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to restore from file backup?"
                 + "\nRestoring will erase all members from the database and save the data from the backup file."
                 + "\nPlease make sure you have recently made a backup file before you continue.",
@@ -477,6 +479,9 @@ public class MainMenu extends javax.swing.JFrame {
         if(option == 0){
             try{
                 readData();
+                System.out.println(restoredList.size());
+                Utilities.DataAccessLayer.restoreData(restoredList);
+                
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());	
             }

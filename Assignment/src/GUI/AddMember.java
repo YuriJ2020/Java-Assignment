@@ -50,7 +50,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     private JButton btnAdd, btnClear, btnExit;
 
     //TextFields
-    private JTextField txfFirst, txfLast, txfEmail, txfPhone;
+    private JTextField txfID, txfFirst, txfLast, txfEmail, txfPhone;
     private JTextField txfAddress, txfSuburb, txfPostcode, txfNoMember;
 
     //Radio Buttons
@@ -63,8 +63,12 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     private JComboBox cboAgentLoad;
 
     //Labels
-    private JLabel lblHeading, lblFirst, lblLast, lblGender, lblEmail, lblPhone;
+    private JLabel lblHeading, lblID, lblFirst, lblLast, lblGender, lblEmail, lblPhone;
     private JLabel lblPack, lblNoMember;
+    
+    //Image
+    private JLabel lblImage;
+    private ImageIcon image;
     
     //set a color object using RGB
     Color myColor1 = new Color(255, 255, 255); //white
@@ -153,6 +157,16 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         GridBagConstraints g = new GridBagConstraints();
         g.weightx = 3;
         g.fill = GridBagConstraints.HORIZONTAL;
+        
+        lblID = new JLabel("ID  ", SwingConstants.RIGHT);
+        g.gridx = 0;
+        g.gridy = 0;
+        pnlData.add(lblID, g);
+        
+        g.gridx = 1;
+        g.gridy = 0;
+    	pnlData.add(txfID = new JTextField(Integer.toString(nextAvailableID)), g);
+    	//txfID.setEnabled(false); //make this field not interactive
         
         g.gridx = 0;
         g.gridy = 1;
@@ -355,6 +369,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     {
         //insert into arrayList
         int id, noMember;
+        double totalFee;
         String first, last, email, phone, address, suburb, postcode;
         String output = "<html>";
         
@@ -403,16 +418,13 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
             if(type.equals("Single")){ //type: Single
                 if(!(packLoad.equals("Make a Selection") || packLoad == null)){
                     //add to ArrayList
-                    System.out.println(id+"\t"+first+"\t"+last+"\t"+gender+"\t"+email+"\t"+phone+"\t"+address+"\t"+suburb+"\t"+stateLoad+"\t"+postcode+"\t"+BASE_FEE+"\t"+packLoad+"\t"+type+"\t"+ agentID);
                     list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, type, agentID));
                    
-                    JOptionPane.showMessageDialog(null, "Old Fee: " + list.get(list.size()-1).getFee());
-                    System.out.println("Size: " + list.size());
-                    System.out.println("CalcFee: " + list.get(list.size()-1));
-                    list.get(list.size()-1).calcFees(); //update the BASE_FEE($50) for this type of member
-                    JOptionPane.showMessageDialog(null, "New Fee: " + list.get(list.size()-1).getFee());
+                    list.get(list.size()-1).calcFees(); //update the BASE_FEE($50) for this member
+                    totalFee = list.get(list.size()-1).getFee();
+                    System.out.println(totalFee);
                     
-                    Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, type, agentID);
+                    Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, totalFee, packLoad, type, agentID);
                     Utilities.DataAccessLayer.addSingleToDatabase(s);
                 }
                 else {
@@ -426,13 +438,13 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                 {
                     noMember = Integer.parseInt(txfNoMember.getText());
                     //add to ArrayList
-                    //list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, type, agentID));
+                    list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, type, agentID));
 
-                    //list.get(id).calcFees(); //update the BASE_FEE($50) for this type of member
-
-                    Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, type, agentID);
+                    list.get(list.size()-1).calcFees(); //update the BASE_FEE($50) for this member
+                    totalFee = list.get(list.size()-1).getFee();
+                    
+                    Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, totalFee, noMember, type, agentID);
                     Utilities.DataAccessLayer.addFamilyToDatabase(f);
-                    JOptionPane.showMessageDialog(null, "Add Family");
                 } 
                 else{// txfNoMember is blank
                     JOptionPane.showMessageDialog(null, "Please complete all fields");
