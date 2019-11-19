@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public class Single extends Members implements Serializable {
     
-    public String packLoad;
+    private String packLoad;
     
     public Single(){
         super(0, "", "", "", "", "", "", "", "", "", 40.00, "", 0);

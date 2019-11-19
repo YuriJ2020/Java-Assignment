@@ -426,6 +426,8 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                     
                     Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, totalFee, packLoad, type, agentID);
                     Utilities.DataAccessLayer.addSingleToDatabase(s);
+                    JOptionPane.showMessageDialog(null, "Member Record successfully added");
+                    clearForm();  //clear Frame for next record  
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Please complete all fields");
@@ -445,13 +447,13 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                     
                     Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, totalFee, noMember, type, agentID);
                     Utilities.DataAccessLayer.addFamilyToDatabase(f);
+                    JOptionPane.showMessageDialog(null, "Member Record successfully added");
+                    clearForm();  //clear Frame for next record  
                 } 
                 else{// txfNoMember is blank
                     JOptionPane.showMessageDialog(null, "Please complete all fields");
                 }
             }
-            JOptionPane.showMessageDialog(null, "Member Record successfully added"); 			
-            clearForm();  //clear Frame for next record  
         } else {
             JOptionPane.showMessageDialog(null, output);
         }

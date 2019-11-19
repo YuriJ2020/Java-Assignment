@@ -25,7 +25,6 @@ import static GUI.UpdateForm.txfSuburb;
 import static GUI.UpdateForm.txfPostcode;
 import static GUI.UpdateForm.txfNoMember;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -88,10 +87,6 @@ public class DataAccessLayer{
             
             //check memberID in database
             String sql = "SELECT * from tblMember where memberID=" + s.getId();
-            r = stmt.executeQuery(sql);
-            System.out.println(sql);
-            
-            sql = "SELECT * from tblAddress where memberID=" + s.getId();
             r = stmt.executeQuery(sql);
             System.out.println(sql);
             
@@ -582,34 +577,28 @@ public class DataAccessLayer{
             sql = "DELETE FROM tblMember";
             stmt.executeUpdate(sql);
             
-            Members m;
-            if(m instanceof Single){
-                String packLoad = ((Single) m).getPackLoad();
-            }
-            
-            //Insert data from binary file to database
-            System.out.println("HERE" + restoredList.size());
-            sql =  "INSERT INTO tblMember (memberID, first, last, gender, email, phone, "
-                    + "package, noMember, baseFee, type, agentID) values (?,?,?,?,?,?,?,?,?,?,?)";
-            PreparedStatement pr = con.prepareStatement(sql);
-            for(int i=0; i<restoredList.size(); i++){
-                pr.setInt(1,restoredList.get(i).getId());
-                pr.setString(2,restoredList.get(i).getName());
-                pr.setString(3,restoredList.get(i).getLast());
-                pr.setString(4,restoredList.get(i).getGender());
-                pr.setString(5,restoredList.get(i).getEmail());
-                pr.setString(6,restoredList.get(i).getPhone());
-                pr.setString(3,packLoad
-                (((Family) m).getNoMembers())
-            }
-            
-        
-            
-            
             stmt.close();
             con.close();
         }catch(SQLException ex){
             ex.printStackTrace();
+        }
+        
+        for(Members m : restoredList){
+            String pack;
+            int noMember;
+            
+            if(m instanceof Single){
+                
+                //Single s = New Single(m.getId());
+                //Single s = New Single(m.getId(),m.getName(),m.getLast(),m.getGender(),m.getEmail(),m.getPhone(),m.getAddress(),m.getSuburb(),m.getState(),m.getPostcode(),m.getFee(),((Single) m).getPackLoad(),m.getType(),m.getAddress());
+                //addSingleToDatabase(s);
+            }
+            if(m instanceof Family){
+                Family f = (Family)m;
+                noMember = f.getNoMembers();
+            }
+            
+           
         }
     }
 }
