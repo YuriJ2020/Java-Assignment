@@ -9,13 +9,13 @@ package GUI;
 import Classes.Family;
 import Classes.Members;
 import Classes.Single;
-import static GUI.AddMember.agentLoad;
-import static GUI.AddMember.stateLoad;
 import Utilities.MemberTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -28,19 +28,20 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
     
     private ArrayList<Members> list = new ArrayList<>();
     
-    private String agentName;
+    public static String agentName;
     public static int agentID;
     public static String gender;
     public static String type;
     public static String stateLoad;
     public static String agentLoad;
     public static String packLoad;
+    private int indexPack, indexAgent;
     
     /** Creates new form Update */
     public UpdateForm(SearchForm menu, MemberTableModel model, Members m) {
         initComponents();
         this.setVisible(true);
-        this.setBounds(400, 100, 594, 495);
+        this.setBounds(400, 100, 400, 531); // (x,y,width,height)
         
         parent = menu;
         memberModel = model;
@@ -50,8 +51,7 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         
         //get Selected agent name from m.getAgentID()
         agentID = m.getAgentID();
-        agentName = Utilities.DataAccessLayer.getAgentName();
-        System.out.println("agent name: " + agentName);
+        agentLoad = Utilities.DataAccessLayer.getAgentName();
         
         //make only one radio button can be selected
         ButtonGroup genderGroup = new ButtonGroup();
@@ -67,7 +67,7 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         txfLast.setText(m.getLast());
         txfEmail.setText(m.getEmail());
         txfPhone.setText(m.getPhone());
-        cboAgent.setSelectedItem(agentName);
+        cboAgent.setSelectedItem(agentLoad);
         
         if(m.getGender().equalsIgnoreCase("Male")){
             rbtMale.setSelected(true);
@@ -85,8 +85,9 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
             lblNoMember.setVisible(false);
             txfNoMember.setVisible(false);
             type = "Single";
+            packLoad = ((Single) m).getPackLoad();
+            System.out.println("Pack " + packLoad);
         } 
-        
         if (m instanceof Family) {
             rbtFamily.setSelected(true);
             txfNoMember.setText(Integer.toString(((Family) m).getNoMembers()));
@@ -94,10 +95,7 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
             cboPack.setVisible(false);
             type = "Family";
         }
-        
-        //if comboBox does not change
-        packLoad = ((Single) m).getPackLoad();
-        
+        System.out.println("Pack " + packLoad);
         //cannot change the primary key
         txfID.setEnabled(false);
         txfID.setToolTipText("CANNOT CHANGE PRIMARY KEY");
@@ -106,9 +104,10 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         rbtFemale.addActionListener(this);
         rbtSingle.addActionListener(this);
         rbtFamily.addActionListener(this);
-        cboState.addActionListener(this);
         cboPack.addActionListener(this);
         cboAgent.addActionListener(this);
+        btnUpdate.addActionListener(this);
+        btnBack.addActionListener(this);
     }
     
     public void actionPerformed(ActionEvent e)
@@ -124,14 +123,18 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         if (e.getSource() == rbtSingle)
         {
             type = "Single"; //retrieve value from RadioButtons
+            lblPack.setVisible(true);
+            cboPack.setVisible(true);
+            lblNoMember.setVisible(false);
+            txfNoMember.setVisible(false);
         }
         if (e.getSource() == rbtFamily)
         {
             type = "Family"; //retrieve value from RadioButtons
-        }
-        if(e.getSource() == cboState)
-        {
-            stateLoad = (String) cboState.getSelectedItem();
+            lblNoMember.setVisible(true);
+            txfNoMember.setVisible(true);
+            lblPack.setVisible(false);
+            cboPack.setVisible(false);
         }
         if(e.getSource() == cboPack)
         {
@@ -139,10 +142,23 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         }
         if(e.getSource() == cboAgent)
         {
-            agentLoad = (String) cboAgent.getSelectedItem();
-            System.out.println("Agent: " + agentLoad);
-            agentID = Utilities.DataAccessLayer.getAgentID();
+            //if agent name was changed
+            agentName = (String) cboAgent.getSelectedItem();
+            System.out.println("Agent: " + agentName);
+            agentID = Utilities.DataAccessLayer.getAgentIDupdate();
             System.out.println("New Agent ID: " + agentID);
+        }
+    }
+    
+    public void itemStateChanged(ItemEvent e)
+    {
+        if(e.getSource()== cboPack)
+        {
+            indexPack = cboPack.getSelectedIndex();
+        }
+        if(e.getSource()== cboAgent)
+        {
+            indexAgent = cboAgent.getSelectedIndex();
         }
     }
 
@@ -171,28 +187,19 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         rbtMale = new javax.swing.JRadioButton();
         txfPhone = new javax.swing.JTextField();
         rbtFemale = new javax.swing.JRadioButton();
-        jLabel7 = new javax.swing.JLabel();
-        lblAddress = new javax.swing.JLabel();
-        txfAddress = new javax.swing.JTextField();
-        lblSuburb = new javax.swing.JLabel();
-        lblState = new javax.swing.JLabel();
-        cboState = new javax.swing.JComboBox<>();
-        txfSuburb = new javax.swing.JTextField();
         lblID = new javax.swing.JLabel();
         txfID = new javax.swing.JTextField();
-        lblPostcode = new javax.swing.JLabel();
-        txfPostcode = new javax.swing.JTextField();
         btnUpdate = new javax.swing.JButton();
         btnBack = new javax.swing.JButton();
         lblAgentName = new javax.swing.JLabel();
         lblType = new javax.swing.JLabel();
         lblPack = new javax.swing.JLabel();
         cboPack = new javax.swing.JComboBox<>();
-        txfNoMember = new javax.swing.JTextField();
         lblNoMember = new javax.swing.JLabel();
         rbtFamily = new javax.swing.JRadioButton();
         rbtSingle = new javax.swing.JRadioButton();
         cboAgent = new javax.swing.JComboBox<>();
+        txfNoMember = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -260,41 +267,11 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         rbtFemale.setForeground(new java.awt.Color(51, 51, 51));
         rbtFemale.setText("Female");
 
-        jLabel7.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel7.setText("ADDRESS");
-
-        lblAddress.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-        lblAddress.setForeground(new java.awt.Color(51, 51, 51));
-        lblAddress.setText("Address");
-
-        txfAddress.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-
-        lblSuburb.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-        lblSuburb.setForeground(new java.awt.Color(51, 51, 51));
-        lblSuburb.setText("Suburb");
-
-        lblState.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-        lblState.setForeground(new java.awt.Color(51, 51, 51));
-        lblState.setText("State");
-
-        cboState.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-        cboState.setForeground(new java.awt.Color(51, 51, 51));
-        cboState.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "New South Wales", "Western Australia", "Queensland", "South Australia", "Victoria", "Tasmania" }));
-
-        txfSuburb.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-
         lblID.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
         lblID.setForeground(new java.awt.Color(51, 51, 51));
         lblID.setText("Member ID");
 
         txfID.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-
-        lblPostcode.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-        lblPostcode.setForeground(new java.awt.Color(51, 51, 51));
-        lblPostcode.setText("Postcode");
-
-        txfPostcode.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
 
         btnUpdate.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
         btnUpdate.setText("Update");
@@ -328,8 +305,6 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         cboPack.setForeground(new java.awt.Color(51, 51, 51));
         cboPack.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Saver", "Bronze", "Ultimate" }));
 
-        txfNoMember.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-
         lblNoMember.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
         lblNoMember.setForeground(new java.awt.Color(51, 51, 51));
         lblNoMember.setText("No. of Family member");
@@ -345,82 +320,68 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         cboAgent.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
         cboAgent.setForeground(new java.awt.Color(51, 51, 51));
 
+        txfNoMember.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(47, 47, 47)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
-                        .addComponent(lblNoMember, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txfNoMember, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lblFirst, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblID, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblGender)
-                                    .addComponent(lblLast)
-                                    .addComponent(lblEmail)
-                                    .addComponent(lblPhone)))
-                            .addGap(12, 12, 12)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(rbtMale)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(rbtFemale))
-                                .addComponent(txfEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
-                                .addComponent(txfLast)
-                                .addComponent(txfID)
-                                .addComponent(txfFirst)
-                                .addComponent(txfPhone)))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(2, 2, 2)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lblAgentName, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)
+                                .addComponent(cboAgent, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                     .addComponent(lblType, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(rbtSingle)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(rbtFamily))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(lblAgentName, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(cboAgent, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(lblPack, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(cboPack, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblPostcode)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txfPostcode))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblAddress)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txfAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblSuburb)
-                            .addComponent(lblState))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cboState, 0, 185, Short.MAX_VALUE)
-                            .addComponent(txfSuburb)))
+                                    .addComponent(rbtFamily)
+                                    .addGap(0, 0, Short.MAX_VALUE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addComponent(btnBack)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(btnUpdate))
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(lblNoMember, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(txfNoMember))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(lblPack, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(cboPack, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addContainerGap(46, Short.MAX_VALUE)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnBack)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnUpdate)))
-                .addGap(21, 21, 21))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblFirst, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblID, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(lblGender)
+                                .addComponent(lblLast)
+                                .addComponent(lblEmail)
+                                .addComponent(lblPhone)))
+                        .addGap(12, 12, 12)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(rbtMale)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(rbtFemale))
+                            .addComponent(txfEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                            .addComponent(txfLast)
+                            .addComponent(txfID)
+                            .addComponent(txfFirst)
+                            .addComponent(txfPhone))
+                        .addGap(20, 20, 20))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -429,58 +390,50 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblID)
-                    .addComponent(txfID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                    .addComponent(txfID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txfFirst, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblFirst)
-                    .addComponent(lblAddress)
-                    .addComponent(txfAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblFirst))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txfLast, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblLast, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblSuburb)
-                    .addComponent(txfSuburb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblLast, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(rbtMale)
                     .addComponent(rbtFemale)
-                    .addComponent(lblGender)
-                    .addComponent(lblState)
-                    .addComponent(cboState, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblGender))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txfEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblEmail)
-                    .addComponent(lblPostcode)
-                    .addComponent(txfPostcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblEmail))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txfPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblPhone))
-                .addGap(40, 40, 40)
+                .addGap(29, 29, 29)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblAgentName)
                     .addComponent(cboAgent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(rbtSingle)
-                        .addComponent(rbtFamily))
-                    .addComponent(lblType))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblType)
+                    .addComponent(rbtSingle)
+                    .addComponent(rbtFamily))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPack)
                     .addComponent(cboPack, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txfNoMember, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblNoMember)
+                    .addComponent(txfNoMember, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnUpdate)
                     .addComponent(btnBack))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -491,7 +444,7 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -515,14 +468,11 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         last = txfLast.getText();
         email = txfEmail.getText();
         phone = txfPhone.getText();
-        address = txfAddress.getText();
-        suburb = txfSuburb.getText();
-        postcode = txfPostcode.getText();
-        
+
         boolean validate = true;
         
         if(Utilities.Validation.CheckNull(first, last, gender, email, phone, type) ||
-            agentLoad == null || agentLoad.equals("Make a Selection") || stateLoad == null || stateLoad.equals("Make a Selection")) 
+            agentLoad == null || agentLoad.equals("Make a Selection") ) 
         {
             output += "Please complete all options on the form<br>";
             validate = false;
@@ -548,6 +498,9 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
             memberModel.fireTableDataChanged(); //refresh table
             this.dispose();             
             parent.setVisible(true); 
+        }
+        else{
+            JOptionPane.showMessageDialog(null, output);
         }
         
         
@@ -603,11 +556,8 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JComboBox<String> cboAgent;
     private javax.swing.JComboBox<String> cboPack;
-    private javax.swing.JComboBox<String> cboState;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JLabel lblAddress;
     private javax.swing.JLabel lblAgentName;
     private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblFirst;
@@ -618,23 +568,17 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
     private javax.swing.JLabel lblNoMember;
     private javax.swing.JLabel lblPack;
     private javax.swing.JLabel lblPhone;
-    private javax.swing.JLabel lblPostcode;
-    private javax.swing.JLabel lblState;
-    private javax.swing.JLabel lblSuburb;
     private javax.swing.JLabel lblType;
     private javax.swing.JRadioButton rbtFamily;
     private javax.swing.JRadioButton rbtFemale;
     private javax.swing.JRadioButton rbtMale;
     private javax.swing.JRadioButton rbtSingle;
-    public static javax.swing.JTextField txfAddress;
     public static javax.swing.JTextField txfEmail;
     public static javax.swing.JTextField txfFirst;
     public static javax.swing.JTextField txfID;
     public static javax.swing.JTextField txfLast;
     public static javax.swing.JTextField txfNoMember;
     public static javax.swing.JTextField txfPhone;
-    public static javax.swing.JTextField txfPostcode;
-    public static javax.swing.JTextField txfSuburb;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -10,7 +10,6 @@ import Classes.Family;
 import Classes.Members;
 import Classes.Single;
 import static GUI.AddMember.agentLoad;
-import static GUI.UpdateForm.stateLoad;
 import static GUI.UpdateForm.packLoad;
 import static GUI.UpdateForm.gender;
 import static GUI.UpdateForm.type;
@@ -20,10 +19,8 @@ import static GUI.UpdateForm.txfFirst;
 import static GUI.UpdateForm.txfID;
 import static GUI.UpdateForm.txfLast;
 import static GUI.UpdateForm.txfPhone;
-import static GUI.UpdateForm.txfAddress;
-import static GUI.UpdateForm.txfSuburb;
-import static GUI.UpdateForm.txfPostcode;
 import static GUI.UpdateForm.txfNoMember;
+import static GUI.UpdateForm.agentName;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -267,6 +264,36 @@ public class DataAccessLayer{
         }
     }
     
+    //Get Agent id for updateForm
+    public static int getAgentIDupdate()
+    {
+        int agentID;
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet r = null;
+        
+        try{
+            con = ConnectionDetails.getConnection();
+            stmt = con.createStatement();
+            System.out.println("Agent Load: " + agentName);
+            String sql = "SELECT * FROM tblAgent WHERE first ='" + agentName + "'";
+            //SELECT * FROM tblAgent WHERE CONCAT(first, ' ', last) LIKE '%Jon aa%'
+            r = stmt.executeQuery(sql);
+            
+            r.next();
+            agentID = r.getInt("agentID");
+            
+            stmt.close();
+            con.close();
+            
+            return agentID;
+            
+        }catch(SQLException ex) {
+            ex.printStackTrace();
+            return agentID = 0;
+        }
+    }
+    
     public static String getAgentName(){
         
         String agentName;
@@ -296,7 +323,6 @@ public class DataAccessLayer{
             return agentName = "";
         }
     }
-    
     
     public static void getDataFromDatabase(ArrayList<Members> list)
     {     
@@ -409,6 +435,10 @@ public class DataAccessLayer{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
    
+            String sql = "DROP TABLE tblMember";
+            stmt.executeUpdate(sql);
+            System.out.println("tblMember was drop");
+            
             //create table if it not exist
             //create tblMember
             String tblMember = "CREATE TABLE if not exists tblMember(" 
@@ -420,17 +450,14 @@ public class DataAccessLayer{
                     + "phone varchar(20),"
                     + "package varchar(50),"
                     + "noMember int," 
-                    + "baseFee double,"
+                    + "fee double,"
                     + "type varchar(50),"
                     + "agentID int,"
                     + "PRIMARY KEY (memberID),"
                     + "FOREIGN KEY (agentID) References tblAgent(agentID))";
             System.out.println(tblMember);        
             stmt.executeUpdate(tblMember);
-            System.out.println("tblMember has been created");
-            
-            String sql = "DELETE FROM tblMember";
-            stmt.executeUpdate(sql);
+            System.out.println("New tblMember has been created");
             
             stmt.close();
             con.close();

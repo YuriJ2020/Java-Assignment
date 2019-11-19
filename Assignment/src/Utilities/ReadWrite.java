@@ -34,34 +34,14 @@ public class ReadWrite {
                                         throws FileNotFoundException, ClassNotFoundException,
                                             NotSerializableException, IOException{
         
+        
+        FileInputStream fis = new FileInputStream(fileName);
+        ObjectInputStream ois = new ObjectInputStream(fis);
         ArrayList<Members> restoredList = new ArrayList<>();
-        boolean reading = true;
-        try
-        {
-            FileInputStream fis = new FileInputStream(fileName);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            
-            //while (ois.readObject() != null)
-            //while (ois.available() != 0)
-            //while (ois.read() != -1) 
-            
-            System.out.println("Read Object" + ois.readObject());
-            while(reading)
-            {			
-                restoredList.add((Members)ois.readObject());
-                System.out.println("Read Object" + ois.readObject());
-            }
-            ois.close();
-            System.out.println("ReadWrite.restoredList" + restoredList);
-        }
-        catch(EOFException ex)
-        {
-            reading = false;
-        }
-        catch(Exception e)
-        {
-            reading = false;
-        }
+        
+        restoredList = (ArrayList<Members>) ois.readObject();
+        
+        ois.close();
         return restoredList;
     }
     
@@ -72,16 +52,15 @@ public class ReadWrite {
                                                     IOException{
         
         System.out.println("Backup List:" + list);
+        
+        
+        
         try{							
             FileOutputStream fos = new FileOutputStream(fileName);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             //open OutputFile
-                   
-            //write Student objects to file
-            for (int i=0; i < list.size() && list.get(i) != null; i++)
-            {
-                oos.writeObject(list.get(i));
-            }
+            oos.writeObject(list);
+            
             oos.close();	
             System.out.println("backup list: "+ list);
         }

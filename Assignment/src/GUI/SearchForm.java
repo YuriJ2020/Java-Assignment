@@ -87,10 +87,11 @@ public class SearchForm extends javax.swing.JFrame {
             String memberIDString = Integer.toString(m.getId());
             String feeString = Double.toString(m.getFee());
             String agentIDString = Integer.toString(m.getAgentID());
+            System.out.println(feeString);
             
             if(memberIDString.equalsIgnoreCase(search) || m.getName().equalsIgnoreCase(search) || m.getLast().equalsIgnoreCase(search)||
                 m.getGender().equalsIgnoreCase(search) || m.getEmail().equalsIgnoreCase(search) || m.getPhone().equalsIgnoreCase(search)||
-                m.getEmail().equalsIgnoreCase(search) || feeString.equalsIgnoreCase(search) ||
+                m.getType().equalsIgnoreCase(search) || feeString.equalsIgnoreCase(search) ||
                 agentIDString.equalsIgnoreCase(search)){
         
                 found = true;
@@ -310,7 +311,7 @@ public class SearchForm extends javax.swing.JFrame {
         );
 
         cboSearch.setFont(new java.awt.Font(".SF NS Text", 0, 14)); // NOI18N
-        cboSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Member ID", "First Name", "Sales Agent" }));
+        cboSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Member ID", "First Name", "Agent ID" }));
         cboSearch.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cboSearchItemStateChanged(evt);

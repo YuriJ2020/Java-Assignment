@@ -7,7 +7,6 @@ package GUI;
 
 import Classes.Agent;
 import Classes.Members;
-import Classes.Single;
 import Utilities.ReadWrite;
 import java.awt.Color;
 import java.awt.Font;
@@ -46,7 +45,6 @@ public class MainMenu extends javax.swing.JFrame {
         
         this.setTitle("Main Menu");
         this.setBounds(500, 100, 528, 580); // (x,y,width,height)
-
     }
 
     /**
@@ -636,7 +634,8 @@ public class MainMenu extends javax.swing.JFrame {
     public static void readData(){
         System.out.println("Restored List:" + restoredList);
         try{
-            ReadWrite.readData(fileName);
+            restoredList = ReadWrite.readData(fileName);
+            System.out.println("Restored List after:" + restoredList);
             JOptionPane.showMessageDialog(null, restoredList.size() + " student records have been loaded from file");
         }
         catch(FileNotFoundException fnfEx){

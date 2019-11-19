@@ -23,7 +23,6 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -41,7 +40,7 @@ import javax.swing.plaf.FontUIResource;
  *
  * @author ppunme
  */
-public class AddMember extends JFrame implements ActionListener
+public class AddMember extends JFrame implements ActionListener, ItemListener
 {
     public static ArrayList<Members> list;
     public static ArrayList<Agent> agentList  = new ArrayList<>();
@@ -74,11 +73,11 @@ public class AddMember extends JFrame implements ActionListener
     
     private boolean validate = true;
     private final static double BASE_FEE = 50.00; 
-    private int nextAvailableID;
     
     private String gender;
     private String type;
-    public static String stateLoad, packLoad, agentLoad;
+    public static String packLoad, agentLoad;
+    private int indexPack, indexAgent;
     private int agentID;
 
     MainMenu parentMenu;
@@ -249,6 +248,10 @@ public class AddMember extends JFrame implements ActionListener
         rbtFamily.addActionListener(this);
         cboPackLoad.addActionListener(this);
         cboAgentLoad.addActionListener(this);
+        
+        //addItemListener
+        cboPackLoad.addItemListener(this);
+        cboAgentLoad.addItemListener(this);
     }	
     
     public void actionPerformed(ActionEvent e)
@@ -297,6 +300,18 @@ public class AddMember extends JFrame implements ActionListener
         {
             agentLoad = (String) cboAgentLoad.getSelectedItem();
             System.out.println("Agent: " + agentLoad);
+        }
+    }
+    
+    public void itemStateChanged(ItemEvent e)
+    {
+        if(e.getSource()== cboPackLoad)
+        {
+            indexPack = cboPackLoad.getSelectedIndex();
+        }
+        if(e.getSource()== cboAgentLoad)
+        {
+            indexAgent = cboAgentLoad.getSelectedIndex();
         }
     }
 	

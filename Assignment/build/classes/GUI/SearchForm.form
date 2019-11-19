@@ -284,7 +284,7 @@
                     <StringItem index="0" value="All"/>
                     <StringItem index="1" value="Member ID"/>
                     <StringItem index="2" value="First Name"/>
-                    <StringItem index="3" value="Sales Agent"/>
+                    <StringItem index="3" value="Agent ID"/>
                   </StringArray>
                 </Property>
               </Properties>
