@@ -17,28 +17,19 @@ public abstract class Members implements Serializable
     private String gender;
     private String email;
     private String phone;
-    private String address;
-    private String suburb;
-    private String state;
-    private String postcode;
     private double baseFee; 
     private String type;
     private int agentID;
 
     //Constructor
     public Members(int id, String name, String last, String gender, String email, 
-            String phone, String address, String suburb, String state, String postcode, 
-            double fee, String type, int agentID) {
+            String phone, double fee, String type, int agentID) {
         this.id = id;
         this.name = name;
         this.last = last;
         this.gender = gender;
         this.email = email;
         this.phone = phone;
-        this.address = address;
-        this.suburb = suburb;
-        this.state = state;
-        this.postcode = postcode;
         this.baseFee = fee;
         this.type = type;
         this.agentID = agentID;
@@ -96,38 +87,6 @@ public abstract class Members implements Serializable
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getSuburb() {
-        return suburb;
-    }
-
-    public void setSuburb(String suburb) {
-        this.suburb = suburb;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getPostcode() {
-        return postcode;
-    }
-
-    public void setPostcode(String postcode) {
-        this.postcode = postcode;
-    }
-
     public double getFee() {
         return this.baseFee;
     }
@@ -154,12 +113,8 @@ public abstract class Members implements Serializable
 
     @Override
     public String toString() {
-        return "\n--Member details--" + "\nMember id: " + id + "\nName: " + name + " " + last 
-                + "\t\t" + gender + "\t" + email + "\t" + phone 
-                + "\nAddress: " + address + "\t" + suburb + "\t" + state 
-                + "\t" + postcode + "\nBase Fee: " + baseFee + "\tType: " + type 
-                + "\tAgent id: " + agentID;
+        return "\nid: " + id + "\t" + name + " " + last 
+                + "\t" + gender + "\t" + email + "\t" + phone + "\t" + baseFee 
+                + "\t" + type + "\t" + agentID;
     }
-    
-    
 }

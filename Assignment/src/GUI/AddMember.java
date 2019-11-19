@@ -41,7 +41,7 @@ import javax.swing.plaf.FontUIResource;
  *
  * @author ppunme
  */
-public class AddMember extends JFrame implements ActionListener, ItemListener
+public class AddMember extends JFrame implements ActionListener
 {
     public static ArrayList<Members> list;
     public static ArrayList<Agent> agentList  = new ArrayList<>();
@@ -50,25 +50,19 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     private JButton btnAdd, btnClear, btnExit;
 
     //TextFields
-    private JTextField txfID, txfFirst, txfLast, txfEmail, txfPhone;
-    private JTextField txfAddress, txfSuburb, txfPostcode, txfNoMember;
+    private JTextField txfID, txfFirst, txfLast, txfEmail, txfPhone, txfNoMember;
 
     //Radio Buttons
     private JRadioButton rbtMale, rbtFemale;
     private JRadioButton rbtSingle, rbtFamily;
 
     //Combo Box
-    private JComboBox cboStateLoad;
     private JComboBox cboPackLoad;
     private JComboBox cboAgentLoad;
 
     //Labels
     private JLabel lblHeading, lblID, lblFirst, lblLast, lblGender, lblEmail, lblPhone;
     private JLabel lblPack, lblNoMember;
-    
-    //Image
-    private JLabel lblImage;
-    private ImageIcon image;
     
     //set a color object using RGB
     Color myColor1 = new Color(255, 255, 255); //white
@@ -84,7 +78,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     
     private String gender;
     private String type;
-    private int indexState, indexPack, indexAgent;
     public static String stateLoad, packLoad, agentLoad;
     private int agentID;
 
@@ -109,7 +102,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Add a new Member");
         this.setVisible(true);
-        this.setBounds(550,100,485,625);
+        this.setBounds(550,100,400,400); // (x,y,width,height)
         
         //set default font
         setUIFont(new FontUIResource(new Font("Helvetica", 0, 16))); 
@@ -158,16 +151,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         g.weightx = 3;
         g.fill = GridBagConstraints.HORIZONTAL;
         
-        lblID = new JLabel("ID  ", SwingConstants.RIGHT);
-        g.gridx = 0;
-        g.gridy = 0;
-        pnlData.add(lblID, g);
-        
-        g.gridx = 1;
-        g.gridy = 0;
-    	pnlData.add(txfID = new JTextField(Integer.toString(nextAvailableID)), g);
-    	//txfID.setEnabled(false); //make this field not interactive
-        
         g.gridx = 0;
         g.gridy = 1;
     	pnlData.add(lblFirst = new JLabel("First name  ", SwingConstants.RIGHT), g);
@@ -208,27 +191,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         g.gridy = 5;
         pnlData.add(txfPhone = new JTextField(10), g);
         
-        //Create panal for Address
-        //Combo box
-        String sLoad[] = {"New South Wales", "Western Australia", "Queensland", "South Australia", "Victoria", "Tasmania", "Make a Selection"};
-        cboStateLoad = new JComboBox(sLoad);
-        cboStateLoad.setSelectedItem("Make a Selection");
-        
-        //Panel
-        JPanel pnlAddress = new JPanel(new GridLayout(0,2,5,5)); // row,col,hgap,vgap
-        pnlAddress.setBorder(new EmptyBorder(10, 10, 10, 10)); //padding
-        pnlAddress.setBackground(myColor2);
-
-        pnlAddress.add(new JLabel());
-        pnlAddress.add(new JLabel("ADDRESS", SwingConstants.CENTER));
-        pnlAddress.add(new JLabel("Address   ", SwingConstants.RIGHT));
-        pnlAddress.add(txfAddress = new JTextField());    
-        pnlAddress.add(new JLabel("Suburb   ", SwingConstants.RIGHT));
-        pnlAddress.add(txfSuburb = new JTextField());
-        pnlAddress.add(new JLabel("State   ", SwingConstants.RIGHT));
-        pnlAddress.add(cboStateLoad);
-        pnlAddress.add(new JLabel("Postcode   ", SwingConstants.RIGHT));
-        pnlAddress.add(txfPostcode = new JTextField());
         
         //Create panel for the type detail
         String pLoad[] = {"Saver", "Bronze", "Ultimate", "Make a Selection"};
@@ -266,9 +228,9 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
 
         //Create panal for combine all panel
         JPanel pnlCenter = new JPanel();
-        pnlCenter.setLayout(new GridLayout(3, 0));
+        pnlCenter.setLayout(new GridLayout(2, 0));
         pnlCenter.add(pnlData);
-        pnlCenter.add(pnlAddress);
+        //pnlCenter.add(pnlAddress);
         pnlCenter.add(pnlType);
         
         //Add panels to the JFrame container
@@ -285,14 +247,8 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         rbtFemale.addActionListener(this);
         rbtSingle.addActionListener(this);
         rbtFamily.addActionListener(this);
-        cboStateLoad.addActionListener(this);
         cboPackLoad.addActionListener(this);
         cboAgentLoad.addActionListener(this);
-        
-        //addItemListener
-        cboStateLoad.addItemListener(this);
-        cboPackLoad.addItemListener(this);
-        cboAgentLoad.addItemListener(this);
     }	
     
     public void actionPerformed(ActionEvent e)
@@ -333,10 +289,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
             lblPack.setVisible(false);
             cboPackLoad.setVisible(false);
         }
-        if(e.getSource() == cboStateLoad)
-        {
-            stateLoad = (String) cboStateLoad.getSelectedItem();
-        }
         if(e.getSource() == cboPackLoad)
         {
             packLoad = (String) cboPackLoad.getSelectedItem();
@@ -348,46 +300,27 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         }
     }
 	
-    public void itemStateChanged(ItemEvent e)
-    {
-        if(e.getSource()==cboStateLoad)
-        {
-            indexState = cboStateLoad.getSelectedIndex();
-        }
-        if(e.getSource()== cboPackLoad)
-        {
-            indexPack = cboPackLoad.getSelectedIndex();
-        }
-        if(e.getSource()== cboAgentLoad)
-        {
-            indexAgent = cboAgentLoad.getSelectedIndex();
-        }
-    }
-	
     //add Single member to the array
     public void addNewMember()
     {
         //insert into arrayList
         int id, noMember;
         double totalFee;
-        String first, last, email, phone, address, suburb, postcode;
+        String first, last, email, phone;
         String output = "<html>";
         
-        id = Integer.parseInt(txfID.getText());
+        id = 1;
 
         //get data from TextFields and ComboBox
         first = txfFirst.getText();
         last = txfLast.getText();
         email = txfEmail.getText();
         phone = txfPhone.getText();
-        address = txfAddress.getText();
-        suburb = txfSuburb.getText();
-        postcode = txfPostcode.getText();
 
         validate = true;
         
-        if(Utilities.Validation.CheckNull(first, last, gender, email, phone, address, suburb, postcode, type) ||
-            agentLoad == null || agentLoad.equals("Make a Selection") || stateLoad == null || stateLoad.equals("Make a Selection")) 
+        if(Utilities.Validation.CheckNull(first, last, gender, email, phone, type) ||
+            agentLoad == null || agentLoad.equals("Make a Selection"))
         {
             output += "Please complete all options on the form<br>";
             validate = false;
@@ -405,10 +338,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                 output += "-  Invalid Phone number<br>";
                 validate = false;
             }
-            if(!Utilities.Validation.checkPost(postcode)){
-                output += "-  Post codes must be in the range of 2000 – 9999<br>";
-                validate = false;
-            }
             
         }
         if(validate){
@@ -416,19 +345,17 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
             agentID = Utilities.DataAccessLayer.getAgentID();
             System.out.println(agentID);
             if(type.equals("Single")){ //type: Single
+                noMember = 0;
                 if(!(packLoad.equals("Make a Selection") || packLoad == null)){
-                    //add to ArrayList
-                    list.add(new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, packLoad, type, agentID));
-                   
+                    list.add(new Single(id, first, last, gender, email, phone, BASE_FEE, packLoad, type, agentID));
                     list.get(list.size()-1).calcFees(); //update the BASE_FEE($50) for this member
                     totalFee = list.get(list.size()-1).getFee();
-                    System.out.println(totalFee);
                     
-                    Single s = new Single(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, totalFee, packLoad, type, agentID);
-                    Utilities.DataAccessLayer.addSingleToDatabase(s);
+                    Utilities.DataAccessLayer.addMemberToDatabase(first, last, gender, email, phone, totalFee, packLoad, noMember, type, agentID);
                     JOptionPane.showMessageDialog(null, "Member Record successfully added");
                     clearForm();  //clear Frame for next record  
                 }
+          
                 else {
                     JOptionPane.showMessageDialog(null, "Please complete all fields");
                 }
@@ -440,13 +367,11 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                 {
                     noMember = Integer.parseInt(txfNoMember.getText());
                     //add to ArrayList
-                    list.add(new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, BASE_FEE, noMember, type, agentID));
-
+                    list.add(new Family(id, first, last, gender, email, phone, BASE_FEE, noMember, type, agentID));
                     list.get(list.size()-1).calcFees(); //update the BASE_FEE($50) for this member
                     totalFee = list.get(list.size()-1).getFee();
-                    
-                    Family f = new Family(id, first, last, gender, email, phone, address, suburb, stateLoad, postcode, totalFee, noMember, type, agentID);
-                    Utilities.DataAccessLayer.addFamilyToDatabase(f);
+                   
+                    Utilities.DataAccessLayer.addMemberToDatabase(first, last, gender, email, phone, totalFee, packLoad, noMember, type, agentID);
                     JOptionPane.showMessageDialog(null, "Member Record successfully added");
                     clearForm();  //clear Frame for next record  
                 } 
@@ -463,17 +388,12 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
     private void clearForm()  
     {
         //re-set all components
-        txfID.setText(Integer.toString(nextAvailableID));
         txfFirst.setText("");	
         txfLast.setText("");		
         rbtMale.setSelected(false);
         rbtFemale.setSelected(false);
         txfEmail.setText("");
         txfPhone.setText("");
-        txfAddress.setText("");
-        txfSuburb.setText("");
-        cboStateLoad.setSelectedItem("Make a Selection");	
-        txfPostcode.setText("");
         rbtSingle.setSelected(false);
         rbtFamily.setSelected(false);
         cboPackLoad.setSelectedItem("Make a Selection");	

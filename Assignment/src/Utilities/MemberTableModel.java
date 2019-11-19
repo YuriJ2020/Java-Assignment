@@ -19,13 +19,12 @@ public class MemberTableModel extends AbstractTableModel {
     private ArrayList<Members> list = new ArrayList<>();
 
     private String[] columnNames = {"ID", "First Name", "Last Name", "Gender",
-        "Email", "Phone", "Address", "Suburb", "State", "Postcode", "Package", "No. of Member", "Fee", "Type", "Agent ID"};
+        "Email", "Phone", "Package", "No. of Member", "Fee", "Type", "Agent ID"};
 
     //constructor
     public MemberTableModel() {
         //call a method - retrieve data from database
         getDataFromDatabase();
-        //Utilities.DataAccessLayer.getDataFromDatabase(list);
     }
 
     public MemberTableModel(ArrayList<Members> searchList) {
@@ -62,32 +61,24 @@ public class MemberTableModel extends AbstractTableModel {
             case 5:
                 return m.getPhone();
             case 6:
-                return m.getAddress();
-            case 7:
-                return m.getSuburb();
-            case 8:
-                return m.getState();
-            case 9:
-                return m.getPostcode();
-            case 10:
                 if (m instanceof Single) {
                     Single s = (Single) m;
                     return s.getPackLoad();
                 } else {
                     return null;
                 }
-            case 11:
+            case 7:
                 if (m instanceof Family) {
                     Family f = (Family) m;
                     return f.getNoMembers();
                 } else {
                     return null;
                 }
-            case 12:
+            case 8:
                 return m.getFee();
-            case 13:
+            case 9:
                 return m.getType();
-            case 14:
+            case 10:
                 return m.getAgentID();              
         }
         return null;
@@ -114,8 +105,7 @@ public class MemberTableModel extends AbstractTableModel {
         try{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
-            String sql = "SELECT * FROM tblMember INNER JOIN tblAddress WHERE"
-                    + " tblMember.memberID = tblAddress.memberID";
+            String sql = "SELECT * FROM tblMember";
             r = stmt.executeQuery(sql);
             System.out.println(sql);
 
@@ -128,14 +118,12 @@ public class MemberTableModel extends AbstractTableModel {
                 if(r.getString("type").equals("Single")){
                     //make sure column names from the DATABASE are spelt correctly
                     list.add(new Single(r.getInt("memberID"),r.getString("first"),r.getString("last"),
-                            r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
-                            r.getString("suburb"),r.getString("state"),r.getString("postcode"),
-                            r.getDouble("baseFee"),r.getString("package"),r.getString("type"),r.getInt("agentID"))); 
+                            r.getString("gender"),r.getString("email"),r.getString("phone"),
+                            r.getDouble("fee"),r.getString("package"),r.getString("type"),r.getInt("agentID"))); 
                 } else {
                     list.add(new Family(r.getInt("memberID"),r.getString("first"),r.getString("last"),
-                            r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
-                            r.getString("suburb"),r.getString("state"),r.getString("postcode"),
-                            r.getDouble("baseFee"),r.getInt("noMember"),r.getString("type"),r.getInt("agentID"))); 
+                            r.getString("gender"),r.getString("email"),r.getString("phone"),
+                            r.getDouble("fee"),r.getInt("noMember"),r.getString("type"),r.getInt("agentID"))); 
                 }
             }  
             stmt.close();

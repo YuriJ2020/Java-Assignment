@@ -38,7 +38,7 @@ import javax.swing.JOptionPane;
  */
 public class DataAccessLayer{
     
-    public static void addSingleToDatabase(Single s){
+    public static void addMemberToDatabase(String first, String last, String gender, String email, String phone, double totalFee, String packLoad, int noMember, String type, int agentID){
         //Insert into database
         Connection con = null;
         Statement stmt = null;
@@ -62,7 +62,7 @@ public class DataAccessLayer{
                     + "phone varchar(20),"
                     + "package varchar(50),"
                     + "noMember int," 
-                    + "baseFee double,"
+                    + "fee double,"
                     + "type varchar(50),"
                     + "agentID int,"
                     + "PRIMARY KEY (memberID),"
@@ -70,155 +70,42 @@ public class DataAccessLayer{
             System.out.println(tblMember);        
             stmt.executeUpdate(tblMember);
             System.out.println("tblMember has been created");
+            System.out.println(email);
             
-            //create tblAddress
-            String tblAddress = "CREATE TABLE if not exists tblAddress("
-                    + "addressID int not null AUTO_INCREMENT,"
-                    + "address varchar(50)," 
-                    + "suburb varchar(50),"
-                    + "state varchar(50),"
-                    + "postcode varchar(10), " 
-                    + "memberID int, "
-                    + "PRIMARY KEY (addressID),"
-                    + "FOREIGN KEY (memberID) References tblMember(memberID))";    
-            System.out.println(tblAddress);        
-            stmt.executeUpdate(tblAddress);
-            System.out.println("tblAddress has been created");
-            
-            //check memberID in database
-            String sql = "SELECT * from tblMember where memberID=" + s.getId();
+            //check if this member is exist in database by email
+            String sql = "SELECT * from tblMember where email='" + email + "'";
             r = stmt.executeQuery(sql);
             System.out.println(sql);
             
             if(r.next())
-            { //found this member id in database
-                JOptionPane.showMessageDialog(null, "This member id is already exist");
+            { //found this member in database
+                JOptionPane.showMessageDialog(null, "This email is already exist");
             }
-            else
-            {
-                //insert data to member table
-                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, package, baseFee, type, agentID) values"
-                        + "('" + s.getId() + "','" + s.getName() + "','" + s.getLast() + "','" + s.getGender() + "','" 
-                        + s.getEmail() + "','" + s.getPhone() + "','" + s.getPackLoad() + "','" + s.getFee() + "','" 
-                        + s.getType() + "','" + s.getAgentID() + "')";
-                stmt.executeUpdate(sql);
-                System.out.println(sql);
-
-                //insert data to address table
-                sql = "INSERT INTO tblAddress (address, suburb, state, postcode, memberID) values ('"+ s.getAddress()
-                        + "','" + s.getSuburb() + "','" + s.getState() + "','" + s.getPostcode() + "','" + s.getId() + "')";
+           
+            else if(type.equals("Single")){
+                sql = "INSERT INTO tblMember (first, last, gender, email, phone, package, fee, type, agentID) values"
+                        + "('" + first + "','" + last + "','" + gender + "','" + email + "','" + phone 
+                        + "','" + packLoad + "'," + totalFee + ",'" + type + "'," + agentID + ")";
                 stmt.executeUpdate(sql);
                 System.out.println(sql);
                 System.out.println("Added Single member to Database");
-            } 
-        } catch (SQLException sqlE) {
-            sqlE.printStackTrace();
-            System.err.println("ERROR: " + sqlE.getMessage());
-            if(sqlE.getErrorCode() == MYSQL_DUPLICATE_PK){ //duplicate primary key
-                JOptionPane.showMessageDialog(null, "Duplicate Member ID");
-            }
-        } finally {
-            
-        }
-        
-        try {
-            if(stmt != null) {
-                stmt.close();
-            }
-            System.out.println("Statement close");
-        } catch (SQLException sqlE) {
-            System.out.println("Error closing statement");
-        }
-        
-        try{
-            if (con != null) {
-                con.close();
-            }
-            System.out.println("Connection close");
-        } catch (SQLException sqlE) {
-            System.out.println("Error Closing connection");
-        }
-    }
-    
-    public static void addFamilyToDatabase(Family f){
-        //Insert into database
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet r = null;
-        
-        int MYSQL_DUPLICATE_PK = 1062; //1062 error code for duplicate primary key
-        
-        try{
-            con = ConnectionDetails.getConnection();
-            stmt = con.createStatement();
-            System.out.println("Connected to the database");
-            
-            //create table if it not exist
-            //create tblMember
-            String tblMember = "CREATE TABLE if not exists tblMember(" 
-                    + "memberID int not null AUTO_INCREMENT, "
-                    + "first varchar(50),"
-                    + "last varchar(50),"
-                    + "gender varchar(20),"
-                    + "email varchar(50),"
-                    + "phone varchar(20),"
-                    + "package varchar(50),"
-                    + "noMember int," 
-                    + "baseFee double,"
-                    + "type varchar(50),"
-                    + "agentID int,"
-                    + "PRIMARY KEY (memberID),"
-                    + "FOREIGN KEY (agentID) References tblAgent(agentID))";
-            System.out.println(tblMember);        
-            stmt.executeUpdate(tblMember);
-            System.out.println("tblMember has been created");
-            
-            //create tblAddress
-            String tblAddress = "CREATE TABLE if not exists tblAddress("
-                    + "addressID int not null AUTO_INCREMENT,"
-                    + "address varchar(50)," 
-                    + "suburb varchar(50),"
-                    + "state varchar(50),"
-                    + "postcode varchar(10), " 
-                    + "memberID int, "
-                    + "PRIMARY KEY (addressID),"
-                    + "FOREIGN KEY (memberID) References tblMember(memberID))";
-            System.out.println(tblAddress);        
-            stmt.executeUpdate(tblAddress);
-            System.out.println("tblAddress has been created");
-            
-            //check memberID in database
-            String sql = "SELECT * from tblMember where memberID=" + f.getId();
-            r = stmt.executeQuery(sql);
-            
-            sql = "SELECT * from tblAddress where memberID=" + f.getId();
-            r = stmt.executeQuery(sql);
-            
-            if(r.next())
-            { //found this member id in database
-                JOptionPane.showMessageDialog(null, "This member id is already exist");
-            } 
-            else 
-            {
-                sql = "INSERT INTO tblMember (memberID, first, last, gender, email, phone, noMember, baseFee, type, agentID) values"
-                        + "('" + f.getId() + "','" + f.getName() + "','" + f.getLast() + "','" + f.getGender() + "','" 
-                        + f.getEmail() + "','" + f.getPhone() + "','" + f.getNoMembers() + "','" + f.getFee() + "','" 
-                        + f.getType() + "','" + f.getAgentID() + "')";
+            } else { //Family
+                sql = "INSERT INTO tblMember (first, last, gender, email, phone, noMember, fee, type, agentID) values"
+                        + "('" + first + "','" + last + "','" + gender + "','" + email + "','" 
+                        + phone + "'," + noMember + "," + totalFee + ",'" + type + "'," + agentID + ")";
                 stmt.executeUpdate(sql);
-
-                //insert data to address table
-                sql = "INSERT INTO tblAddress (address, suburb, state, postcode, memberID) values ('"+ f.getAddress()
-                        + "','" + f.getSuburb() + "','" + f.getState() + "','" + f.getPostcode() + "','" + f.getId() + "')";
-                stmt.executeUpdate(sql);
+                System.out.println(sql);
                 System.out.println("Added Family member to Database");
             }
-            
         } catch (SQLException sqlE) {
             sqlE.printStackTrace();
             System.err.println("ERROR: " + sqlE.getMessage());
             if(sqlE.getErrorCode() == MYSQL_DUPLICATE_PK){ //duplicate primary key
                 JOptionPane.showMessageDialog(null, "Duplicate Member ID");
             }
+        } catch (NullPointerException nEx){
+            nEx.printStackTrace();
+            System.err.println("ERROR: " + nEx.getMessage());
         } finally {
             
         }
@@ -420,8 +307,7 @@ public class DataAccessLayer{
         try{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
-            String sql = "SELECT * FROM tblMember INNER JOIN tblAddress WHERE"
-                    + " tblMember.memberID = tblAddress.memberID";
+            String sql = "SELECT * FROM tblMember";
             r = stmt.executeQuery(sql);
             System.out.println(sql);
 
@@ -434,14 +320,12 @@ public class DataAccessLayer{
                 if(r.getString("type").equals("Single")){
                     //make sure column names from the DATABASE are spelt correctly
                     list.add(new Single(r.getInt("memberID"),r.getString("first"),r.getString("last"),
-                            r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
-                            r.getString("suburb"),r.getString("state"),r.getString("postcode"),
-                            r.getDouble("baseFee"),r.getString("package"),r.getString("type"),r.getInt("agentID"))); 
+                            r.getString("gender"),r.getString("email"),r.getString("phone"),
+                            r.getDouble("fee"),r.getString("package"),r.getString("type"),r.getInt("agentID"))); 
                 } else {
                     list.add(new Family(r.getInt("memberID"),r.getString("first"),r.getString("last"),
-                            r.getString("gender"),r.getString("email"),r.getString("phone"),r.getString("address"),
-                            r.getString("suburb"),r.getString("state"),r.getString("postcode"),
-                            r.getDouble("baseFee"),r.getInt("noMember"),r.getString("type"),r.getInt("agentID"))); 
+                            r.getString("gender"),r.getString("email"),r.getString("phone"),
+                            r.getDouble("fee"),r.getInt("noMember"),r.getString("type"),r.getInt("agentID"))); 
                 }
             }  
             stmt.close();
@@ -459,10 +343,7 @@ public class DataAccessLayer{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
             
-            String sql = "Delete from tblAddress where memberID=" + m.getId();
-            stmt.executeUpdate(sql);
-            
-            sql = "Delete from tblMember where memberID=" + m.getId();
+            String sql = "Delete from tblMember where memberID=" + m.getId();
             stmt.executeUpdate(sql);
 
             stmt.close();
@@ -493,10 +374,6 @@ public class DataAccessLayer{
             System.out.println(type);
             System.out.println(agentID);
             System.out.println(txfID.getText());
-            System.out.println(txfAddress.getText());
-            System.out.println(txfSuburb.getText());
-            System.out.println(stateLoad);
-            System.out.println(txfPostcode.getText());
             
             if(type.equals("Single")){
                 String sql = "UPDATE tblMember SET first='" + txfFirst.getText()
@@ -504,8 +381,7 @@ public class DataAccessLayer{
                     + "',phone='" + txfPhone.getText() + "',email='" + txfEmail.getText() 
                     + "',package='" + packLoad + "',type='" + type + "',agentID='" + agentID 
                     + "' WHERE memberId=" + txfID.getText();
-            stmt.executeUpdate(sql);
-            
+                stmt.executeUpdate(sql);
             
             } else {
                 String sql = "UPDATE tblMember SET first='" + txfFirst.getText()
@@ -513,12 +389,9 @@ public class DataAccessLayer{
                     + "',phone='" + txfPhone.getText() + "',email='" + txfEmail.getText() 
                     + "',noMember='" + txfNoMember.getText() + "',type='" + type 
                     + "',agentID='" + agentID + "' WHERE memberId=" + txfID.getText();
+                stmt.executeUpdate(sql);
             }
             
-            String sql = "UPDATE tblAddress SET address='" + txfAddress.getText() + "',suburb='" 
-                    + txfSuburb.getText() + "',state='" + stateLoad + "',postcode='" 
-                    + txfPostcode.getText() + "' WHERE memberId=" + txfID.getText();
-            stmt.executeUpdate(sql);
             JOptionPane.showMessageDialog(null, "Member details have been updated");
             
             stmt.close();
@@ -556,25 +429,7 @@ public class DataAccessLayer{
             stmt.executeUpdate(tblMember);
             System.out.println("tblMember has been created");
             
-            //create tblAddress
-            String tblAddress = "CREATE TABLE if not exists tblAddress("
-                    + "addressID int not null AUTO_INCREMENT,"
-                    + "address varchar(50)," 
-                    + "suburb varchar(50),"
-                    + "state varchar(50),"
-                    + "postcode varchar(10), " 
-                    + "memberID int, "
-                    + "PRIMARY KEY (addressID),"
-                    + "FOREIGN KEY (memberID) References tblMember(memberID))";    
-            System.out.println(tblAddress);        
-            stmt.executeUpdate(tblAddress);
-            System.out.println("tblAddress has been created");
-            
-            //Delete All data in database
-            String sql = "DELETE FROM tblAddress";
-            stmt.executeUpdate(sql);
-            
-            sql = "DELETE FROM tblMember";
+            String sql = "DELETE FROM tblMember";
             stmt.executeUpdate(sql);
             
             stmt.close();
@@ -588,17 +443,12 @@ public class DataAccessLayer{
             int noMember;
             
             if(m instanceof Single){
+                addMemberToDatabase(m.getName(),m.getLast(),m.getGender(),m.getEmail(),m.getPhone(),m.getFee(),((Single) m).getPackLoad(),0,m.getType(),m.getAgentID());
                 
-                //Single s = New Single(m.getId());
-                //Single s = New Single(m.getId(),m.getName(),m.getLast(),m.getGender(),m.getEmail(),m.getPhone(),m.getAddress(),m.getSuburb(),m.getState(),m.getPostcode(),m.getFee(),((Single) m).getPackLoad(),m.getType(),m.getAddress());
-                //addSingleToDatabase(s);
             }
             if(m instanceof Family){
-                Family f = (Family)m;
-                noMember = f.getNoMembers();
+                addMemberToDatabase(m.getName(),m.getLast(),m.getGender(),m.getEmail(),m.getPhone(),m.getFee(),"",((Family) m).getNoMembers(),m.getType(),m.getAgentID());
             }
-            
-           
         }
     }
 }

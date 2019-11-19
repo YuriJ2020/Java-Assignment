@@ -90,8 +90,7 @@ public class SearchForm extends javax.swing.JFrame {
             
             if(memberIDString.equalsIgnoreCase(search) || m.getName().equalsIgnoreCase(search) || m.getLast().equalsIgnoreCase(search)||
                 m.getGender().equalsIgnoreCase(search) || m.getEmail().equalsIgnoreCase(search) || m.getPhone().equalsIgnoreCase(search)||
-                m.getEmail().equalsIgnoreCase(search) || m.getAddress().equalsIgnoreCase(search) || m.getSuburb().equalsIgnoreCase(search)||
-                m.getState().equalsIgnoreCase(search) || m.getPostcode().equalsIgnoreCase(search) || feeString.equalsIgnoreCase(search) ||
+                m.getEmail().equalsIgnoreCase(search) || feeString.equalsIgnoreCase(search) ||
                 agentIDString.equalsIgnoreCase(search)){
         
                 found = true;

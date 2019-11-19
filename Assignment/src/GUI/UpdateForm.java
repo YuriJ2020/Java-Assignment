@@ -9,6 +9,8 @@ package GUI;
 import Classes.Family;
 import Classes.Members;
 import Classes.Single;
+import static GUI.AddMember.agentLoad;
+import static GUI.AddMember.stateLoad;
 import Utilities.MemberTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,10 +67,6 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         txfLast.setText(m.getLast());
         txfEmail.setText(m.getEmail());
         txfPhone.setText(m.getPhone());
-        txfAddress.setText(m.getAddress());
-        txfSuburb.setText(m.getSuburb());
-        cboState.setSelectedItem(m.getState());
-        txfPostcode.setText(m.getPostcode());
         cboAgent.setSelectedItem(agentName);
         
         if(m.getGender().equalsIgnoreCase("Male")){
@@ -99,7 +97,6 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         
         //if comboBox does not change
         packLoad = ((Single) m).getPackLoad();
-        stateLoad = m.getState();
         
         //cannot change the primary key
         txfID.setEnabled(false);
@@ -510,12 +507,51 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     public void updateMember(){
-        Utilities.DataAccessLayer.updateMember();
-        memberModel.getDataFromDatabase(); //get datafrom database again
-        memberModel.fireTableDataChanged(); //refresh table
+        int id, noMember;
+        double totalFee;
+        String first, last, email, phone, address, suburb, postcode;
+        String output = "<html>";
+        first = txfFirst.getText();
+        last = txfLast.getText();
+        email = txfEmail.getText();
+        phone = txfPhone.getText();
+        address = txfAddress.getText();
+        suburb = txfSuburb.getText();
+        postcode = txfPostcode.getText();
         
-        this.dispose();             
-        parent.setVisible(true); 
+        boolean validate = true;
+        
+        if(Utilities.Validation.CheckNull(first, last, gender, email, phone, type) ||
+            agentLoad == null || agentLoad.equals("Make a Selection") || stateLoad == null || stateLoad.equals("Make a Selection")) 
+        {
+            output += "Please complete all options on the form<br>";
+            validate = false;
+        }
+        else{
+            if(!Utilities.Validation.isString(first, last)){
+            output += "-  First name and Last name cannot contains numeric<br>";
+            validate = false;    
+            }
+            if(!Utilities.Validation.checkEmail(email)){
+                output += "-  Invalid Email<br>";
+                validate = false;
+            }
+            if(!Utilities.Validation.checkPhone(phone)){
+                output += "-  Invalid Phone number<br>";
+                validate = false;
+            }
+        }
+        
+        if(validate == true){
+            Utilities.DataAccessLayer.updateMember();
+            memberModel.getDataFromDatabase(); //get datafrom database again
+            memberModel.fireTableDataChanged(); //refresh table
+            this.dispose();             
+            parent.setVisible(true); 
+        }
+        
+        
+        
     }
     
     /**

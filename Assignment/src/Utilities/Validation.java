@@ -11,10 +11,9 @@ package Utilities;
  */
 public class Validation {
     
-    public static boolean CheckNull(String first, String last, String gender, String email, String phone, String address, String suburb, String postcode, String type) {
+    public static boolean CheckNull(String first, String last, String gender, String email, String phone, String type) {
         //check to see if each TextField have data
-        if(first.equals("") || last.equals("") || gender == null || email.equals("") || phone.equals("") || address.equals("")
-            || suburb.equals("") || postcode.equals("") || type == null) {
+        if(first.equals("") || last.equals("") || gender == null || email.equals("") || phone.equals("") || type == null) {
             return true;
         } else {
             return false;
@@ -34,22 +33,6 @@ public class Validation {
     public static boolean checkPhone(String phone){
         if(phone.matches("-?\\d+(\\.\\d+)?") && phone.length() >= 9){
             return true;
-        } else {
-            return false;
-        }
-    }
-    
-    //Post codes must be in the range of 2000 – 9999
-    public static boolean checkPost(String postcode){
-        if(postcode.matches("-?\\d+(\\.\\d+)?") )
-        {
-            int newPostcode = Integer.parseInt(postcode);
-            if(newPostcode > 2000 && newPostcode < 9999){
-                return true;
-            }
-            else {
-                return false;
-            }
         } else {
             return false;
         }

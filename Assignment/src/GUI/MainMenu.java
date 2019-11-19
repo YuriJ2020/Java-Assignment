@@ -477,6 +477,7 @@ public class MainMenu extends javax.swing.JFrame {
         // 0=yes, 1=no
         
         if(option == 0){
+            System.out.println("option: " + option);
             try{
                 readData();
                 System.out.println(restoredList.size());
@@ -633,7 +634,7 @@ public class MainMenu extends javax.swing.JFrame {
     }
     
     public static void readData(){
-        Utilities.DataAccessLayer.getDataFromDatabase(restoredList);
+        System.out.println("Restored List:" + restoredList);
         try{
             ReadWrite.readData(fileName);
             JOptionPane.showMessageDialog(null, restoredList.size() + " student records have been loaded from file");

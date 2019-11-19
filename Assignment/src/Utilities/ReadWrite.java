@@ -45,12 +45,14 @@ public class ReadWrite {
             //while (ois.available() != 0)
             //while (ois.read() != -1) 
             
+            System.out.println("Read Object" + ois.readObject());
             while(reading)
             {			
-                restoredList.add((Members)ois.readObject());	         
+                restoredList.add((Members)ois.readObject());
+                System.out.println("Read Object" + ois.readObject());
             }
             ois.close();
-            System.out.println(restoredList);
+            System.out.println("ReadWrite.restoredList" + restoredList);
         }
         catch(EOFException ex)
         {
@@ -80,7 +82,8 @@ public class ReadWrite {
             {
                 oos.writeObject(list.get(i));
             }
-            oos.close();								
+            oos.close();	
+            System.out.println("backup list: "+ list);
         }
 
         catch (Exception e)
