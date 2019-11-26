@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Utilities;
 
 import Classes.Members;
-import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -18,7 +13,9 @@ import java.util.ArrayList;
 
 /**
  *
- * @author ppunme
+ * @author Poonnamee
+ * Date: 27/11/19
+ * Read and Write member data to file
  */
 public class ReadWrite {
     
@@ -51,10 +48,6 @@ public class ReadWrite {
                                                 NotSerializableException,
                                                     IOException{
         
-        System.out.println("Backup List:" + list);
-        
-        
-        
         try{							
             FileOutputStream fos = new FileOutputStream(fileName);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -62,7 +55,6 @@ public class ReadWrite {
             oos.writeObject(list);
             
             oos.close();	
-            System.out.println("backup list: "+ list);
         }
 
         catch (Exception e)

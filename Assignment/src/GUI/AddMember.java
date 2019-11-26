@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package GUI;
 
 import Classes.Agent;
@@ -38,7 +34,9 @@ import javax.swing.plaf.FontUIResource;
 
 /**
  *
- * @author ppunme
+ * @@author Poonnamee
+ * Date: 27/11/19
+ * Add member form for add member details to database
  */
 public class AddMember extends JFrame implements ActionListener, ItemListener
 {
@@ -214,7 +212,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         cboPackLoad.setVisible(false);
         pnlType.add(lblNoMember = new JLabel("No. of Family Member ", SwingConstants.RIGHT));
         pnlType.add(txfNoMember = new JTextField());
-        System.out.println(txfNoMember);
         lblNoMember.setVisible(false);
         txfNoMember.setVisible(false);
         
@@ -299,7 +296,6 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         if(e.getSource() == cboAgentLoad)
         {
             agentLoad = (String) cboAgentLoad.getSelectedItem();
-            System.out.println("Agent: " + agentLoad);
         }
     }
     
@@ -358,7 +354,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         if(validate){
             //get agent ID from comboBox
             agentID = Utilities.DataAccessLayer.getAgentID();
-            System.out.println(agentID);
+
             if(type.equals("Single")){ //type: Single
                 noMember = 0;
                 if(!(packLoad.equals("Make a Selection") || packLoad == null)){
@@ -367,7 +363,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                     totalFee = list.get(list.size()-1).getFee();
                     
                     Utilities.DataAccessLayer.addMemberToDatabase(first, last, gender, email, phone, totalFee, packLoad, noMember, type, agentID);
-
+                    JOptionPane.showMessageDialog(null, "Member Record successfully added");
                     clearForm();  //clear Frame for next record  
                 }
           
@@ -381,14 +377,21 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
                 if(!(txfNoMember.equals("")))
                 {
                     noMember = Integer.parseInt(txfNoMember.getText());
-                    //add to ArrayList
-                    list.add(new Family(id, first, last, gender, email, phone, BASE_FEE, noMember, type, agentID));
-                    list.get(list.size()-1).calcFees(); //update the BASE_FEE($50) for this member
-                    totalFee = list.get(list.size()-1).getFee();
-                   
-                    Utilities.DataAccessLayer.addMemberToDatabase(first, last, gender, email, phone, totalFee, packLoad, noMember, type, agentID);
-                    
-                    clearForm();  //clear Frame for next record  
+                    if(Utilities.Validation.checkNoMember(noMember))
+                    {
+                        //add to ArrayList
+                        list.add(new Family(id, first, last, gender, email, phone, BASE_FEE, noMember, type, agentID));
+                        list.get(list.size()-1).calcFees(); //update the BASE_FEE($50) for this member
+                        totalFee = list.get(list.size()-1).getFee();
+
+                        Utilities.DataAccessLayer.addMemberToDatabase(first, last, gender, email, phone, totalFee, packLoad, noMember, type, agentID);
+                        JOptionPane.showMessageDialog(null, "Member Record successfully added");
+                        clearForm();  //clear Frame for next record  
+                    }
+                    else //No. of family member <= 1
+                    {
+                        JOptionPane.showMessageDialog(null, "Number of family member must be more than 1");
+                    }
                 } 
                 else{// txfNoMember is blank
                     JOptionPane.showMessageDialog(null, "Please complete all fields");
@@ -413,6 +416,7 @@ public class AddMember extends JFrame implements ActionListener, ItemListener
         rbtFamily.setSelected(false);
         cboPackLoad.setSelectedItem("Make a Selection");	
         cboAgentLoad.setSelectedItem("Make a Selection");	
+        txfNoMember.setText("");
     }
     
     // close addMember frame and return to main menu

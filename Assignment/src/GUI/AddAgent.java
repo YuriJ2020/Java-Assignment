@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package GUI;
 
 import Classes.Agent;
-import static GUI.AddMember.agentLoad;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -30,7 +25,9 @@ import javax.swing.plaf.FontUIResource;
 
 /**
  *
- * @author ppunme
+ * @author Poonnamee
+ * Date: 27/11/19
+ * Add agent form for add agent details to database
  */
 public class AddAgent extends JFrame implements ActionListener
 {
@@ -172,47 +169,53 @@ public class AddAgent extends JFrame implements ActionListener
     //add Local student to the array
     public void addAgent()
     {
-        int id;
-        String first, last, email, phone, address, suburb, postcode;
-        String output = "<html>";
+        try{
+                int id;
+            String first, last, phone;
+            String output = "<html>";
 
-        //get data from TextFields and ComboBox
-        id = Integer.parseInt(txfID.getText());
-        first = txfFirst.getText();
-        last = txfLast.getText();
-        phone = txfPhone.getText();
+            //get data from TextFields and ComboBox
+            id = Integer.parseInt(txfID.getText());
+            first = txfFirst.getText();
+            last = txfLast.getText();
+            phone = txfPhone.getText();
 
-        validate = true;
-        
-        if((first.equals("")|| last.equals("")|| phone.equals("") || id == 0))
-        {
-            output += "Please complete all options on the form<br>";
-            validate = false;
-        }
-        else{
-            if(!Utilities.Validation.isString(first, last)){
-            output += "-  First name and Last name cannot contains numeric<br>";
-            validate = false;    
-            }
-            if(!Utilities.Validation.checkPhone(phone)){
-                output += "-  Invalid Phone number<br>";
+            validate = true;
+
+            if((first.equals("")|| last.equals("")|| phone.equals("") || id == 0))
+            {
+                output += "Please complete all options on the form<br>";
                 validate = false;
             }
-        }
+            else{
+                if(!Utilities.Validation.isString(first, last)){
+                output += "-  First name and Last name can contains only letters<br>";
+                validate = false;    
+                }
+                if(!Utilities.Validation.checkPhone(phone)){
+                    output += "-  Invalid Phone number<br>";
+                    validate = false;
+                }
+            }
 
-        if(validate)
-        {
-            //add to ArrayList
-            agentList.add(new Agent(id,first,last,phone));
-            
-            //create an object to stored the details
-            Agent a = new Agent(id,first,last,phone);
-            Utilities.DataAccessLayer.addAgentToDatabase(a);
+            if(validate)
+            {
+                //add to ArrayList
+                agentList.add(new Agent(id,first,last,phone));
+
+                //create an object to stored the details
+                Agent a = new Agent(id,first,last,phone);
+                Utilities.DataAccessLayer.addAgentToDatabase(a);
+                clearForm();
+            }
+            else
+            {   			   			
+                JOptionPane.showMessageDialog(null, output);			
+            }		
+        } catch (NumberFormatException nFx){ //if Agent id is blank
+            JOptionPane.showMessageDialog(null, "Please enter a number for Agent ID");
         }
-        else
-        {   			   			
-            JOptionPane.showMessageDialog(null, output);			
-        }		
+        
     }
     
     

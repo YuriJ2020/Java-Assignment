@@ -13,6 +13,8 @@ import javax.swing.table.AbstractTableModel;
 /**
  *
  * @author Poonnamee
+ * Date: 27/11/19
+ * Create a table Model
  */
 public class MemberTableModel extends AbstractTableModel {
 
@@ -107,8 +109,7 @@ public class MemberTableModel extends AbstractTableModel {
             stmt = con.createStatement();
             String sql = "SELECT * FROM tblMember";
             r = stmt.executeQuery(sql);
-            System.out.println(sql);
-
+           
             //clear out the arrayList
             list.clear();
             

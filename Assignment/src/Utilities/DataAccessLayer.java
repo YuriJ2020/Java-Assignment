@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Utilities;
 
 import Classes.Agent;
@@ -31,7 +27,9 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author ppunme
+ * @author Poonnamee
+ * Date: 27/11/19
+ * Query for database
  */
 public class DataAccessLayer{
     
@@ -63,16 +61,12 @@ public class DataAccessLayer{
                     + "type varchar(50),"
                     + "agentID int,"
                     + "PRIMARY KEY (memberID),"
-                    + "FOREIGN KEY (agentID) References tblAgent(agentID))";
-            System.out.println(tblMember);        
+                    + "FOREIGN KEY (agentID) References tblAgent(agentID))";     
             stmt.executeUpdate(tblMember);
-            System.out.println("tblMember has been created");
-            System.out.println(email);
             
             //check if this member is exist in database by email
             String sql = "SELECT * from tblMember where email='" + email + "'";
             r = stmt.executeQuery(sql);
-            System.out.println(sql);
             
             if(r.next())
             { //found this member in database
@@ -83,19 +77,12 @@ public class DataAccessLayer{
                 sql = "INSERT INTO tblMember (first, last, gender, email, phone, package, fee, type, agentID) values"
                         + "('" + first + "','" + last + "','" + gender + "','" + email + "','" + phone 
                         + "','" + packLoad + "'," + totalFee + ",'" + type + "'," + agentID + ")";
-                stmt.executeUpdate(sql);
-                System.out.println(sql);
-                System.out.println("Added Single member to Database");
-                JOptionPane.showMessageDialog(null, "Member Record successfully added");
-                
+                stmt.executeUpdate(sql);     
             } else { //Family
                 sql = "INSERT INTO tblMember (first, last, gender, email, phone, noMember, fee, type, agentID) values"
                         + "('" + first + "','" + last + "','" + gender + "','" + email + "','" 
                         + phone + "'," + noMember + "," + totalFee + ",'" + type + "'," + agentID + ")";
                 stmt.executeUpdate(sql);
-                System.out.println(sql);
-                System.out.println("Added Family member to Database");
-                JOptionPane.showMessageDialog(null, "Member Record successfully added");
             }
         } catch (SQLException sqlE) {
             sqlE.printStackTrace();
@@ -149,11 +136,8 @@ public class DataAccessLayer{
                     + "first varchar(50), "
                     + "last varchar(50),"
                     + "phone varchar(20)," 
-                    + "PRIMARY KEY (agentID))";
-                    
-            System.out.println(tblMember);        
+                    + "PRIMARY KEY (agentID))";      
             stmt.executeUpdate(tblMember);
-            System.out.println("tblAgent has been created");
             
             //check agentID in database
             String sql = "SELECT * from tblAgent where agentID=" + a.getId();
@@ -170,7 +154,6 @@ public class DataAccessLayer{
                         + "('" + a.getId() + "','" + a.getFirst() + "','" + a.getLast()
                         + "','" + a.getPhone() + "')";
                 stmt.executeUpdate(sql);
-                System.out.println("add data to tblAgent");
                 JOptionPane.showMessageDialog(null, "Agent Record successfully added");
             }
             
@@ -222,7 +205,6 @@ public class DataAccessLayer{
                     + "phone varchar(20)," 
                     + "PRIMARY KEY (agentID))";
             stmt.executeUpdate(tblAgent);
-            System.out.println("tblAgent has been created");
             
             r = stmt.executeQuery("select * from tblAgent");
          
@@ -249,7 +231,6 @@ public class DataAccessLayer{
         try{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
-            System.out.println("Agent Load: " + agentLoad);
             String sql = "SELECT * FROM tblAgent WHERE first ='" + agentLoad + "'";
             //SELECT * FROM tblAgent WHERE CONCAT(first, ' ', last) LIKE '%Jon aa%'
             r = stmt.executeQuery(sql);
@@ -279,7 +260,6 @@ public class DataAccessLayer{
         try{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
-            System.out.println("Agent Load: " + agentName);
             String sql = "SELECT * FROM tblAgent WHERE first ='" + agentName + "'";
             //SELECT * FROM tblAgent WHERE CONCAT(first, ' ', last) LIKE '%Jon aa%'
             r = stmt.executeQuery(sql);
@@ -307,21 +287,16 @@ public class DataAccessLayer{
         try{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
-            System.out.println("get Agent ID: " + agentID);
             String sql = "SELECT * FROM tblAgent WHERE agentID =" + agentID ;
        
             r = stmt.executeQuery(sql);
-            System.out.println(sql);
-            
             r.next();
             agentName = r.getString("first");
-            System.out.println(agentName);
             
             stmt.close();
             con.close();
                
             return agentName;
-            
         }catch(SQLException ex) {
             ex.printStackTrace();
             return agentName = "";
@@ -339,7 +314,6 @@ public class DataAccessLayer{
             stmt = con.createStatement();
             String sql = "SELECT * FROM tblMember";
             r = stmt.executeQuery(sql);
-            System.out.println(sql);
 
             //clear out the arrayList
             list.clear();
@@ -393,18 +367,6 @@ public class DataAccessLayer{
             con = ConnectionDetails.getConnection();
             stmt = con.createStatement();
             
-            System.out.println("-- UPDATE --");
-            System.out.println(txfFirst.getText());
-            System.out.println(txfLast.getText());
-            System.out.println(gender);
-            System.out.println(txfPhone.getText());
-            System.out.println(txfEmail.getText());
-            System.out.println(packLoad);
-            System.out.println(txfNoMember.getText());
-            System.out.println(type);
-            System.out.println(agentID);
-            System.out.println(txfID.getText());
-            
             if(type.equals("Single")){
                 String sql = "UPDATE tblMember SET first='" + txfFirst.getText()
                     + "',last='" + txfLast.getText() + "',gender='" + gender 
@@ -441,7 +403,6 @@ public class DataAccessLayer{
    
             String sql = "DROP TABLE tblMember";
             stmt.executeUpdate(sql);
-            System.out.println("tblMember was drop");
             
             //create table if it not exist
             //create tblMember
@@ -458,10 +419,8 @@ public class DataAccessLayer{
                     + "type varchar(50),"
                     + "agentID int,"
                     + "PRIMARY KEY (memberID),"
-                    + "FOREIGN KEY (agentID) References tblAgent(agentID))";
-            System.out.println(tblMember);        
+                    + "FOREIGN KEY (agentID) References tblAgent(agentID))";        
             stmt.executeUpdate(tblMember);
-            System.out.println("New tblMember has been created");
             
             stmt.close();
             con.close();

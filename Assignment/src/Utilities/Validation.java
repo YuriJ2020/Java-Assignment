@@ -1,13 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Utilities;
 
 /**
  *
- * @author ppunme
+ * @author Poonnamee
+ * Date: 27/11/19
+ * Validate input data
  */
 public class Validation {
     
@@ -31,7 +29,7 @@ public class Validation {
     
     //check phone is numeric and at least 9 number
     public static boolean checkPhone(String phone){
-        if(phone.matches("-?\\d+(\\.\\d+)?") && phone.length() >= 9){
+        if(phone.matches("-?\\d+(\\.\\d+)?") && phone.length() >= 10){
             return true;
         } else {
             return false;
@@ -44,6 +42,14 @@ public class Validation {
             return true;
         } else {
             return false;
+        }
+    }
+    
+    public static boolean checkNoMember(int noMember){
+        if(noMember < 2){
+            return false;
+        } else {
+            return true;
         }
     }
 }

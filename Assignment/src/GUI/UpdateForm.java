@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package GUI;
 
@@ -19,7 +14,9 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author ppunme
+ * @author Poonnamee
+ * Date: 27/11/19
+ * Update Form for update member details to database
  */
 public class UpdateForm extends javax.swing.JFrame implements ActionListener{
     
@@ -86,7 +83,6 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
             txfNoMember.setVisible(false);
             type = "Single";
             packLoad = ((Single) m).getPackLoad();
-            System.out.println("Pack " + packLoad);
         } 
         if (m instanceof Family) {
             rbtFamily.setSelected(true);
@@ -95,7 +91,6 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
             cboPack.setVisible(false);
             type = "Family";
         }
-        System.out.println("Pack " + packLoad);
         //cannot change the primary key
         txfID.setEnabled(false);
         txfID.setToolTipText("CANNOT CHANGE PRIMARY KEY");
@@ -144,9 +139,7 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener{
         {
             //if agent name was changed
             agentName = (String) cboAgent.getSelectedItem();
-            System.out.println("Agent: " + agentName);
             agentID = Utilities.DataAccessLayer.getAgentIDupdate();
-            System.out.println("New Agent ID: " + agentID);
         }
     }
     

@@ -8,7 +8,8 @@ import java.sql.SQLException;
 /**
  *
  * @author Poonnamee
- * Date: 24/10/19 
+ * Date: 27/11/19
+ * Connection details to connect to database
  */
 public class ConnectionDetails {
     

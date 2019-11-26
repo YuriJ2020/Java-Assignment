@@ -1,21 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package GUI;
 
 import Classes.Agent;
 import Classes.Members;
-import Classes.Single;
-import Utilities.ConnectionDetails;
 import Utilities.MemberTableModel;
 import java.awt.Color;
-import java.awt.Font;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Comparator;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -25,7 +16,9 @@ import javax.swing.event.ListSelectionListener;
 
 /**
  *
- * @author ppunme
+ * @author Poonnamee
+ * Date: 27/11/19
+ * Search Form for search member in database
  */
 public class SearchForm extends javax.swing.JFrame {
 
@@ -55,7 +48,6 @@ public class SearchForm extends javax.swing.JFrame {
         parentMenu = menu;
         
         searchLoad = (String) cboSearch.getSelectedItem();
-        System.out.println(searchLoad);
         
         memberModel = new MemberTableModel();
         resultTable.setModel(memberModel);
@@ -87,7 +79,6 @@ public class SearchForm extends javax.swing.JFrame {
             String memberIDString = Integer.toString(m.getId());
             String feeString = Double.toString(m.getFee());
             String agentIDString = Integer.toString(m.getAgentID());
-            System.out.println(feeString);
             
             if(memberIDString.equalsIgnoreCase(search) || m.getName().equalsIgnoreCase(search) || m.getLast().equalsIgnoreCase(search)||
                 m.getGender().equalsIgnoreCase(search) || m.getEmail().equalsIgnoreCase(search) || m.getPhone().equalsIgnoreCase(search)||
@@ -96,6 +87,7 @@ public class SearchForm extends javax.swing.JFrame {
         
                 found = true;
                 searchList.add(m);
+                searchList.sort(Comparator.comparing(Members::getName));
             }      
         }
         
@@ -113,22 +105,25 @@ public class SearchForm extends javax.swing.JFrame {
 
         found = false;
         
-        for(Members m : list) {
-            try{
+        try{
+            int search = Integer.parseInt(txfSearch.getText());
+            for(Members m : list) {
                 if(m.getId() == (Integer.parseInt(txfSearch.getText()))){
                     found = true;
                     searchList.add(m);
                 }
-            } catch (NumberFormatException nEx) { //if enter String
-                nEx.getMessage();
+                
             }
-        }
-
-        if(found == true) {
-            memberModel = new MemberTableModel(searchList);
-            resultTable.setModel(memberModel);
-        } else {
-            JOptionPane.showMessageDialog(null, "This member does not exist");
+        
+            if(found == true) {
+                memberModel = new MemberTableModel(searchList);
+                resultTable.setModel(memberModel);
+            } 
+            else{
+                JOptionPane.showMessageDialog(null, "This member does not exist");
+            }
+        } catch (NumberFormatException nEx) { //if enter String
+            JOptionPane.showMessageDialog(null, "Enter a number to search by Member ID");
         }
     }
     
@@ -142,6 +137,7 @@ public class SearchForm extends javax.swing.JFrame {
             if(m.getName().equalsIgnoreCase(txfSearch.getText())){
                 found = true;
                 searchList.add(m);
+                searchList.sort(Comparator.comparing(Members::getLast));
             }
         }
         
@@ -159,22 +155,25 @@ public class SearchForm extends javax.swing.JFrame {
 
         found = false;
         
-        for(Members m : list) {
-            try{
+        try{
+            int search = Integer.parseInt(txfSearch.getText());
+            for(Members m : list) {
                 if(m.getAgentID() == (Integer.parseInt(txfSearch.getText()))){
                     found = true;
                     searchList.add(m);
+                    searchList.sort(Comparator.comparing(Members::getName));
                 }
-            } catch (NumberFormatException nEx) { //if enter String
-                nEx.getMessage();
             }
-        }
-
-        if(found == true) {
-            memberModel = new MemberTableModel(searchList);
-            resultTable.setModel(memberModel);
-        } else {
-            JOptionPane.showMessageDialog(null, "This member does not exist");
+        
+            if(found == true) {
+                memberModel = new MemberTableModel(searchList);
+                resultTable.setModel(memberModel);
+            } 
+            else{
+                JOptionPane.showMessageDialog(null, "This member does not exist");
+            }
+        } catch (NumberFormatException nEx) { //if enter String
+            JOptionPane.showMessageDialog(null, "Enter a number to search by Agent ID");
         }
     }
 
@@ -445,10 +444,9 @@ public class SearchForm extends javax.swing.JFrame {
         else if (searchLoad == "First Name") {
             SearchFromName();
         }
-        else if (searchLoad == "Sales Agent") {
+        else if (searchLoad == "Agent ID") {
             SearchFromAgent();
         }
-        
     }//GEN-LAST:event_btnSearchMousePressed
 
     private void cboSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboSearchActionPerformed
@@ -460,7 +458,6 @@ public class SearchForm extends javax.swing.JFrame {
     private void cboSearchItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboSearchItemStateChanged
         if(evt.getSource() == cboSearch){
             indexSearch = cboSearch.getSelectedIndex();
-            System.out.println("index: " + indexSearch);
         }
     }//GEN-LAST:event_cboSearchItemStateChanged
 
@@ -525,7 +522,7 @@ public class SearchForm extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    /*public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -556,8 +553,8 @@ public class SearchForm extends javax.swing.JFrame {
             public void run() {
                 new SearchForm().setVisible(true);
             }
-        });*/
-    }
+        });
+    }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btnBack;

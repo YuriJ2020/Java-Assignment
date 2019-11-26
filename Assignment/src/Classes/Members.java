@@ -5,7 +5,9 @@ import java.io.Serializable;
 
 /**
  *
- * @author ppunme
+ * @author Poonnamee
+ * Date: 27/11/19
+ * Member class (Superclass)
  */
 
 //Abstract class

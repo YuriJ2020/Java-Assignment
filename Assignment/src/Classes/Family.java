@@ -5,7 +5,9 @@ import java.io.Serializable;
 
 /**
  *
- * @author ppunme
+ * @author Poonnamee
+ * Date: 27/11/19
+ * Family class (subclass)
  */
 public class Family extends Members implements Serializable
 {

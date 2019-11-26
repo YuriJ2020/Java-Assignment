@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package GUI;
 
 import Classes.Agent;
@@ -45,6 +41,7 @@ public class MainMenu extends javax.swing.JFrame {
     public MainMenu() {
         initComponents();
         
+        this.setVisible(true);
         this.setTitle("Main Menu");
         this.setBounds(500, 100, 528, 580); // (x,y,width,height)
     }
@@ -63,23 +60,23 @@ public class MainMenu extends javax.swing.JFrame {
         lblHead1 = new javax.swing.JLabel();
         lblHead2 = new javax.swing.JLabel();
         btnBackup = new javax.swing.JPanel();
-        icBackup = new javax.swing.JLabel();
         lblBackup = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         btnRestore = new javax.swing.JPanel();
-        icRestore = new javax.swing.JLabel();
         lblRestore = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
         btnAddMember = new javax.swing.JPanel();
         lblAddMember = new javax.swing.JLabel();
-        icAddMember = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         btnSearch = new javax.swing.JPanel();
-        icSearch = new javax.swing.JLabel();
         lblSearch = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         btnAddAgent = new javax.swing.JPanel();
-        icAddAgent = new javax.swing.JLabel();
         lblAddAgent = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         btnHelp = new javax.swing.JPanel();
-        icHelp = new javax.swing.JLabel();
         lblHelp = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         btnExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -142,28 +139,28 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        icBackup.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-database-50orange.png"))); // NOI18N
-
         lblBackup.setForeground(new java.awt.Color(102, 102, 102));
         lblBackup.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblBackup.setText("Backup");
+
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-database-50orange 02.37.28.png"))); // NOI18N
 
         javax.swing.GroupLayout btnBackupLayout = new javax.swing.GroupLayout(btnBackup);
         btnBackup.setLayout(btnBackupLayout);
         btnBackupLayout.setHorizontalGroup(
             btnBackupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblBackup, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
             .addGroup(btnBackupLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(icBackup, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(lblBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         btnBackupLayout.setVerticalGroup(
             btnBackupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnBackupLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(icBackup)
+                .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblBackup)
                 .addGap(12, 12, 12))
@@ -183,12 +180,12 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        icRestore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icRestore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-restart-purple.png"))); // NOI18N
-
         lblRestore.setForeground(new java.awt.Color(102, 102, 102));
         lblRestore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblRestore.setText("Restore");
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-update_left_rotation_filled.png"))); // NOI18N
 
         javax.swing.GroupLayout btnRestoreLayout = new javax.swing.GroupLayout(btnRestore);
         btnRestore.setLayout(btnRestoreLayout);
@@ -196,15 +193,16 @@ public class MainMenu extends javax.swing.JFrame {
             btnRestoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnRestoreLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblRestore, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                .addGroup(btnRestoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblRestore, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
                 .addContainerGap())
-            .addComponent(icRestore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         btnRestoreLayout.setVerticalGroup(
             btnRestoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnRestoreLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(icRestore, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblRestore)
                 .addGap(12, 12, 12))
@@ -228,9 +226,8 @@ public class MainMenu extends javax.swing.JFrame {
         lblAddMember.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAddMember.setText("Add Member");
 
-        icAddMember.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icAddMember.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-user-green.png"))); // NOI18N
-        icAddMember.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-user-green 02.37.28 02.37.28.png"))); // NOI18N
 
         javax.swing.GroupLayout btnAddMemberLayout = new javax.swing.GroupLayout(btnAddMember);
         btnAddMember.setLayout(btnAddMemberLayout);
@@ -239,14 +236,15 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(btnAddMemberLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(btnAddMemberLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(icAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                    .addComponent(lblAddMember, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
+                    .addComponent(lblAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         btnAddMemberLayout.setVerticalGroup(
             btnAddMemberLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnAddMemberLayout.createSequentialGroup()
-                .addComponent(icAddMember, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblAddMember)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -266,13 +264,12 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        icSearch.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-search-50blue.png"))); // NOI18N
-        icSearch.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-
         lblSearch.setForeground(new java.awt.Color(102, 102, 102));
         lblSearch.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblSearch.setText("Search");
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-search_filled.png"))); // NOI18N
 
         javax.swing.GroupLayout btnSearchLayout = new javax.swing.GroupLayout(btnSearch);
         btnSearch.setLayout(btnSearchLayout);
@@ -281,14 +278,15 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(btnSearchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(btnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(icSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                    .addComponent(lblSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
                 .addContainerGap())
         );
         btnSearchLayout.setVerticalGroup(
             btnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnSearchLayout.createSequentialGroup()
-                .addComponent(icSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12))
@@ -309,13 +307,12 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        icAddAgent.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icAddAgent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-business-red.png"))); // NOI18N
-        icAddAgent.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-
         lblAddAgent.setForeground(new java.awt.Color(102, 102, 102));
         lblAddAgent.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAddAgent.setText("Add Agent");
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-business-red 02.37.28 02.37.28 02.37.28.png"))); // NOI18N
 
         javax.swing.GroupLayout btnAddAgentLayout = new javax.swing.GroupLayout(btnAddAgent);
         btnAddAgent.setLayout(btnAddAgentLayout);
@@ -323,15 +320,15 @@ public class MainMenu extends javax.swing.JFrame {
             btnAddAgentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnAddAgentLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(btnAddAgentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(icAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                    .addComponent(lblAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
+                .addComponent(lblAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                 .addContainerGap())
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         btnAddAgentLayout.setVerticalGroup(
             btnAddAgentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnAddAgentLayout.createSequentialGroup()
-                .addComponent(icAddAgent, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16)
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblAddAgent, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12))
@@ -352,13 +349,12 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        icHelp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        icHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-help-50grey.png"))); // NOI18N
-        icHelp.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-
         lblHelp.setForeground(new java.awt.Color(102, 102, 102));
         lblHelp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblHelp.setText("Help");
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/icons8-help-50grey 02.37.28 02.37.28 02.37.28.png"))); // NOI18N
 
         javax.swing.GroupLayout btnHelpLayout = new javax.swing.GroupLayout(btnHelp);
         btnHelp.setLayout(btnHelpLayout);
@@ -367,15 +363,15 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(btnHelpLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(btnHelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(icHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblHelp, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         btnHelpLayout.setVerticalGroup(
             btnHelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnHelpLayout.createSequentialGroup()
                 .addContainerGap(16, Short.MAX_VALUE)
-                .addComponent(icHelp)
+                .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblHelp)
                 .addGap(12, 12, 12))
@@ -419,7 +415,7 @@ public class MainMenu extends javax.swing.JFrame {
                         .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnRestore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
         pnlAllLayout.setVerticalGroup(
             pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -427,15 +423,15 @@ public class MainMenu extends javax.swing.JFrame {
                 .addComponent(pnlHead, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(50, 50, 50)
                 .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(37, 37, 37)
+                    .addComponent(btnAddMember, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAddAgent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(29, 29, 29)
                 .addGroup(pnlAllLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnRestore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnHelp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                    .addComponent(btnHelp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnBackup, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnRestore, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -448,7 +444,9 @@ public class MainMenu extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlAll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(pnlAll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         pack();
@@ -566,20 +564,6 @@ public class MainMenu extends javax.swing.JFrame {
         setColor(btnAddAgent);
     }//GEN-LAST:event_btnAddAgentMouseEntered
 
-    private void btnSearchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMousePressed
-        SearchForm search = new SearchForm(this);
-        this.setVisible(false);	
-        
-    }//GEN-LAST:event_btnSearchMousePressed
-
-    private void btnSearchMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMouseExited
-        resetColor(btnSearch);
-    }//GEN-LAST:event_btnSearchMouseExited
-
-    private void btnSearchMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMouseEntered
-        setColor(btnSearch);
-    }//GEN-LAST:event_btnSearchMouseEntered
-
     private void btnExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExitMouseEntered
         btnExit.setBackground(new java.awt.Color(181,177,178));
     }//GEN-LAST:event_btnExitMouseEntered
@@ -609,6 +593,20 @@ public class MainMenu extends javax.swing.JFrame {
         }
         System.exit(0);
     }//GEN-LAST:event_btnExitMousePressed
+
+    private void btnSearchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMousePressed
+        SearchForm search = new SearchForm(this);
+        this.setVisible(false);
+
+    }//GEN-LAST:event_btnSearchMousePressed
+
+    private void btnSearchMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMouseExited
+        resetColor(btnSearch);
+    }//GEN-LAST:event_btnSearchMouseExited
+
+    private void btnSearchMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMouseEntered
+        setColor(btnSearch);
+    }//GEN-LAST:event_btnSearchMouseEntered
 
     public void setColor(JPanel panel){
         panel.setBackground(new java.awt.Color(181,177,178)); 
@@ -688,11 +686,11 @@ public class MainMenu extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+    /*    java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new MainMenu().setVisible(true);
             }
-        });
+        });*/
         
     }
 
@@ -704,12 +702,12 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JPanel btnHelp;
     private javax.swing.JPanel btnRestore;
     private javax.swing.JPanel btnSearch;
-    private javax.swing.JLabel icAddAgent;
-    private javax.swing.JLabel icAddMember;
-    private javax.swing.JLabel icBackup;
-    private javax.swing.JLabel icHelp;
-    private javax.swing.JLabel icRestore;
-    private javax.swing.JLabel icSearch;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel lblAddAgent;
     private javax.swing.JLabel lblAddMember;
     private javax.swing.JLabel lblBackup;

@@ -1,0 +1,658 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ClassDiagram name="Assignment">
+  <ClassDiagramComponents>
+    <Class name="Single" package="Classes" visibility="public" xPosition="29.0" yPosition="764.0">
+      <Fields>
+        <Field name="packLoad" type="String" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+        <Constructor visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="String" name="name"/>
+          <Argument type="String" name="last"/>
+          <Argument type="String" name="gender"/>
+          <Argument type="String" name="email"/>
+          <Argument type="String" name="phone"/>
+          <Argument type="double" name="fee"/>
+          <Argument type="String" name="packLoad"/>
+          <Argument type="String" name="type"/>
+          <Argument type="int" name="agentID"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getPackLoad" returnType="String" visibility="public"/>
+        <Method name="setPackLoad" returnType="void" visibility="public">
+          <Argument type="String" name="pack"/>
+        </Method>
+        <Method name="calcFees" returnType="void" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Family" package="Classes" visibility="public" xPosition="2.0" yPosition="1016.0">
+      <Fields>
+        <Field name="noMembers" type="int" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+        <Constructor visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="String" name="name"/>
+          <Argument type="String" name="last"/>
+          <Argument type="String" name="gender"/>
+          <Argument type="String" name="email"/>
+          <Argument type="String" name="phone"/>
+          <Argument type="double" name="baseFee"/>
+          <Argument type="int" name="noMembers"/>
+          <Argument type="String" name="type"/>
+          <Argument type="int" name="agentID"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getNoMembers" returnType="int" visibility="public"/>
+        <Method name="setNoMembers" returnType="void" visibility="public">
+          <Argument type="int" name="noMembers"/>
+        </Method>
+        <Method name="calcFees" returnType="void" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Members" package="Classes" visibility="public" isAbstract="true" xPosition="1105.0" yPosition="610.0">
+      <Fields>
+        <Field name="id" type="int" visibility="private"/>
+        <Field name="name" type="String" visibility="private"/>
+        <Field name="last" type="String" visibility="private"/>
+        <Field name="gender" type="String" visibility="private"/>
+        <Field name="email" type="String" visibility="private"/>
+        <Field name="phone" type="String" visibility="private"/>
+        <Field name="baseFee" type="double" visibility="private"/>
+        <Field name="type" type="String" visibility="private"/>
+        <Field name="agentID" type="int" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="String" name="name"/>
+          <Argument type="String" name="last"/>
+          <Argument type="String" name="gender"/>
+          <Argument type="String" name="email"/>
+          <Argument type="String" name="phone"/>
+          <Argument type="double" name="fee"/>
+          <Argument type="String" name="type"/>
+          <Argument type="int" name="agentID"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="calcFees" returnType="void" visibility="public" isAbstract="true"/>
+        <Method name="getId" returnType="int" visibility="public"/>
+        <Method name="setId" returnType="void" visibility="public">
+          <Argument type="int" name="id"/>
+        </Method>
+        <Method name="getName" returnType="String" visibility="public"/>
+        <Method name="setName" returnType="void" visibility="public">
+          <Argument type="String" name="name"/>
+        </Method>
+        <Method name="getLast" returnType="String" visibility="public"/>
+        <Method name="setLast" returnType="void" visibility="public">
+          <Argument type="String" name="last"/>
+        </Method>
+        <Method name="getGender" returnType="String" visibility="public"/>
+        <Method name="setGender" returnType="void" visibility="public">
+          <Argument type="String" name="gender"/>
+        </Method>
+        <Method name="getEmail" returnType="String" visibility="public"/>
+        <Method name="setEmail" returnType="void" visibility="public">
+          <Argument type="String" name="email"/>
+        </Method>
+        <Method name="getPhone" returnType="String" visibility="public"/>
+        <Method name="setPhone" returnType="void" visibility="public">
+          <Argument type="String" name="phone"/>
+        </Method>
+        <Method name="getFee" returnType="double" visibility="public"/>
+        <Method name="setFee" returnType="void" visibility="public">
+          <Argument type="double" name="fee"/>
+        </Method>
+        <Method name="getType" returnType="String" visibility="public"/>
+        <Method name="setType" returnType="void" visibility="public">
+          <Argument type="String" name="type"/>
+        </Method>
+        <Method name="getAgentID" returnType="int" visibility="public"/>
+        <Method name="setAgentID" returnType="void" visibility="public">
+          <Argument type="int" name="agentID"/>
+        </Method>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Agent" package="Classes" visibility="public" xPosition="1869.0" yPosition="1812.0">
+      <Fields>
+        <Field name="id" type="int" visibility="public"/>
+        <Field name="first" type="String" visibility="public"/>
+        <Field name="last" type="String" visibility="public"/>
+        <Field name="phone" type="String" visibility="public"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="String" name="first"/>
+          <Argument type="String" name="last"/>
+          <Argument type="String" name="phone"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getId" returnType="int" visibility="public"/>
+        <Method name="setId" returnType="void" visibility="public">
+          <Argument type="int" name="id"/>
+        </Method>
+        <Method name="getFirst" returnType="String" visibility="public"/>
+        <Method name="setFirst" returnType="void" visibility="public">
+          <Argument type="String" name="first"/>
+        </Method>
+        <Method name="getLast" returnType="String" visibility="public"/>
+        <Method name="setLast" returnType="void" visibility="public">
+          <Argument type="String" name="last"/>
+        </Method>
+        <Method name="getPhone" returnType="String" visibility="public"/>
+        <Method name="setPhone" returnType="void" visibility="public">
+          <Argument type="String" name="phone"/>
+        </Method>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="MemberTableModel" package="Utilities" visibility="public" xPosition="3960.0" yPosition="1891.0">
+      <Fields>
+        <Field name="list" type="ArrayList&lt;Members&gt;" visibility="private"/>
+        <Field name="columnNames" type="String[]" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+        <Constructor visibility="public">
+          <Argument type="ArrayList&lt;Members&gt;" name="searchList"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getRowCount" returnType="int" visibility="public"/>
+        <Method name="getColumnCount" returnType="int" visibility="public"/>
+        <Method name="getValueAt" returnType="Object" visibility="public">
+          <Argument type="int" name="rowIndex"/>
+          <Argument type="int" name="columnIndex"/>
+        </Method>
+        <Method name="getColumnName" returnType="String" visibility="public">
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="getRow" returnType="Members" visibility="public">
+          <Argument type="int" name="row"/>
+        </Method>
+        <Method name="getDataFromDatabase" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Validation" package="Utilities" visibility="public" xPosition="62.0" yPosition="2245.0">
+      <Fields/>
+      <Constructors/>
+      <Methods>
+        <Method name="CheckNull" returnType="boolean" visibility="public" isStatic="true">
+          <Argument type="String" name="first"/>
+          <Argument type="String" name="last"/>
+          <Argument type="String" name="gender"/>
+          <Argument type="String" name="email"/>
+          <Argument type="String" name="phone"/>
+          <Argument type="String" name="type"/>
+        </Method>
+        <Method name="isString" returnType="boolean" visibility="public" isStatic="true">
+          <Argument type="String" name="first"/>
+          <Argument type="String" name="last"/>
+        </Method>
+        <Method name="checkPhone" returnType="boolean" visibility="public" isStatic="true">
+          <Argument type="String" name="phone"/>
+        </Method>
+        <Method name="checkEmail" returnType="boolean" visibility="public" isStatic="true">
+          <Argument type="String" name="email"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="DataAccessLayer" package="Utilities" visibility="public" xPosition="527.0" yPosition="1444.0">
+      <Fields/>
+      <Constructors/>
+      <Methods>
+        <Method name="addMemberToDatabase" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="first"/>
+          <Argument type="String" name="last"/>
+          <Argument type="String" name="gender"/>
+          <Argument type="String" name="email"/>
+          <Argument type="String" name="phone"/>
+          <Argument type="double" name="totalFee"/>
+          <Argument type="String" name="packLoad"/>
+          <Argument type="int" name="noMember"/>
+          <Argument type="String" name="type"/>
+          <Argument type="int" name="agentID"/>
+        </Method>
+        <Method name="addAgentToDatabase" returnType="void" visibility="public" isStatic="true">
+          <Argument type="Agent" name="a"/>
+        </Method>
+        <Method name="getAgentToCombobox" returnType="void" visibility="public" isStatic="true">
+          <Argument type="JComboBox" name="cboAgentLoad"/>
+        </Method>
+        <Method name="getAgentID" returnType="int" visibility="public" isStatic="true"/>
+        <Method name="getAgentIDupdate" returnType="int" visibility="public" isStatic="true"/>
+        <Method name="getAgentName" returnType="String" visibility="public" isStatic="true"/>
+        <Method name="getDataFromDatabase" returnType="void" visibility="public" isStatic="true">
+          <Argument type="ArrayList&lt;Members&gt;" name="list"/>
+        </Method>
+        <Method name="deleteMember" returnType="void" visibility="public" isStatic="true">
+          <Argument type="Members" name="m"/>
+        </Method>
+        <Method name="updateMember" returnType="void" visibility="public" isStatic="true"/>
+        <Method name="restoreData" returnType="void" visibility="public" isStatic="true">
+          <Argument type="ArrayList&lt;Members&gt;" name="restoredList"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="ReadWrite" package="Utilities" visibility="public" xPosition="150.0" yPosition="520.0">
+      <Fields/>
+      <Constructors/>
+      <Methods>
+        <Method name="readData" returnType="ArrayList&lt;Members&gt;" visibility="public" isStatic="true">
+          <Argument type="String" name="fileName"/>
+        </Method>
+        <Method name="writeData" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="fileName"/>
+          <Argument type="ArrayList&lt;Members&gt;" name="list"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="ConnectionDetails" package="Utilities" visibility="public" xPosition="62.0" yPosition="1891.0">
+      <Fields>
+        <Field name="userName" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="passWord" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="driver" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="url" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="db" type="String" visibility="private" isStatic="true" isFinal="true"/>
+      </Fields>
+      <Constructors/>
+      <Methods>
+        <Method name="getUserName" returnType="String" visibility="public" isStatic="true"/>
+        <Method name="getPassWord" returnType="String" visibility="public" isStatic="true"/>
+        <Method name="getDriver" returnType="String" visibility="public" isStatic="true"/>
+        <Method name="getUrl" returnType="String" visibility="public" isStatic="true"/>
+        <Method name="getConnection" returnType="Connection" visibility="public" isStatic="true"/>
+      </Methods>
+    </Class>
+    <Class name="SearchForm" package="GUI" visibility="public" xPosition="2783.0" yPosition="1860.0">
+      <Fields>
+        <Field name="parentMenu" type="MainMenu" visibility="package"/>
+        <Field name="myColor1" type="Color" visibility="package"/>
+        <Field name="searchLoad" type="String" visibility="package"/>
+        <Field name="indexSearch" type="int" visibility="package"/>
+        <Field name="selectedRow" type="int" visibility="private"/>
+        <Field name="found" type="boolean" visibility="private"/>
+        <Field name="memberModel" type="MemberTableModel" visibility="package"/>
+        <Field name="list" type="ArrayList&lt;Members&gt;" visibility="package"/>
+        <Field name="agentList" type="ArrayList&lt;Agent&gt;" visibility="package"/>
+        <Field name="btnBack" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="btnDelete" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="btnSearch" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="btnUpdate" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="cboSearch" type="javax.swing.JComboBox&lt;String&gt;" visibility="private"/>
+        <Field name="jInternalFrame1" type="javax.swing.JInternalFrame" visibility="private"/>
+        <Field name="jScrollPane1" type="javax.swing.JScrollPane" visibility="private"/>
+        <Field name="lblHead" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblSearch" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblSearchBy" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="pnlAll" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="pnlSearch" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="resultTable" type="javax.swing.JTable" visibility="private" isStatic="true"/>
+        <Field name="txfSearch" type="javax.swing.JTextField" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="MainMenu" name="menu"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="SearchFromAll" returnType="void" visibility="private"/>
+        <Method name="SearchFromID" returnType="void" visibility="private"/>
+        <Method name="SearchFromName" returnType="void" visibility="private"/>
+        <Method name="SearchFromAgent" returnType="void" visibility="private"/>
+        <Method name="initComponents" returnType="// &lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Generated Code&quot;&gt;//GEN-BEGIN:initComponents void" visibility="private"/>
+        <Method name="btnSearchMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="cboSearchActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="cboSearchItemStateChanged" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ItemEvent" name="evt"/>
+        </Method>
+        <Method name="btnBackMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnDeleteMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnUpdateMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnSearchMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnBackMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnDeleteMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnUpdateMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnSearchMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnBackMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnDeleteMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnUpdateMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="setColor" returnType="void" visibility="public">
+          <Argument type="JLabel" name="label"/>
+        </Method>
+        <Method name="main" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="args"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="MainMenu" package="GUI" visibility="public" xPosition="2688.0" yPosition="561.0">
+      <Fields>
+        <Field name="fileName" type="String" visibility="package" isStatic="true" isFinal="true"/>
+        <Field name="list" type="ArrayList&lt;Members&gt;" visibility="public" isStatic="true"/>
+        <Field name="agentList" type="ArrayList&lt;Agent&gt;" visibility="public" isStatic="true"/>
+        <Field name="restoredList" type="ArrayList&lt;Members&gt;" visibility="public" isStatic="true"/>
+        <Field name="fos" type="FileOutputStream" visibility="private" isStatic="true"/>
+        <Field name="oos" type="ObjectOutputStream" visibility="private" isStatic="true"/>
+        <Field name="myColor" type="Color" visibility="package"/>
+        <Field name="btnAddAgent" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="btnAddMember" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="btnBackup" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="btnExit" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="btnHelp" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="btnRestore" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="btnSearch" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="icAddAgent" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="icAddMember" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="icBackup" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="icHelp" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="icRestore" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="icSearch" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblAddAgent" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblAddMember" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblBackup" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblHead1" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblHead2" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblHelp" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblRestore" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblSearch" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="pnlAll" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="pnlHead" type="javax.swing.JPanel" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="initComponents" returnType="// &lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Generated Code&quot;&gt;//GEN-BEGIN:initComponents void" visibility="private"/>
+        <Method name="btnAddMemberMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnBackupMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnHelpMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnRestoreMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnAddMemberMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnHelpMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnBackupMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnRestoreMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnAddMemberMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnHelpMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnBackupMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnRestoreMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="formWindowActivated" returnType="void" visibility="private">
+          <Argument type="java.awt.event.WindowEvent" name="evt"/>
+        </Method>
+        <Method name="btnAddAgentMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnAddAgentMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnAddAgentMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnSearchMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnSearchMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnSearchMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnExitMouseEntered" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnExitMouseExited" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="btnExitMousePressed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="setColor" returnType="void" visibility="public">
+          <Argument type="JPanel" name="panel"/>
+        </Method>
+        <Method name="resetColor" returnType="void" visibility="public">
+          <Argument type="JPanel" name="panel"/>
+        </Method>
+        <Method name="writeData" returnType="void" visibility="public" isStatic="true"/>
+        <Method name="readData" returnType="void" visibility="public" isStatic="true"/>
+        <Method name="main" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="args"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="UpdateForm" package="GUI" visibility="public" xPosition="4053.0" yPosition="284.0">
+      <Fields>
+        <Field name="parent" type="SearchForm" visibility="package"/>
+        <Field name="memberModel" type="MemberTableModel" visibility="package"/>
+        <Field name="list" type="ArrayList&lt;Members&gt;" visibility="private"/>
+        <Field name="agentName" type="String" visibility="public" isStatic="true"/>
+        <Field name="agentID" type="int" visibility="public" isStatic="true"/>
+        <Field name="gender" type="String" visibility="public" isStatic="true"/>
+        <Field name="type" type="String" visibility="public" isStatic="true"/>
+        <Field name="stateLoad" type="String" visibility="public" isStatic="true"/>
+        <Field name="agentLoad" type="String" visibility="public" isStatic="true"/>
+        <Field name="packLoad" type="String" visibility="public" isStatic="true"/>
+        <Field name="indexPack" type="int" visibility="private"/>
+        <Field name="btnBack" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btnUpdate" type="javax.swing.JButton" visibility="private" isStatic="true"/>
+        <Field name="buttonGroup1" type="javax.swing.ButtonGroup" visibility="private"/>
+        <Field name="buttonGroup2" type="javax.swing.ButtonGroup" visibility="private"/>
+        <Field name="cboAgent" type="javax.swing.JComboBox&lt;String&gt;" visibility="private"/>
+        <Field name="cboPack" type="javax.swing.JComboBox&lt;String&gt;" visibility="private"/>
+        <Field name="jPanel1" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="jPanel2" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="lblAgentName" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblEmail" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblFirst" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblGender" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblHead" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblID" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblLast" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblNoMember" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblPack" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblPhone" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="lblType" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="rbtFamily" type="javax.swing.JRadioButton" visibility="private"/>
+        <Field name="rbtFemale" type="javax.swing.JRadioButton" visibility="private"/>
+        <Field name="rbtMale" type="javax.swing.JRadioButton" visibility="private"/>
+        <Field name="rbtSingle" type="javax.swing.JRadioButton" visibility="private"/>
+        <Field name="txfEmail" type="javax.swing.JTextField" visibility="public" isStatic="true"/>
+        <Field name="txfFirst" type="javax.swing.JTextField" visibility="public" isStatic="true"/>
+        <Field name="txfID" type="javax.swing.JTextField" visibility="public" isStatic="true"/>
+        <Field name="txfLast" type="javax.swing.JTextField" visibility="public" isStatic="true"/>
+        <Field name="txfNoMember" type="javax.swing.JTextField" visibility="public" isStatic="true"/>
+        <Field name="txfPhone" type="javax.swing.JTextField" visibility="public" isStatic="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="SearchForm" name="menu"/>
+          <Argument type="MemberTableModel" name="model"/>
+          <Argument type="Members" name="m"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="actionPerformed" returnType="void" visibility="public">
+          <Argument type="ActionEvent" name="e"/>
+        </Method>
+        <Method name="itemStateChanged" returnType="void" visibility="public">
+          <Argument type="ItemEvent" name="e"/>
+        </Method>
+        <Method name="initComponents" returnType="// &lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Generated Code&quot;&gt;//GEN-BEGIN:initComponents void" visibility="private"/>
+        <Method name="btnBackActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btnUpdateActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="updateMember" returnType="void" visibility="public"/>
+        <Method name="main" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="args"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="AddMember" package="GUI" visibility="public" xPosition="2085.0" yPosition="2727.0">
+      <Fields>
+        <Field name="list" type="ArrayList&lt;Members&gt;" visibility="public" isStatic="true"/>
+        <Field name="agentList" type="ArrayList&lt;Agent&gt;" visibility="public" isStatic="true"/>
+        <Field name="btnAdd" type="JButton" visibility="private"/>
+        <Field name="txfID" type="JTextField" visibility="private"/>
+        <Field name="rbtMale" type="JRadioButton" visibility="private"/>
+        <Field name="rbtSingle" type="JRadioButton" visibility="private"/>
+        <Field name="cboPackLoad" type="JComboBox" visibility="private"/>
+        <Field name="cboAgentLoad" type="JComboBox" visibility="private"/>
+        <Field name="lblHeading" type="JLabel" visibility="private"/>
+        <Field name="lblPack" type="JLabel" visibility="private"/>
+        <Field name="myColor1" type="Color" visibility="package"/>
+        <Field name="myColor2" type="Color" visibility="package"/>
+        <Field name="myColor3" type="Color" visibility="package"/>
+        <Field name="f1" type="Font" visibility="package"/>
+        <Field name="f2" type="Font" visibility="package"/>
+        <Field name="validate" type="boolean" visibility="private"/>
+        <Field name="BASE_FEE" type="double" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="gender" type="String" visibility="private"/>
+        <Field name="type" type="String" visibility="private"/>
+        <Field name="packLoad" type="String" visibility="public" isStatic="true"/>
+        <Field name="indexPack" type="int" visibility="private"/>
+        <Field name="agentID" type="int" visibility="private"/>
+        <Field name="parentMenu" type="MainMenu" visibility="package"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="MainMenu" name="menu"/>
+          <Argument type="ArrayList&lt;Members&gt;" name="memberArray"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="setUIFont" returnType="void" visibility="public" isStatic="true">
+          <Argument type="FontUIResource" name="f"/>
+        </Method>
+        <Method name="actionPerformed" returnType="void" visibility="public">
+          <Argument type="ActionEvent" name="e"/>
+        </Method>
+        <Method name="itemStateChanged" returnType="void" visibility="public">
+          <Argument type="ItemEvent" name="e"/>
+        </Method>
+        <Method name="addNewMember" returnType="void" visibility="public"/>
+        <Method name="clearForm" returnType="void" visibility="private"/>
+        <Method name="mainMenu" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="AddAgent" package="GUI" visibility="public" xPosition="1983.0" yPosition="1150.0">
+      <Fields>
+        <Field name="agentList" type="ArrayList&lt;Agent&gt;" visibility="public" isStatic="true"/>
+        <Field name="btnAdd" type="JButton" visibility="private"/>
+        <Field name="txfID" type="JTextField" visibility="private"/>
+        <Field name="lblHeading" type="JLabel" visibility="private"/>
+        <Field name="myColor1" type="Color" visibility="package"/>
+        <Field name="myColor2" type="Color" visibility="package"/>
+        <Field name="myColor3" type="Color" visibility="package"/>
+        <Field name="f1" type="Font" visibility="package"/>
+        <Field name="f2" type="Font" visibility="package"/>
+        <Field name="validate" type="boolean" visibility="private"/>
+        <Field name="parentMenu" type="MainMenu" visibility="package"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="MainMenu" name="menu"/>
+          <Argument type="ArrayList&lt;Agent&gt;" name="list"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="setUIFont" returnType="void" visibility="public" isStatic="true">
+          <Argument type="FontUIResource" name="f"/>
+        </Method>
+        <Method name="actionPerformed" returnType="void" visibility="public">
+          <Argument type="ActionEvent" name="e"/>
+        </Method>
+        <Method name="addAgent" returnType="void" visibility="public"/>
+        <Method name="clearForm" returnType="void" visibility="private"/>
+        <Method name="mainMenu" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+  </ClassDiagramComponents>
+  <ClassDiagramRelations>
+    <HasRelation name="memberModel" source="GUI.UpdateForm" target="Utilities.MemberTableModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="parentMenu" source="GUI.AddMember" target="GUI.MainMenu" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="parentMenu" source="GUI.SearchForm" target="GUI.MainMenu" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="Classes.Family" target="Classes.Members"/>
+    <HasRelation name="agentList" source="GUI.AddAgent" target="Classes.Agent" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Agent&gt;"/>
+    <HasRelation name="restoredList" source="GUI.MainMenu" target="Classes.Members" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Members&gt;"/>
+    <HasRelation name="agentList" source="GUI.MainMenu" target="Classes.Agent" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Agent&gt;"/>
+    <UseRelation source="Utilities.MemberTableModel" target="Classes.Members" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="Utilities.DataAccessLayer" target="Classes.Agent" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="Classes.Single" target="Classes.Members"/>
+    <HasRelation name="list" source="GUI.SearchForm" target="Classes.Members" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Members&gt;"/>
+    <HasRelation name="list" source="GUI.MainMenu" target="Classes.Members" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Members&gt;"/>
+    <HasRelation name="agentList" source="GUI.SearchForm" target="Classes.Agent" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Agent&gt;"/>
+    <HasRelation name="parent" source="GUI.UpdateForm" target="GUI.SearchForm" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="Utilities.DataAccessLayer" target="Classes.Members" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="memberModel" source="GUI.SearchForm" target="Utilities.MemberTableModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="agentList" source="GUI.AddMember" target="Classes.Agent" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Agent&gt;"/>
+    <HasRelation name="list" source="GUI.UpdateForm" target="Classes.Members" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Members&gt;"/>
+    <UseRelation source="Utilities.ReadWrite" target="Classes.Members" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="parentMenu" source="GUI.AddAgent" target="GUI.MainMenu" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="list" source="GUI.AddMember" target="Classes.Members" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Members&gt;"/>
+    <HasRelation name="list" source="Utilities.MemberTableModel" target="Classes.Members" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Members&gt;"/>
+  </ClassDiagramRelations>
+</ClassDiagram>
